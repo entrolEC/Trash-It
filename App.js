@@ -24,19 +24,25 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
+//import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import Geolocation from '@react-native-community/geolocation';
+import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap";
 
 const initialState = {
   latitude: null,
   longitude: null,
-  latitudeDelta: 0.015,
-  longitudeDelta: 0.0121,
 }
 
 const App = () => {
   const [currentPosition, setCurrentPosition] = useState(initialState);
   const [loading, setLoading] = useState(true);
+  const [lst, setLst] = useState([
+    {latitude: 37.564200, longitude: 126.977011},
+  ]);
+
+  const P0 = {latitude: 37.564362, longitude: 126.977011};
+  const P1 = {latitude: 37.565051, longitude: 126.978567};
+  const P2 = {latitude: 37.565383, longitude: 126.976292};
 
   const getLocation = () => {
     Geolocation.getCurrentPosition(async position => {
@@ -45,8 +51,6 @@ const App = () => {
       await setCurrentPosition({
         latitude: latitude,
         longitude: longitude,
-        latitudeDelta: 0.015,
-        longitudeDelta: 0.0121,
       })
       setLoading(false)
 
@@ -59,19 +63,33 @@ const App = () => {
     )
   }
 
+
   useEffect(() => {
-    getLocation()
-    
+    //getLocation()
   })
 
-  return !loading ? (
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            showsUserLocation
-            initialRegion={currentPosition}/>
-  ) : (
-    <ActivityIndicator style={{flex:1}} animatingSize="large"/>
+  return (
+          <NaverMapView style={{width: '100%', height: '100%'}}
+                         showsMyLocationButton={true}
+                         setLocationTrackingMode={2}
+                         center={{...P0, zoom: 16}}
+                         onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
+                         onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
+                         onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
+                         {
+        
+                        lst.map((point)=>(
+                          <Marker coordinate={point} onClick={() => console.warn('onClick! p0')}/>
+                        ))
+        }
+        <Marker coordinate={P0} onClick={() => console.warn('onClick! p0')}/>
+        <Marker coordinate={P1} pinColor="blue" onClick={() => console.warn('onClick! p1')}/>
+        <Marker coordinate={P2} pinColor="red" onClick={() => console.warn('onClick! p2')}/>
+        <Path coordinates={[P0, P1]} onClick={() => console.warn('onClick! path')} width={10}/>
+        <Polyline coordinates={[P1, P2]} onClick={() => console.warn('onClick! polyline')}/>
+        <Circle coordinate={P0} color={"rgba(255,0,0,0.3)"} radius={200} onClick={() => console.warn('onClick! circle')}/>
+        <Polygon coordinates={[P0, P1, P2]} color={`rgba(0, 0, 0, 0.5)`} onClick={() => console.warn('onClick! polygon')}/>
+    </NaverMapView>
   )
 };
 

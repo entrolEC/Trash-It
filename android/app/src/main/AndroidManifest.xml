@@ -12,8 +12,12 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="ao30kwj45o" />
+      <!--
+      <meta-data
         android:name="com.google.android.maps.v2.API_KEY"
-        android:value="AIzaSyA1IqOBhJyXZ89k7gr19jpiUYsbaC0Pyzg"/>
+        android:value="AIzaSyA1IqOBhJyXZ89k7gr19jpiUYsbaC0Pyzg"/>-->
       
       <!-- You will also only need to add this uses-library tag -->
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
