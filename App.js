@@ -63,12 +63,31 @@ const App = () => {
     )
   }
 
+  const fetchData = async () => {
+    console.log("fetchdata!")
+
+    //.catch(err=>{console.log(err)})
+    //.then((request) => request.text())
+    //.then((requestTxt)=> {console.log(requestTxt)})
+
+    var requestOptions = {
+  method: 'GET',
+  redirect: 'follow'
+};
+
+await fetch("localhost:8081", requestOptions)
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+
+    setLoading(false)
+  }
 
   useEffect(() => {
-    //getLocation()
+    fetchData()
   })
 
-  return (
+  return !loading ? (
           <NaverMapView style={{width: '100%', height: '100%'}}
                          showsMyLocationButton={true}
                          setLocationTrackingMode={2}
@@ -90,6 +109,8 @@ const App = () => {
         <Circle coordinate={P0} color={"rgba(255,0,0,0.3)"} radius={200} onClick={() => console.warn('onClick! circle')}/>
         <Polygon coordinates={[P0, P1, P2]} color={`rgba(0, 0, 0, 0.5)`} onClick={() => console.warn('onClick! polygon')}/>
     </NaverMapView>
+  ) : (
+    <Text>loading!!</Text>
   )
 };
 
