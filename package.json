@@ -13,7 +13,10 @@
     "@react-native-community/geolocation": "^2.0.2",
     "react": "16.13.1",
     "react-native": "0.63.3",
-    "react-native-nmap": "0.0.54"
+    "react-native-action-button": "^2.8.5",
+    "react-native-floating-action": "^1.21.0",
+    "react-native-nmap": "0.0.54",
+    "react-native-vector-icons": "^7.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
