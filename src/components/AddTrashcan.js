@@ -19,17 +19,22 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
     ImagePicker.openCamera({
       width: 300,
       height: 400,
+      includeExif: true,
       cropping: true,
+      mediaType: 'photo',
     }).then(image => {
-      console.log(image.data);
+      console.log(image);
 
       var formdata = new FormData();
       formdata.append("latitude", "37.38521659999999");
       formdata.append("longitude", "126.6621438");
       formdata.append("address", "인천 송도과학로27번길 15");
-      formdata.append("image", image.data);
+      formdata.append("image", {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"});
 
       var requestOptions = {
+        headers:{
+          'Content-Type': 'multipart/form-data',
+        },
         method: 'POST',
         body: formdata,
         redirect: 'follow'
