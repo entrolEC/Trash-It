@@ -5,14 +5,47 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  View
+  View,
+  Image
 } from "react-native";
+import data from '../../dummy/data.json'
+import ImagePicker from 'react-native-image-crop-picker';
 
-export const AddTrashcan = ({modalVisible, setModalVisible}) => {
+export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) => {
 
+  const addNewTrashcan = () => {
+    //data.push(currentPosition)
+
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      console.log(image.data);
+
+      var formdata = new FormData();
+      formdata.append("latitude", "37.38521659999999");
+      formdata.append("longitude", "126.6621438");
+      formdata.append("address", "인천 송도과학로27번길 15");
+      formdata.append("image", image.data);
+
+      var requestOptions = {
+        method: 'POST',
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch("http://112.145.103.184:8000/locations/", requestOptions)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+
+    });
+  }
 
   useEffect(() => {
     console.log("success!!!!!!!!!!!!!!!!!!!")
+    
     //setModalVisible(modalVisible)
   })
   
@@ -28,15 +61,16 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>Hello World!</Text>
+            <Text style={styles.modalText}>현재 위치에 쓰레기통을 추가합니다.</Text>
 
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 setModalVisible(!modalVisible);
+                addNewTrashcan()
               }}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={styles.textStyle}>     확인     </Text>
             </TouchableHighlight>
           </View>
         </View>
@@ -56,7 +90,8 @@ const styles = StyleSheet.create({
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 35,
+    padding: 25,
+    paddingHorizontal: 40,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
@@ -71,6 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F194FF",
     borderRadius: 20,
     padding: 10,
+    marginTop: 15,
     elevation: 2
   },
   textStyle: {
@@ -79,7 +115,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   modalText: {
-    marginBottom: 15,
+    marginBottom: 30,
     textAlign: "center"
   }
 });
