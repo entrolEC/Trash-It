@@ -8,7 +8,6 @@ import {
   View,
   Image
 } from "react-native";
-import data from '../../dummy/data.json'
 import ImagePicker from 'react-native-image-crop-picker';
 
 export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) => {
@@ -26,8 +25,8 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
       console.log(image);
 
       var formdata = new FormData();
-      formdata.append("latitude", "37.38521659999999");
-      formdata.append("longitude", "126.6621438");
+      formdata.append("latitude", currentPosition.latitude);
+      formdata.append("longitude", currentPosition.longitude);
       formdata.append("address", "인천 송도과학로27번길 15");
       formdata.append("image", {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"});
 
@@ -52,7 +51,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
     console.log("success!!!!!!!!!!!!!!!!!!!")
     
     //setModalVisible(modalVisible)
-  })
+  },[])
   
   return (
     <View style={styles.centeredView}>

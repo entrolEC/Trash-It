@@ -42,8 +42,8 @@ const actions = [
 ];
 
 const initialState = {
-  latitude: null,
-  longitude: null,
+  latitude: 37.3677,
+  longitude: 126.6603,
 }
 
 const App = () => {
