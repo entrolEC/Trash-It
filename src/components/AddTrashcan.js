@@ -56,7 +56,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -66,16 +66,25 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>현재 위치에 쓰레기통을 추가합니다.</Text>
-
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-              onPress={() => {
-                setModalVisible(!modalVisible);
-                addNewTrashcan()
-              }}
-            >
-              <Text style={styles.textStyle}>     확인     </Text>
-            </TouchableHighlight>
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                }}
+              >
+                <Text style={styles.textStyle}>     취소     </Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
+                onPress={() => {
+                  setModalVisible(!modalVisible);
+                  addNewTrashcan()
+                }}
+              >
+                <Text style={styles.textStyle}>     확인     </Text>
+              </TouchableHighlight>
+            </View>            
           </View>
         </View>
       </Modal>
@@ -111,7 +120,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginTop: 15,
-    elevation: 2
+    elevation: 2,
+    marginHorizontal: 10
   },
   textStyle: {
     color: "white",
@@ -121,5 +131,9 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 30,
     textAlign: "center"
+  },
+  buttonContainer : {
+    flexDirection: "row",
+    alignContent: "space-around"
   }
 });
