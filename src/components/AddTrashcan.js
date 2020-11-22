@@ -14,10 +14,27 @@ import Geolocation from '@react-native-community/geolocation';
 import PositionContext from '../context/PositionContext'
 
 export const AddTrashcan = ({modalVisible, setModalVisible}) => {
-
+  const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
   const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
   const [description, setDescription] = useState("설명 없음")
   const [ data, setData ] = useState(0)
+
+  const fetchData = async () => {
+    console.log("fetchdata!")
+
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://112.145.103.184:8000/locations/", requestOptions) // i'm stuck on this network failed error. (android)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        setTrashcanLocation(result)
+      })
+      .catch(error => console.log('error', error));
+  }
 
   const addNewTrashcan = () => {
     ImagePicker.openCamera({
@@ -30,8 +47,6 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       console.log(image);
 
       let temp = {
-        latitude : currentPosition.latitude,
-        longitude : currentPosition.longitude,
         address : "인천 송도과학로27번길 15",
         image : {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"}
       }
@@ -48,13 +63,13 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
         longitude: longitude,
       })
     })
-    console.log(currentPosition)
+    console.log("getlocation", currentPosition)
   }
 
   const postData = () => {
     var formdata = new FormData();
-    formdata.append("latitude", data.latitude);
-    formdata.append("longitude", data.longitude);
+    formdata.append("latitude", currentPosition.latitude);
+    formdata.append("longitude", currentPosition.longitude);
     formdata.append("address", data.address);
     formdata.append("image", data.image);
     formdata.append("description", description);
@@ -74,7 +89,6 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   }
 
   useEffect(() => {
-    console.log("success!!!!!!!!!!!!!!!!!!!")
     //setModalVisible(modalVisible)
   },[])
   
@@ -84,9 +98,6 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
         animationType="fade"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-        }}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
@@ -97,8 +108,8 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                 <TouchableHighlight
                   style={styles.cameraButton}
                   onPress={() => {
-                    addNewTrashcan()
                     getLocation()
+                    addNewTrashcan()                    
                   }}
                 >
                   <Text style={styles.textStyle}>     촬영     </Text>
@@ -121,18 +132,19 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                 <TouchableHighlight
                   style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                   onPress={() => {
-                    setModalVisible(!modalVisible);
+                    setModalVisible(!modalVisible)
                   }}
                 >
                   <Text style={styles.textStyle}>     취소     </Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                   style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                  onPress={() => {
+                  onPress={async () => {
                     if(data) {
                       setModalVisible(!modalVisible);
-                      postData()
-                      console.log(";afklsdj;kldfjasd;asfklj")
+                      await postData()
+                      await fetchData()
+                      setData(0)
                     }                        
                   }}
                 >

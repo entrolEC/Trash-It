@@ -9,12 +9,10 @@ import {
   Image
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
+import PositionContext from '../context/PositionContext'
 
-export const TrashcanInfo = ({trashcanLocation, modalVisible, setModalVisible}) => {
-
-  useEffect(() => {
-
-  },[])
+export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex}) => {
+  const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
 
   return (
     <View style={styles.centeredView}>
@@ -31,10 +29,10 @@ export const TrashcanInfo = ({trashcanLocation, modalVisible, setModalVisible}) 
             <Image
               style={styles.image}
               source={{
-                uri: trashcanLocation.image,
+                uri: trashcanLocation[selectedIndex].image,
               }}
             />
-            <Text style={styles.text}>{trashcanLocation.description}</Text>
+            <Text style={styles.text}>{trashcanLocation[selectedIndex].description}</Text>
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {

@@ -43,9 +43,10 @@ const actions = [
   }
 ];
 
-const App = ({trashcanLocation}) => {
+const App = () => {
 
   const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
+  const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -80,7 +81,7 @@ const App = ({trashcanLocation}) => {
       
       {
         selectedIndex!==null ? (
-          <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} trashcanLocation = {trashcanLocation[selectedIndex]}/>
+          <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} selectedIndex={selectedIndex}/>
         ) : (
           null
         )

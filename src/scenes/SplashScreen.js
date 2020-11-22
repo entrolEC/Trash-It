@@ -60,8 +60,8 @@ export default SplashScreen = () => {
       logoHeight={300}
       logoWidth={300}
     >
-      <PositionContext.Provider value={{currentPosition, setCurrentPosition}}>
-        <App trashcanLocation={trashcanLocation}/>
+      <PositionContext.Provider value={{currentPosition, setCurrentPosition, trashcanLocation, setTrashcanLocation}}>
+        <App/>
       </PositionContext.Provider>
     </AnimatedSplash>
   )
