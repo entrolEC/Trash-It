@@ -32,10 +32,6 @@ export default SplashScreen = () => {
   const fetchData = async () => {
     console.log("fetchdata!")
 
-    //.catch(err=>{console.log(err)})
-    //.then((request) => request.text())
-    //.then((requestTxt)=> {console.log(requestTxt)})
-
     var requestOptions = {
       method: 'GET',
       redirect: 'follow'

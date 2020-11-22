@@ -38,7 +38,8 @@ const actions = [
     text: "쓰레기통 추가",
     icon: <Icon name="trash" color="#fff" size={24}></Icon>,
     name: "bt_accessibility",
-    position: 2
+    position: 2,
+    color: "#666666"
   }
 ];
 
@@ -69,11 +70,14 @@ const App = ({trashcanLocation}) => {
             <Marker key={point.key} coordinate={point} onClick={()=>{onClicked(idx)}}/>
           ))
         }
+
       </NaverMapView>
       <FloatingAction
         actions={actions}
+        color={"#666666"}
         onPressItem={() => {setModalVisible(true)}}
       />
+      
       {
         selectedIndex!==null ? (
           <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} trashcanLocation = {trashcanLocation[selectedIndex]}/>

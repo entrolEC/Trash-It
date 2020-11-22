@@ -13,7 +13,9 @@ import ImagePicker from 'react-native-image-crop-picker';
 export const TrashcanInfo = ({trashcanLocation, modalVisible, setModalVisible}) => {
 
   useEffect(() => {
+
   },[])
+
   return (
     <View style={styles.centeredView}>
       <Modal
@@ -32,7 +34,7 @@ export const TrashcanInfo = ({trashcanLocation, modalVisible, setModalVisible}) 
                 uri: trashcanLocation.image,
               }}
             />
-
+            <Text style={styles.text}>{trashcanLocation.description}</Text>
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
@@ -92,5 +94,8 @@ const styles = StyleSheet.create({
   image: {
     width:300,
     height:300
+  },
+  text:{
+    marginVertical:20
   }
 });
