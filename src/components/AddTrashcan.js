@@ -9,8 +9,12 @@ import {
   Image
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
+import Geolocation from '@react-native-community/geolocation';
+import PositionContext from '../context/PositionContext'
 
-export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) => {
+export const AddTrashcan = ({modalVisible, setModalVisible}) => {
+
+  const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
 
   const addNewTrashcan = () => {
     //data.push(currentPosition)
@@ -47,9 +51,20 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
     });
   }
 
+  const getLocation = async () => {
+    Geolocation.getCurrentPosition(async position => {
+      console.log(JSON.stringify(position))
+      const {longitude, latitude} = position.coords
+      await setCurrentPosition({
+        latitude: latitude,
+        longitude: longitude,
+      })
+    })
+    console.log(currentPosition)
+  }
+
   useEffect(() => {
     console.log("success!!!!!!!!!!!!!!!!!!!")
-    
     //setModalVisible(modalVisible)
   },[])
   
@@ -80,6 +95,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible, currentPosition}) =>
                 onPress={() => {
                   setModalVisible(!modalVisible);
                   addNewTrashcan()
+                  getLocation()
                 }}
               >
                 <Text style={styles.textStyle}>     확인     </Text>

@@ -31,6 +31,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { AddTrashcan } from '../components/AddTrashcan'
 import data from '../../dummy/data.json'
 import {TrashcanInfo} from '../components/TrashcanInfo'
+import PositionContext from '../context/PositionContext'
 
 const actions = [
   {
@@ -41,7 +42,9 @@ const actions = [
   }
 ];
 
-const App = ({trashcanLocation, currentPosition}) => {
+const App = ({trashcanLocation}) => {
+
+  const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -57,11 +60,11 @@ const App = ({trashcanLocation, currentPosition}) => {
         showsMyLocationButton={true}
         setLocationTrackingMode={2}
         center={{...currentPosition, zoom: 16}}
-        onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-        onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
-        onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
+        //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
+        //onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
+        //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
+      >
         {
-
           trashcanLocation.map((point, idx)=>(
             <Marker key={point.key} coordinate={point} onClick={()=>{onClicked(idx)}}/>
           ))
@@ -78,7 +81,7 @@ const App = ({trashcanLocation, currentPosition}) => {
           null
         )
       }
-      <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible} currentPosition={currentPosition}/>
+      <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible}/>
     </SafeAreaView>
   )
 };

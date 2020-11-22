@@ -2,6 +2,7 @@ import React,{useEffect, useState} from 'react';
 import AnimatedSplash from "react-native-animated-splash-screen";
 import App from './App';
 import Geolocation from '@react-native-community/geolocation';
+import PositionContext from '../context/PositionContext'
 
 const initialState = {
   latitude: 37.3677,
@@ -10,14 +11,11 @@ const initialState = {
 
 export default SplashScreen = () => {
 
-  const initialState = {
-  latitude: 37.3677,
-  longitude: 126.6603,
-}
-
   const [trashcanLocation, setTrashcanLocation] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(initialState);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  
 
   const getLocation = async () => {
     Geolocation.getCurrentPosition(async position => {
@@ -66,7 +64,9 @@ export default SplashScreen = () => {
       logoHeight={300}
       logoWidth={300}
     >
-      <App trashcanLocation={trashcanLocation} currentPosition={currentPosition}/>
+      <PositionContext.Provider value={{currentPosition, setCurrentPosition}}>
+        <App trashcanLocation={trashcanLocation}/>
+      </PositionContext.Provider>
     </AnimatedSplash>
   )
 }
