@@ -36,25 +36,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       .catch(error => console.log('error', error));
   }
 
-  const addNewTrashcan = () => {
-    ImagePicker.openCamera({
-      width: 300,
-      height: 400,
-      includeExif: true,
-      cropping: true,
-      mediaType: 'photo',
-    }).then(async image => {
-      console.log(image);
-
-      let temp = {
-        address : "인천 송도과학로27번길 15",
-        image : {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"}
-      }
-      setData(temp)
-    });
-  }
-
-  const getLocation = async () => {
+   const getLocation = async () => {
     Geolocation.getCurrentPosition(async position => {
       console.log(JSON.stringify(position))
       const {longitude, latitude} = position.coords
@@ -64,6 +46,24 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       })
     })
     console.log("getlocation", currentPosition)
+  }
+
+  const addNewTrashcan = () => {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      includeExif: true,
+      cropping: true,
+      mediaType: 'photo',
+    }).then(image => {
+      console.log(image);
+      getLocation()
+      let temp = {
+        address : "인천 송도과학로27번길 15",
+        image : {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"}
+      }
+      setData(temp)
+    });
   }
 
   const postData = () => {
@@ -108,7 +108,6 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                 <TouchableHighlight
                   style={styles.cameraButton}
                   onPress={() => {
-                    getLocation()
                     addNewTrashcan()                    
                   }}
                 >
