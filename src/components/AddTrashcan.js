@@ -28,7 +28,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://112.145.103.184:8000/locations/", requestOptions) // i'm stuck on this network failed error. (android)
+    await fetch("http://112.145.103.184:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)

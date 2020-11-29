@@ -29,17 +29,24 @@ import {Alert} from '../components/Alert'
 
 const actions = [
   {
-    text: "쓰레기통 추가",
-    icon: <Icon name="trash" color="#fff" size={24}></Icon>,
-    name: "addTrashcan",
+    text: "리더보드",
+    icon: <Icon name="trophy-outline" color="#fff" size={24}></Icon>,
+    name: "leaderBoard",
     position: 2,
     color: "#666666"
   },
   {
-    text: "로그인",
+    text: "쓰레기통 추가",
     icon: <Icon name="trash" color="#fff" size={24}></Icon>,
-    name: "login",
+    name: "addTrashcan",
     position: 3,
+    color: "#666666"
+  },
+  {
+    text: "로그인",
+    icon: <Icon name="person-circle-outline" color="#fff" size={24}></Icon>,
+    name: "login",
+    position: 4,
     color: "#666666"
   }
 ];

@@ -11,12 +11,50 @@ import {
   TextInput,
   TouchableHighlight
 } from 'react-native';
+import PositionContext from '../context/PositionContext'
 
-export const RegisterScreen = ({isRegister, setIsRegister}) => {
+export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible}) => {
 
+  const { user, setUser } = React.useContext(PositionContext)
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
   const [inputPassword2, setInputPassword2] = useState();
+  const [errMessage, setErrMessage] = useState('회원가입하기');
+
+  const loginSuccess = (result) => {
+    setUser({"token":result.Token, "username": inputId})
+  }
+
+  const fetchData = async () => {
+    if(inputPassword !== inputPassword2) {
+      setErrMessage('비밀번호가 서로 다릅니다!')
+    } else {
+      var formdata = new FormData();
+      formdata.append("username", inputId);
+      formdata.append("password", inputPassword);
+
+      var requestOptions = {
+        headers:{
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'POST',
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      await fetch("http://112.145.103.184:8000/signup/", requestOptions)
+        .then(response => response.json())
+        .then(async result => {
+          console.log(result)
+          if (result.Token) {
+            await loginSuccess(result)
+            setAuthModalVisible(false) 
+          }          
+        })
+        .catch(error => console.log('error', error));
+    }
+    
+  }
 
   const onPress = () => {
     setIsRegister(false)
@@ -24,33 +62,30 @@ export const RegisterScreen = ({isRegister, setIsRegister}) => {
 
   return(
     <SafeAreaView style={styles.container}>
-      <Text>registerScreen</Text>
+      <Text>{errMessage}</Text>
       <TextInput
         style={styles.textInput}
         onChangeText={text => setInputId(text)}
         placeholder={"  아이디"}
-        value={inputId}
       />
       <TextInput
         style={styles.textInput}
-        onChangeText={text => setInputId(text)}
+        onChangeText={text => setInputPassword(text)}
         placeholder={"  비밀번호"}
-        value={inputPassword}
+        secureTextEntry={true}
       />
        <TextInput
         style={styles.textInput}
-        onChangeText={text => setInputId(text)}
+        onChangeText={text => setInputPassword2(text)}
         placeholder={"  비밀번호 재입력"}
-        value={inputPassword2}
+        secureTextEntry={true}
       />
       <View style={styles.buttonContainer}>
         <Text style={styles.textButton} onPress={onPress}> 이미 계정이 있나요? </Text>
         <TouchableHighlight
           style={{ ...styles.openButton, backgroundColor: "#2176FF" }}
           onPress={() => {
-            setAuthModalVisible(!authModalVisible);
-            console.log(trashcanLocation)
-            //addNewTrashcan()
+            fetchData()
           }}
         >
           <Text style={styles.textStyle}>회원가입</Text>
