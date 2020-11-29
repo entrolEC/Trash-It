@@ -109,7 +109,7 @@ export const MapScreen = ({navigation}) => {
       
       {
         selectedIndex!==null ? (
-          <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} selectedIndex={selectedIndex}/>
+          <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex}/>
         ) : (
           null
         )

@@ -53,9 +53,9 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
   );
 
   const Item = ({ username, count, idx }) => (
-    <View style={styles.item}>
+    <View style={idx%2==0 ? ({...styles.item, backgroundColor:'#f5f5f5'}):(styles.item)}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={styles.username}>{idx+1}</Text>
+        <Text style={{...styles.username, fontWeight: 'bold'}}>{idx+1}</Text>
         <Text style={styles.username}>{username}</Text>
       </View>      
       <Text style={styles.username}>{count}</Text>
@@ -72,9 +72,6 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
         animationType="slide"
         transparent={true}
         visible={leaderBoardVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-        }}
       >
         <View style={styles.centeredView}>
           <View style={{...styles.modalView, width: windowWidth*0.85, height: windowHeight*0.6 }}>
@@ -151,9 +148,7 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: '#ffffff',
     padding: 10,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 15,
+    paddingVertical: 20,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },

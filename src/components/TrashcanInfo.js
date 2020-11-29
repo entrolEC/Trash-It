@@ -11,8 +11,42 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import PositionContext from '../context/PositionContext'
 
-export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex}) => {
+export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex, setSelectedIndex}) => {
   const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
+  const { user, setUser } = React.useContext(PositionContext)
+
+  const refreshData = async () =>{
+    var requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://112.145.103.184:8000/locations/", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        setTrashcanLocation(result)
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  const fetchData = async () => {
+    console.log("selectedIndex.id", trashcanLocation[selectedIndex].id)
+    var requestOptions = {
+      headers:{
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Token ' + user.token
+      },
+      method: 'DELETE',
+      redirect: 'follow'
+    };
+
+    await fetch(`http://112.145.103.184:8000/locations/${trashcanLocation[selectedIndex].id}/`, requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+      
+  }
 
   return (
     <View style={styles.centeredView}>
@@ -26,6 +60,32 @@ export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex}) => 
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <View style={{flexDirection:'row', alignContent:'space-between'}}>
+              <Text>게시자 : {trashcanLocation[selectedIndex].name}</Text>
+              {
+                user.username==trashcanLocation[selectedIndex].name ? (
+                  <TouchableHighlight
+                    style={{ ...styles.deleteButton, backgroundColor: "#b30000" }}
+                    onPress={async () => {
+                      setSelectedIndex(null)
+                      await setModalVisible(!modalVisible);
+                      await fetchData()                      
+                      setTimeout(()=>{ refreshData() }, 1000)
+                    }}
+                  >
+                    <Text style={styles.textStyle}>     삭제     </Text>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    style={{ ...styles.deleteButton, backgroundColor: "#aaaaaa" }}
+                  >
+                    <Text style={styles.textStyle}>     삭제     </Text>
+                  </TouchableHighlight>
+                )
+              }
+                
+              
+            </View>
             <Image
               style={styles.image}
               source={{
@@ -91,9 +151,17 @@ const styles = StyleSheet.create({
   },
   image: {
     width:300,
-    height:300
+    height:300,
+    marginVertical: 10
   },
   text:{
     marginVertical:20
+  },
+  deleteButton:{
+    backgroundColor: "#F194FF",
+    borderRadius: 10,
+    padding: 5,
+    elevation: 2,
+    marginLeft: 50
   }
 });

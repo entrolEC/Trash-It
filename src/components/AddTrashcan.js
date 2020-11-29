@@ -144,7 +144,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                     if(data) {
                       setModalVisible(!modalVisible);
                       await postData()
-                      await fetchData()
+                      setTimeout(()=>{ fetchData() }, 1000)
                       setData(0)
                     }                        
                   }}
