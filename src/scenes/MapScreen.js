@@ -22,10 +22,11 @@ import { FloatingAction } from "react-native-floating-action";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { AddTrashcan } from '../components/AddTrashcan'
 import data from '../../dummy/data.json'
-import {TrashcanInfo} from '../components/TrashcanInfo'
+import { TrashcanInfo } from '../components/TrashcanInfo'
 import PositionContext from '../context/PositionContext'
-import {Auth} from '../components/Auth'
-import {Alert} from '../components/Alert'
+import { Auth } from '../components/Auth'
+import { Alert } from '../components/Alert'
+import { LeaderBoard } from '../components/LeaderBoard'
 
 const actions = [
   {
@@ -61,6 +62,7 @@ export const MapScreen = ({navigation}) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
+  const [leaderBoardVisible, setLeaderBoardVisible] = useState(false);
 
   const onClicked = (idx) =>{
     setSelectedIndex(idx)
@@ -76,6 +78,8 @@ export const MapScreen = ({navigation}) => {
       } else {
         setModalVisible(true)
       }
+    } else if(name == 'leaderBoard') {
+      setLeaderBoardVisible(true)
     }
   }
 
@@ -113,6 +117,7 @@ export const MapScreen = ({navigation}) => {
       <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible}/>
       <Auth authModalVisible={authModalVisible} setAuthModalVisible={setAuthModalVisible}/>
       <Alert alertVisible={alertVisible} setAlertVisible={setAlertVisible}/>
+      <LeaderBoard leaderBoardVisible={leaderBoardVisible} setLeaderBoardVisible={setLeaderBoardVisible}/>
     </SafeAreaView>
   )
 };

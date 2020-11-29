@@ -6,14 +6,14 @@ import {
   Text,
   TouchableHighlight,
   View,
-  Image
+  Image,
+  Dimensions
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
 import PositionContext from '../context/PositionContext'
 import {AuthNavigator} from '../navigation/AuthNavigator'
 import {LoginScreen} from '../scenes/LoginScreen'
 import {RegisterScreen} from '../scenes/RegisterScreen'
-import { Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -94,10 +94,6 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 30,
     textAlign: "center"
-  },
-  image: {
-    width:300,
-    height:300
   },
   text:{
     marginVertical:20
