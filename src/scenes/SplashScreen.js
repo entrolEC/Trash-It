@@ -1,6 +1,6 @@
 import React,{useEffect, useState} from 'react';
 import AnimatedSplash from "react-native-animated-splash-screen";
-import App from './App';
+import {MapScreen} from './MapScreen';
 import Geolocation from '@react-native-community/geolocation';
 import PositionContext from '../context/PositionContext'
 
@@ -11,11 +11,10 @@ const initialState = {
 
 export default SplashScreen = () => {
 
+  const [user, setUser] = useState({'token': null, 'username' : '로그인되지 않음'});
   const [trashcanLocation, setTrashcanLocation] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(initialState);
   const [isLoaded, setIsLoaded] = useState(false);
-
-  
 
   const getLocation = async () => {
     Geolocation.getCurrentPosition(async position => {
@@ -24,9 +23,9 @@ export default SplashScreen = () => {
       await setCurrentPosition({
         latitude: latitude,
         longitude: longitude,
-      })
-      setTimeout(()=>{ setIsLoaded(true) }, 1000)
+      }) 
     })
+    console.log("getlocation", currentPosition)
   }
 
   const fetchData = async () => {
@@ -37,11 +36,12 @@ export default SplashScreen = () => {
       redirect: 'follow'
     };
 
-    await fetch("http://112.145.103.184:8000/locations/", requestOptions) // i'm stuck on this network failed error. (android)
+    await fetch("http://112.145.103.184:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
         setTrashcanLocation(result)
+        setTimeout(()=>{ setIsLoaded(true) }, 1000)
       })
       .catch(error => console.log('error', error));
   }
@@ -60,8 +60,8 @@ export default SplashScreen = () => {
       logoHeight={300}
       logoWidth={300}
     >
-      <PositionContext.Provider value={{currentPosition, setCurrentPosition, trashcanLocation, setTrashcanLocation}}>
-        <App/>
+      <PositionContext.Provider value={{currentPosition, setCurrentPosition, trashcanLocation, setTrashcanLocation, user, setUser}}>
+        <MapScreen/>
       </PositionContext.Provider>
     </AnimatedSplash>
   )

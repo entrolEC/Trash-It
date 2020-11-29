@@ -16,6 +16,7 @@ import PositionContext from '../context/PositionContext'
 export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
   const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
+  const { user, setUser } = React.useContext(PositionContext)
   const [description, setDescription] = useState("설명 없음")
   const [ data, setData ] = useState(0)
 
@@ -76,6 +77,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     var requestOptions = {
       headers:{
         'Content-Type': 'multipart/form-data',
+        'Authorization': 'Token ' + user.token
       },
       method: 'POST',
       body: formdata,

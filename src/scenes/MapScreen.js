@@ -17,14 +17,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-//import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap";
 import { FloatingAction } from "react-native-floating-action";
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -32,28 +24,52 @@ import { AddTrashcan } from '../components/AddTrashcan'
 import data from '../../dummy/data.json'
 import {TrashcanInfo} from '../components/TrashcanInfo'
 import PositionContext from '../context/PositionContext'
+import {Auth} from '../components/Auth'
+import {Alert} from '../components/Alert'
 
 const actions = [
   {
     text: "쓰레기통 추가",
     icon: <Icon name="trash" color="#fff" size={24}></Icon>,
-    name: "bt_accessibility",
+    name: "addTrashcan",
     position: 2,
+    color: "#666666"
+  },
+  {
+    text: "로그인",
+    icon: <Icon name="trash" color="#fff" size={24}></Icon>,
+    name: "login",
+    position: 3,
     color: "#666666"
   }
 ];
 
-const App = () => {
+export const MapScreen = ({navigation}) => {
 
   const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
+  const { user, setUser } = React.useContext(PositionContext)
   const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [authModalVisible, setAuthModalVisible] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
 
   const onClicked = (idx) =>{
     setSelectedIndex(idx)
     setInfoModalVisible(true)
+  }
+
+  const menuPressed = (name) => {
+    if(name == 'login') {
+      setAuthModalVisible(true) 
+    } else if(name == 'addTrashcan') { 
+      if(user.token == null) {
+        setAlertVisible(true)
+      } else {
+        setModalVisible(true)
+      }
+    }
   }
 
   return(
@@ -63,7 +79,8 @@ const App = () => {
         setLocationTrackingMode={2}
         center={{...currentPosition, zoom: 16}}
         //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-        //onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
+        //onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+        
         //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
       >
         {
@@ -76,7 +93,7 @@ const App = () => {
       <FloatingAction
         actions={actions}
         color={"#666666"}
-        onPressItem={() => {setModalVisible(true)}}
+        onPressItem={name => {menuPressed(name)}}
       />
       
       {
@@ -87,6 +104,8 @@ const App = () => {
         )
       }
       <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+      <Auth authModalVisible={authModalVisible} setAuthModalVisible={setAuthModalVisible}/>
+      <Alert alertVisible={alertVisible} setAlertVisible={setAlertVisible}/>
     </SafeAreaView>
   )
 };
@@ -96,5 +115,3 @@ const styles = StyleSheet.create({
     flex: 1,
   }
 });
-
-export default App;
