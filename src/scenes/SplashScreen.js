@@ -36,7 +36,7 @@ export default SplashScreen = () => {
       redirect: 'follow'
     };
 
-    await fetch("http://112.145.103.184:8000/locations/", requestOptions)
+    await fetch("http://URL/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)

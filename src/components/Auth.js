@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Alert,
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  Image,
-  Dimensions
-} from "react-native";
+import { Alert, Modal, StyleSheet, Text, TouchableHighlight, View, Image, Dimensions } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
 import PositionContext from '../context/PositionContext'
 import {AuthNavigator} from '../navigation/AuthNavigator'
@@ -29,7 +20,7 @@ export const Auth = ({authModalVisible, setAuthModalVisible, selectedIndex}) => 
         transparent={true}
         visible={authModalVisible}
         onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
+
         }}
       >
         <View style={styles.centeredView}>
@@ -45,8 +36,6 @@ export const Auth = ({authModalVisible, setAuthModalVisible, selectedIndex}) => 
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
                 setAuthModalVisible(!authModalVisible);
-                console.log(trashcanLocation)
-                //addNewTrashcan()
               }}
             >
               <Text style={styles.textStyle}>     닫기     </Text>

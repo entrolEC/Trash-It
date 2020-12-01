@@ -1,16 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  Dimensions,
-  ActivityIndicator,
-  Button,
-  TextInput,
-  TouchableHighlight
-} from 'react-native';
+import { SafeAreaView, StyleSheet, ScrollView, View, Text, Dimensions, ActivityIndicator, Button, TextInput, TouchableHighlight } from 'react-native';
 import PositionContext from '../context/PositionContext'
 
 export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) => {
@@ -24,7 +13,6 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
   }
   
   const fetchData = async () => {
-    console.log("asdf",inputId,inputPassword)
     var formdata = new FormData();
     formdata.append("username", inputId);
     formdata.append("password", inputPassword);
@@ -38,7 +26,7 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
       redirect: 'follow'
     };
 
-    await fetch("http://112.145.103.184:8000/signin/", requestOptions)
+    await fetch("http://URL/signin/", requestOptions)
       .then(response => response.json())
       .then(async result => {
         console.log(result)
