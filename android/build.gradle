@@ -35,7 +35,7 @@ allprojects {
         }
 
         maven {
-            url 'https://navercorp.bintray.com/maps'
+            url 'https://naver.jfrog.io/artifactory/maven/'
         }
 
         maven { url 'https://maven.google.com' }

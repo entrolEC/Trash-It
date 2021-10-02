@@ -26,7 +26,7 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
       redirect: 'follow'
     };
 
-    await fetch("http://URL/signin/", requestOptions)
+    await fetch("http://192.168.219.106:8000/signin/", requestOptions)
       .then(response => response.json())
       .then(async result => {
         console.log(result)

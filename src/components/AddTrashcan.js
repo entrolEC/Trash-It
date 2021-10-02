@@ -19,6 +19,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   const { user, setUser } = React.useContext(PositionContext)
   const [description, setDescription] = useState("설명 없음")
   const [ data, setData ] = useState(0)
+  const [image, setImage] = useState()
 
   const fetchData = async () => {
     console.log("fetchdata!")
@@ -28,7 +29,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://URL/locations/", requestOptions)
+    await fetch("http://192.168.219.106:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
@@ -39,13 +40,13 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
 
    const getLocation = async () => {
     Geolocation.getCurrentPosition(async position => {
-      console.log(JSON.stringify(position))
-      const {longitude, latitude} = position.coords
-      await setCurrentPosition({
-        latitude: latitude,
-        longitude: longitude,
-      })
-    })
+      setCurrentPosition({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      }) 
+    },
+    error => console.log(error),
+    { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 })
     console.log("getlocation", currentPosition)
   }
 
@@ -56,16 +57,23 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
-    }).then(image => {
+    }).then(async image => {
       console.log(image);
+      setImage(image)
       getLocation()
+      
+    });
+  }
+
+  useEffect(() => {
+    if(image) {
       let temp = {
         address : "인천 송도과학로27번길 15",
         image : {uri: image.path, type: "image/jpeg", name: ";alkfsdj;ljkasdf"}
       }
       setData(temp)
-    });
-  }
+    }
+  },[currentPosition, image])
 
   const postData = () => {
     var formdata = new FormData();
@@ -84,7 +92,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    fetch("http://URL/locations/", requestOptions)
+    fetch("http://192.168.219.106:8000/locations/", requestOptions)
       .then(response => response.text())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
