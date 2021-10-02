@@ -37,10 +37,10 @@ export default SplashScreen = () => {
       redirect: 'follow'
     };
 
-    fetch("http://192.168.219.106:8000/locations/", requestOptions)
+    fetch("http://192.168.219.102:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result)
+        //console.log(result)
         setTrashcanLocation(result)
         //setTimeout(()=>{ setIsLoaded(true) }, 1000)
       })
@@ -51,18 +51,19 @@ export default SplashScreen = () => {
   useEffect(() => {
     fetchData()
     getLocation()
+    setIsLoaded(0)
   },[])
 
   useEffect(() => {
     setIsLoaded(isLoaded + 1);
-    console.log('loading ... ')
+    console.log('loading ... ', isLoaded)
     console.log("current", currentPosition)
   },[trashcanLocation, currentPosition])
 
   return(
     <AnimatedSplash
       translucent={true}
-      isLoaded={isLoaded === 2}
+      isLoaded={isLoaded>2}
       logoImage={require("../assets/logo/logo.png")}
       backgroundColor={"#262626"}
       logoHeight={300}

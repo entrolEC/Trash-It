@@ -21,7 +21,7 @@ export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex, setS
       redirect: 'follow'
     };
 
-    await fetch("http://192.168.219.106:8000/locations/", requestOptions)
+    await fetch("http://192.168.219.102:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
@@ -41,7 +41,7 @@ export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex, setS
       redirect: 'follow'
     };
 
-    await fetch(`http://192.168.219.106:8000/locations/${trashcanLocation[selectedIndex].id}/`, requestOptions)
+    await fetch(`http://192.168.219.102:8000/locations/${trashcanLocation[selectedIndex].id}/`, requestOptions)
       .then(response => response.json())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
@@ -70,7 +70,7 @@ export const TrashcanInfo = ({modalVisible, setModalVisible, selectedIndex, setS
                       setSelectedIndex(null)
                       await setModalVisible(!modalVisible);
                       await fetchData()                      
-                      setTimeout(()=>{ refreshData() }, 1000)
+                      await refreshData()
                     }}
                   >
                     <Text style={styles.textStyle}>     삭제     </Text>

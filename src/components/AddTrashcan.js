@@ -29,7 +29,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://192.168.219.106:8000/locations/", requestOptions)
+    await fetch("http://192.168.219.102:8000/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
@@ -38,8 +38,8 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       .catch(error => console.log('error', error));
   }
 
-   const getLocation = async () => {
-    Geolocation.getCurrentPosition(async position => {
+   const getLocation = () => {
+    Geolocation.getCurrentPosition(position => {
       setCurrentPosition({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
@@ -57,7 +57,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
-    }).then(async image => {
+    }).then(image => {
       console.log(image);
       setImage(image)
       getLocation()
@@ -66,6 +66,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   }
 
   useEffect(() => {
+    console.log(currentPosition)
     if(image) {
       let temp = {
         address : "인천 송도과학로27번길 15",
@@ -75,7 +76,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     }
   },[currentPosition, image])
 
-  const postData = () => {
+  const postData = async () => {
     var formdata = new FormData();
     formdata.append("latitude", currentPosition.latitude);
     formdata.append("longitude", currentPosition.longitude);
@@ -92,7 +93,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    fetch("http://192.168.219.106:8000/locations/", requestOptions)
+    await fetch("http://192.168.219.102:8000/locations/", requestOptions)
       .then(response => response.text())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
@@ -150,9 +151,11 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                   style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
                   onPress={async () => {
                     if(data) {
+                      console.log("here")
                       setModalVisible(!modalVisible);
                       await postData()
-                      setTimeout(()=>{ fetchData() }, 1000)
+                      await fetchData()
+                      //setTimeout(()=>{ fetchData() }, 1000)
                       setData(0)
                     }                        
                   }}
