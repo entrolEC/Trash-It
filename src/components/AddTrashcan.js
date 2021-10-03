@@ -10,7 +10,7 @@ import {
   TextInput
 } from "react-native";
 import ImagePicker from 'react-native-image-crop-picker';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import PositionContext from '../context/PositionContext'
 
 export const AddTrashcan = ({modalVisible, setModalVisible}) => {
@@ -46,7 +46,8 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       }) 
     },
     error => console.log(error),
-    { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 })
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    )
     console.log("getlocation", currentPosition)
   }
 
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 30,
     textAlign: "center",
-    fontSize: 20
+    fontSize: 18
   },
   itemText: {
     marginBottom: 10,

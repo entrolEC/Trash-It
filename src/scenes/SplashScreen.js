@@ -1,7 +1,7 @@
 import React,{useEffect, useState} from 'react';
 import AnimatedSplash from "react-native-animated-splash-screen";
 import {MapScreen} from './MapScreen';
-import Geolocation from '@react-native-community/geolocation';
+import Geolocation from 'react-native-geolocation-service';
 import PositionContext from '../context/PositionContext'
 import { set } from 'react-native-reanimated';
 
@@ -25,7 +25,8 @@ export default SplashScreen = () => {
       }) 
     },
     error => console.log(error),
-    { enableHighAccuracy: true, timeout: 200000, maximumAge: 1000 })
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    )
     
   }
 
