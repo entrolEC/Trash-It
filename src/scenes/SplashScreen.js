@@ -1,9 +1,11 @@
 import React,{useEffect, useState} from 'react';
+import { PermissionsAndroid } from 'react-native';
 import AnimatedSplash from "react-native-animated-splash-screen";
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
 import PositionContext from '../context/PositionContext'
 import { set } from 'react-native-reanimated';
+import { Alert } from '../components/Alert'
 
 const initialState = {
   latitude: 37.3677,
@@ -16,17 +18,36 @@ export default SplashScreen = () => {
   const [trashcanLocation, setTrashcanLocation] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(initialState);
   const [isLoaded, setIsLoaded] = useState(0);
+  const [hasLocationPermission, setHasLocationPermission] = useState();
+  const [alertVisible, setAlertVisible] = useState(false)
+
+  const getLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "TrashIt 위치 권한 요청",
+          message:
+            "사용자의 위치 권한이 필요합니다.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the location");
+        setHasLocationPermission(true);
+      } else {
+        console.log("location permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 
   const getLocation = () => {
-    Geolocation.getCurrentPosition(position => {
-      setCurrentPosition({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      }) 
-    },
-    error => console.log(error),
-    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-    )
+    getLocationPermission();
+    
     
   }
 
@@ -54,6 +75,21 @@ export default SplashScreen = () => {
     getLocation()
     setIsLoaded(0)
   },[])
+
+  useEffect(() => {
+    if(hasLocationPermission) {
+      Geolocation.getCurrentPosition(position => {
+        setCurrentPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }) 
+      },
+      error => console.log(error),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      )
+    }
+    
+  },[hasLocationPermission])
 
   useEffect(() => {
     setIsLoaded(isLoaded + 1);
