@@ -28,10 +28,10 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
   const fetchData = async () => {
     if(inputPassword !== inputPassword2) {
       setErrMessage('비밀번호가 서로 다릅니다!')
-    } else if (inputPassword < 8) {
+    } else if (inputPassword.length < 8) {
       setErrMessage('비밀번호가 너무 짧습니다!')
-    } else if (inputId > 12 || inputId < 4) {
-      setErrMessage('비밀번호가 너무 짧거나 깁니다!')
+    } else if (inputId.length > 12 || inputId.length < 4) {
+      setErrMessage('아이디가 너무 짧거나 깁니다!')
     } else {
       var formdata = new FormData();
       formdata.append("username", inputId);
