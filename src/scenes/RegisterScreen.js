@@ -28,6 +28,10 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
   const fetchData = async () => {
     if(inputPassword !== inputPassword2) {
       setErrMessage('비밀번호가 서로 다릅니다!')
+    } else if (inputPassword < 8) {
+      setErrMessage('비밀번호가 너무 짧습니다!')
+    } else if (inputId > 12 || inputId < 4) {
+      setErrMessage('비밀번호가 너무 짧거나 깁니다!')
     } else {
       var formdata = new FormData();
       formdata.append("username", inputId);
@@ -62,7 +66,7 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
 
   return(
     <SafeAreaView style={styles.container}>
-      <Text>{errMessage}</Text>
+      <Text style={{color: 'red'}}>{errMessage}</Text>
       <TextInput
         style={styles.textInput}
         onChangeText={text => setInputId(text)}

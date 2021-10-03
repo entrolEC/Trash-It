@@ -1,36 +1,52 @@
 import React, {useState, useEffect} from 'react';
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, Dimensions, ActivityIndicator, Button, TextInput, TouchableHighlight } from 'react-native';
 import PositionContext from '../context/PositionContext'
-import { GoogleSignin, GoogleSigninButton } from '@react-native-community/google-signin';
+import { GoogleSignin, GoogleSigninButton, statusCode } from '@react-native-community/google-signin';
 
 export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) => {
 
   const { user, setUser } = React.useContext(PositionContext)
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
+  const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
-  const [googleLoaded, setGoogleLoaded] = useState();
+  // const [googleLoaded, setGoogleLoaded] = useState();
 
-  GoogleSignin.configure({
-    scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
-    webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
-    offlineAccess : true
-  })
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
+  //     webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
+  //     offlineAccess : true,
+  //     forceCodeForRefreshToken: true
+  //   })
+  // },[])
 
-  useEffect(() => {
-    console.log(userGoogleInfo)
-  },[googleLoaded])
+  // useEffect(() => {
+  //   console.log(userGoogleInfo)
+  // },[googleLoaded])
 
-  const googleSignIn = async () => {
-    
-      await GoogleSignin.hasPlayServices()
-      console.log("1")
-      const userInfo = await GoogleSignin.signIn()
-      console.log("2")
-      setUserGoogleInfo(userInfo)
-      setGoogleLoaded(true)
+  // const googleSignIn = async () => {
+  //   try{
+  //     await GoogleSignin.hasPlayServices()
+  //     console.log("1")
+  //     const userInfo = await GoogleSignin.signIn()
+  //     console.log("2")
+  //     setUserGoogleInfo(userInfo)
+  //     setGoogleLoaded(true)
+  //   } catch (error) {
+  //     console.log("message____________", error.message)
+  //     if (error.code === statusCode.SIGN_IN_CANCELLED)
+  //       console.log('USER CANCELLED')
+  //     else if (error.code === statusCode.IN_PROGRESS)
+  //       console.log("signin in")
+  //     else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
+  //       console.log("PLAY_SERVICES_NOT_AVAILABLE")
+  //     else 
+  //       console.log("some other error happened")
+  //   }
+
   
-  }
+  // }
 
   const loginSuccess = (result) => {
     setUser({"token":result.Token, "username": inputId})
@@ -57,7 +73,10 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
         if (result.Token) {
           await loginSuccess(result)
           setAuthModalVisible(false) 
-        }          
+        } else if (result.error) {
+          setErrMessage("아이디나 비밀번호가 일치하지 않습니다.")
+          console.log("adsflkajs;dlfkja;sdlkfj")
+        }       
       })
       .catch(error => console.log('error', error));
   }
@@ -69,6 +88,9 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
   return(
     <SafeAreaView style={styles.container}>
       <Text>로그인된 계정 : {user.username}</Text>
+      {(errMessage) && (
+        <Text style={{color: 'red'}}>{errMessage}</Text>
+      )}
       <TextInput
         style={styles.textInput}
         onChangeText={text => setInputId(text)}
@@ -89,12 +111,12 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
           <Text style={styles.textStyle}>로그인</Text>
         </TouchableHighlight>
       </View>
-      <GoogleSigninButton
+      {/* <GoogleSigninButton
         onPress={googleSignIn}
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         sytle={{width:100, height:100}}
-      />  
+      />   */}
     </SafeAreaView>
   )
 };
