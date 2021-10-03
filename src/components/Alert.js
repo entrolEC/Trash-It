@@ -10,7 +10,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 import PositionContext from '../context/PositionContext'
 
-export const Alert = ({alertVisible, setAlertVisible}) => {
+export const Alert = ({alertVisible, setAlertVisible, message, callback = null}) => {
   const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
 
   return (
@@ -25,11 +25,14 @@ export const Alert = ({alertVisible, setAlertVisible}) => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text>로그인을 먼저 해주세요!</Text>
+            <Text>{message}</Text>
             <TouchableHighlight
               style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
               onPress={() => {
+                
                 setAlertVisible(!alertVisible);
+                if(callback!==null)
+                  callback();
                 console.log(trashcanLocation)
                 //addNewTrashcan()
               }}
