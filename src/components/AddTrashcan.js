@@ -29,7 +29,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://192.168.219.102:8000/locations/", requestOptions)
+    await fetch("http://121.171.155.192:8080/locations/", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)
@@ -93,7 +93,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://192.168.219.102:8000/locations/", requestOptions)
+    await fetch("http://121.171.155.192:8080/locations/", requestOptions)
       .then(response => response.text())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));

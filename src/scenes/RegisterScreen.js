@@ -42,7 +42,7 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
         redirect: 'follow'
       };
 
-      await fetch("http://192.168.219.102:8000/signup/", requestOptions)
+      await fetch("http://121.171.155.192:8080/signup/", requestOptions)
         .then(response => response.json())
         .then(async result => {
           console.log(result)
