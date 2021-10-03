@@ -116,7 +116,7 @@ export const MapScreen = ({navigation}) => {
       }
       <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible}/>
       <Auth authModalVisible={authModalVisible} setAuthModalVisible={setAuthModalVisible}/>
-      <Alert alertVisible={alertVisible} setAlertVisible={setAlertVisible}/>
+      <Alert alertVisible={alertVisible} setAlertVisible={setAlertVisible} message={"로그인을 먼저 해주세요!"}/>
       <LeaderBoard leaderBoardVisible={leaderBoardVisible} setLeaderBoardVisible={setLeaderBoardVisible}/>
     </SafeAreaView>
   )
