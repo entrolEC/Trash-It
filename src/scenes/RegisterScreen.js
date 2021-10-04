@@ -19,7 +19,7 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
   const [inputPassword2, setInputPassword2] = useState();
-  const [errMessage, setErrMessage] = useState('회원가입하기');
+  const [errMessage, setErrMessage] = useState();
 
   const loginSuccess = (result) => {
     setUser({"token":result.Token, "username": inputId})
@@ -66,7 +66,12 @@ export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible})
 
   return(
     <SafeAreaView style={styles.container}>
-      <Text style={{color: 'red'}}>{errMessage}</Text>
+      {(errMessage) ? (
+        <Text style={{color: 'red'}}>{errMessage}</Text>
+        ) : (
+        <Text>회원가입</Text>
+        )}
+      
       <TextInput
         style={styles.textInput}
         onChangeText={text => setInputId(text)}
@@ -131,6 +136,7 @@ const styles = StyleSheet.create({
   textStyle: {
     color: "white",
     fontWeight: "bold",
-    textAlign: "center"
+    textAlign: "center",
+    fontSize: 13
   },
 });
