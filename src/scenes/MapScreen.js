@@ -95,7 +95,7 @@ export const MapScreen = ({navigation}) => {
         //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
       >
         {
-          trashcanLocation.map((point, idx)=>(
+          trashcanLocation && trashcanLocation.map((point, idx)=>(
             <Marker key={point.key} coordinate={point} onClick={()=>{onClicked(idx)}}/>
           ))
         }

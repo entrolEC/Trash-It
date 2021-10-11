@@ -27,7 +27,7 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
       redirect: 'follow'
     };
 
-    await fetch("http://121.171.155.192:8080/users/", requestOptions)
+    await fetch("http://192.168.219.102:8000/users/", requestOptions)
       .then(response => response.json())
       .then(async result => {
         console.log(result)

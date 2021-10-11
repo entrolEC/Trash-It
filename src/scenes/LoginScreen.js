@@ -10,43 +10,84 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
   const [inputPassword, setInputPassword] = useState();
   const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
-  // const [googleLoaded, setGoogleLoaded] = useState();
+  const [googleLoaded, setGoogleLoaded] = useState();
+  const [token, setToken] = useState();
 
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
-  //     webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
-  //     offlineAccess : true,
-  //     forceCodeForRefreshToken: true
-  //   })
-  // },[])
+  useEffect(() => {
+    GoogleSignin.configure({
+      //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
+      webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
+      offlineAccess : true,
+      forceCodeForRefreshToken: true
+    })
+  },[])
 
-  // useEffect(() => {
-  //   console.log(userGoogleInfo)
-  // },[googleLoaded])
+  useEffect(() => {
+    console.log("tokens are ready", token)
+    fetchGoogleLoginFinish();
+  },[token])
 
-  // const googleSignIn = async () => {
-  //   try{
-  //     await GoogleSignin.hasPlayServices()
-  //     console.log("1")
-  //     const userInfo = await GoogleSignin.signIn()
-  //     console.log("2")
-  //     setUserGoogleInfo(userInfo)
-  //     setGoogleLoaded(true)
-  //   } catch (error) {
-  //     console.log("message____________", error.message)
-  //     if (error.code === statusCode.SIGN_IN_CANCELLED)
-  //       console.log('USER CANCELLED')
-  //     else if (error.code === statusCode.IN_PROGRESS)
-  //       console.log("signin in")
-  //     else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
-  //       console.log("PLAY_SERVICES_NOT_AVAILABLE")
-  //     else 
-  //       console.log("some other error happened")
-  //   }
+  const fetchGoogleLoginFinish = async () => {
+    var formdata = new FormData();
+    
+    formdata.append("access_token", token.accessToken);
+    // formdata.append("code", token.code);
+    // formdata.append("id_token", token.idToken);
+    console.log("in fetchGoogleLoginFinish", formdata)
+    var requestOptions = {
+      headers:{
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://192.168.219.102:8000/accounts/google/login/finish/", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log('google login finished:',result)
+        // if (result.Token) {
+        //   await loginSuccess(result)
+        //   setAuthModalVisible(false) 
+        // } else if (result.error) {
+        //   setErrMessage("아이디나 비밀번호가 일치하지 않습니다.")
+        //   console.log("adsflkajs;dlfkja;sdlkfj")
+        // }       
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  const googleSignIn = async () => {
+    try{
+      await GoogleSignin.hasPlayServices()
+      console.log("1")
+      const userInfo = await GoogleSignin.signIn()
+      const tokens = await GoogleSignin.getTokens()
+      console.log("2")
+      console.log('userInfo : ', userInfo )
+      console.log('tokens :', tokens)
+      setUserGoogleInfo(userInfo)
+      setToken({
+        accessToken : tokens.accessToken,
+        code : userInfo.serverAuthCode,
+        idToken : userInfo.idToken
+      })
+      setGoogleLoaded(true)
+    } catch (error) {
+      console.log("message____________", error.message)
+      if (error.code === statusCode.SIGN_IN_CANCELLED)
+        console.log('USER CANCELLED')
+      else if (error.code === statusCode.IN_PROGRESS)
+        console.log("signin in")
+      else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
+        console.log("PLAY_SERVICES_NOT_AVAILABLE")
+      else 
+        console.log("some other error happened")
+    }
 
   
-  // }
+  }
 
   const loginSuccess = (result) => {
     setUser({"token":result.Token, "username": inputId})
@@ -66,7 +107,7 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
       redirect: 'follow'
     };
 
-    await fetch("http://121.171.155.192:8080/signin/", requestOptions)
+    await fetch("http://192.168.219.102:8000/signin/", requestOptions)
       .then(response => response.json())
       .then(async result => {
         console.log(result)
@@ -111,12 +152,12 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
           <Text style={styles.textStyle}>로그인</Text>
         </TouchableHighlight>
       </View>
-      {/* <GoogleSigninButton
+      <GoogleSigninButton
         onPress={googleSignIn}
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         sytle={{width:100, height:100}}
-      />   */}
+      />  
     </SafeAreaView>
   )
 };
