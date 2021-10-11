@@ -5766,11 +5766,14 @@
   dependencies:
     "prop-types" "^15.7.2"
 
+<<<<<<< HEAD
 "react-native-config@^1.4.4":
   "integrity" "sha512-bu47sJHn/HrB7COAWBI8DieAhrbFLINHFE2HBCcVkDu0Y5ScrMs6vL+jhIm+pMSgxouseLhXG8h7xYYpxE38PA=="
   "resolved" "https://registry.npmjs.org/react-native-config/-/react-native-config-1.4.4.tgz"
   "version" "1.4.4"
 
+=======
+>>>>>>> 99adda60c6336de166711c37e6a500268804f117
 "react-native-floating-action@^1.21.0":
   "integrity" "sha512-ozd/iaJunrEYc4eGUWkP+4UI8yoIL0nQsToI3hnJRste/3LPhBkyu0eG3RTjc6aFY+q++JpRmgO469Ck8jJOwg=="
   "resolved" "https://registry.npmjs.org/react-native-floating-action/-/react-native-floating-action-1.21.0.tgz"
