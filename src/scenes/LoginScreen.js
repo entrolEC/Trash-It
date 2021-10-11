@@ -10,43 +10,43 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
   const [inputPassword, setInputPassword] = useState();
   const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
-  // const [googleLoaded, setGoogleLoaded] = useState();
+  const [googleLoaded, setGoogleLoaded] = useState();
 
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
-  //     webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
-  //     offlineAccess : true,
-  //     forceCodeForRefreshToken: true
-  //   })
-  // },[])
+  useEffect(() => {
+    GoogleSignin.configure({
+      //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
+      webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
+      offlineAccess : true,
+      forceCodeForRefreshToken: true
+    })
+  },[])
 
-  // useEffect(() => {
-  //   console.log(userGoogleInfo)
-  // },[googleLoaded])
+  useEffect(() => {
+    console.log(userGoogleInfo)
+  },[googleLoaded])
 
-  // const googleSignIn = async () => {
-  //   try{
-  //     await GoogleSignin.hasPlayServices()
-  //     console.log("1")
-  //     const userInfo = await GoogleSignin.signIn()
-  //     console.log("2")
-  //     setUserGoogleInfo(userInfo)
-  //     setGoogleLoaded(true)
-  //   } catch (error) {
-  //     console.log("message____________", error.message)
-  //     if (error.code === statusCode.SIGN_IN_CANCELLED)
-  //       console.log('USER CANCELLED')
-  //     else if (error.code === statusCode.IN_PROGRESS)
-  //       console.log("signin in")
-  //     else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
-  //       console.log("PLAY_SERVICES_NOT_AVAILABLE")
-  //     else 
-  //       console.log("some other error happened")
-  //   }
+  const googleSignIn = async () => {
+    try{
+      await GoogleSignin.hasPlayServices()
+      console.log("1")
+      const userInfo = await GoogleSignin.signIn()
+      console.log("2")
+      setUserGoogleInfo(userInfo)
+      setGoogleLoaded(true)
+    } catch (error) {
+      console.log("message____________", error.message)
+      if (error.code === statusCode.SIGN_IN_CANCELLED)
+        console.log('USER CANCELLED')
+      else if (error.code === statusCode.IN_PROGRESS)
+        console.log("signin in")
+      else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
+        console.log("PLAY_SERVICES_NOT_AVAILABLE")
+      else 
+        console.log("some other error happened")
+    }
 
   
-  // }
+  }
 
   const loginSuccess = (result) => {
     setUser({"token":result.Token, "username": inputId})
@@ -111,12 +111,12 @@ export const LoginScreen = ({isRegister, setIsRegister, setAuthModalVisible}) =>
           <Text style={styles.textStyle}>로그인</Text>
         </TouchableHighlight>
       </View>
-      {/* <GoogleSigninButton
+      <GoogleSigninButton
         onPress={googleSignIn}
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         sytle={{width:100, height:100}}
-      />   */}
+      />  
     </SafeAreaView>
   )
 };
