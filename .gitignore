@@ -60,3 +60,4 @@ buck-out/
 
 env.json
 .hprof
+android/app/src/main/assets/index.android.bundle

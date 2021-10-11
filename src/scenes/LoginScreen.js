@@ -31,8 +31,10 @@ export const LoginScreen = ({
   const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
+  const [token, setToken] = useState();
 
   useEffect(() => {
+    console.log(webClientId);
     GoogleSignin.configure({
       //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
       webClientId: webClientId,
@@ -42,16 +44,56 @@ export const LoginScreen = ({
   }, []);
 
   useEffect(() => {
-    console.log(userGoogleInfo);
-  }, [googleLoaded]);
+    console.log('tokens are ready', token);
+    fetchGoogleLoginFinish();
+  }, [token]);
+
+  const fetchGoogleLoginFinish = async () => {
+    var formdata = new FormData();
+
+    formdata.append('access_token', token.accessToken);
+    // formdata.append("code", token.code);
+    // formdata.append("id_token", token.idToken);
+    console.log('in fetchGoogleLoginFinish', formdata);
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    await fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log('google login finished:', result);
+        // if (result.Token) {
+        //   await loginSuccess(result)
+        //   setAuthModalVisible(false)
+        // } else if (result.error) {
+        //   setErrMessage("아이디나 비밀번호가 일치하지 않습니다.")
+        //   console.log("adsflkajs;dlfkja;sdlkfj")
+        // }
+      })
+      .catch((error) => console.log('error', error));
+  };
 
   const googleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       console.log('1');
       const userInfo = await GoogleSignin.signIn();
+      const tokens = await GoogleSignin.getTokens();
       console.log('2');
+      console.log('userInfo : ', userInfo);
+      console.log('tokens :', tokens);
       setUserGoogleInfo(userInfo);
+      setToken({
+        accessToken: tokens.accessToken,
+        code: userInfo.serverAuthCode,
+        idToken: userInfo.idToken,
+      });
       setGoogleLoaded(true);
     } catch (error) {
       console.log('message____________', error.message);

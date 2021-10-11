@@ -128,16 +128,17 @@ export const MapScreen = ({navigation}) => {
 
         //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
       >
-        {trashcanLocation.map((point, idx) => (
-          <Marker
-            key={idx}
-            coordinate={point}
-            onClick={async () => {
-              onClicked(idx);
-              await fetchData(point);
-            }}
-          />
-        ))}
+        {trashcanLocation &&
+          trashcanLocation.map((point, idx) => (
+            <Marker
+              key={point.key}
+              coordinate={point}
+              onClick={async () => {
+                onClicked(idx);
+                await fetchData(point);
+              }}
+            />
+          ))}
       </NaverMapView>
       <FloatingAction
         actions={actions}
