@@ -18,7 +18,7 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
-import {URL} from '../../env.json';
+import {URL, webClientId} from '../../env.json';
 
 export const LoginScreen = ({
   isRegister,
@@ -35,9 +35,7 @@ export const LoginScreen = ({
   useEffect(() => {
     GoogleSignin.configure({
       //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
-<<<<<<< HEAD
-      webClientId:
-        '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
+      webClientId: webClientId,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
     });
@@ -65,40 +63,6 @@ export const LoginScreen = ({
       else console.log('some other error happened');
     }
   };
-=======
-      webClientId : '954273909234-951gfeqkhisec5ag6tdrfs73k2a352d0.apps.googleusercontent.com',
-      offlineAccess : true,
-      forceCodeForRefreshToken: true
-    })
-  },[])
-
-  useEffect(() => {
-    console.log(userGoogleInfo)
-  },[googleLoaded])
-
-  const googleSignIn = async () => {
-    try{
-      await GoogleSignin.hasPlayServices()
-      console.log("1")
-      const userInfo = await GoogleSignin.signIn()
-      console.log("2")
-      setUserGoogleInfo(userInfo)
-      setGoogleLoaded(true)
-    } catch (error) {
-      console.log("message____________", error.message)
-      if (error.code === statusCode.SIGN_IN_CANCELLED)
-        console.log('USER CANCELLED')
-      else if (error.code === statusCode.IN_PROGRESS)
-        console.log("signin in")
-      else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
-        console.log("PLAY_SERVICES_NOT_AVAILABLE")
-      else 
-        console.log("some other error happened")
-    }
-
-  
-  }
->>>>>>> 99adda60c6336de166711c37e6a500268804f117
 
   const loginSuccess = (result) => {
     setUser({token: result.Token, username: inputId});
