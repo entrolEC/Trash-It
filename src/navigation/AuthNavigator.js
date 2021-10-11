@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { MapScreen } from '../scenes/MapScreen'
-import { LoginScreen } from '../scenes/LoginScreen'
-import { RegisterScreen } from '../scenes/RegisterScreen'
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {MapScreen} from '../scenes/MapScreen';
+import {LoginScreen} from '../scenes/LoginScreen';
+import {RegisterScreen} from '../scenes/RegisterScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,4 +16,4 @@ export const AuthNavigator = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};

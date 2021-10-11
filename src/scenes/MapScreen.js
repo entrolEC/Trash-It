@@ -17,46 +17,61 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-import NaverMapView, {Circle, Marker, Path, Polyline, Polygon} from "react-native-nmap";
-import { FloatingAction } from "react-native-floating-action";
+import NaverMapView, {
+  Circle,
+  Marker,
+  Path,
+  Polyline,
+  Polygon,
+} from 'react-native-nmap';
+import {FloatingAction} from 'react-native-floating-action';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { AddTrashcan } from '../components/AddTrashcan'
-import data from '../../dummy/data.json'
-import { TrashcanInfo } from '../components/TrashcanInfo'
-import PositionContext from '../context/PositionContext'
-import { Auth } from '../components/Auth'
-import { Alert } from '../components/Alert'
-import { LeaderBoard } from '../components/LeaderBoard'
+import {AddTrashcan} from '../components/AddTrashcan';
+import data from '../../dummy/data.json';
+import {TrashcanInfo} from '../components/TrashcanInfo';
+import PositionContext from '../context/PositionContext';
+import {Auth} from '../components/Auth';
+import {Alert} from '../components/Alert';
+import {LeaderBoard} from '../components/LeaderBoard';
+
+import {URL} from '../../env.json';
 
 const actions = [
   {
-    text: "리더보드",
+    text: '리더보드',
     icon: <Icon name="trophy-outline" color="#fff" size={24}></Icon>,
-    name: "leaderBoard",
+    name: 'leaderBoard',
     position: 2,
-    color: "#666666"
+    color: '#666666',
   },
   {
-    text: "쓰레기통 추가",
+    text: '쓰레기통 추가',
     icon: <Icon name="trash" color="#fff" size={24}></Icon>,
-    name: "addTrashcan",
+    name: 'addTrashcan',
     position: 3,
-    color: "#666666"
+    color: '#666666',
   },
   {
-    text: "로그인",
+    text: '로그인',
     icon: <Icon name="person-circle-outline" color="#fff" size={24}></Icon>,
-    name: "login",
+    name: 'login',
     position: 4,
-    color: "#666666"
-  }
+    color: '#666666',
+  },
 ];
 
 export const MapScreen = ({navigation}) => {
+  const {currentPosition, setCurrentPosition} = React.useContext(
+    PositionContext,
+  );
+  const {user, setUser} = React.useContext(PositionContext);
+  const {trashcanLocation, setTrashcanLocation} = React.useContext(
+    PositionContext,
+  );
+  const {selectedtrashcan, setSelectedtrashcan} = React.useContext(
+    PositionContext,
+  );
 
-  const { currentPosition, setCurrentPosition } = React.useContext(PositionContext)
-  const { user, setUser } = React.useContext(PositionContext)
-  const { trashcanLocation, setTrashcanLocation } = React.useContext(PositionContext)
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -64,66 +79,105 @@ export const MapScreen = ({navigation}) => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [leaderBoardVisible, setLeaderBoardVisible] = useState(false);
 
-  const onClicked = (idx) =>{
-    setSelectedIndex(idx)
-    setInfoModalVisible(true)
-  }
+  const onClicked = (idx) => {
+    setSelectedIndex(idx);
+    setInfoModalVisible(true);
+  };
+
+  const fetchData = async (point) => {
+    // console.log('fetchData', point);
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'GET',
+      redirect: 'follow',
+    };
+
+    await fetch(`http://${URL}/locations/${point.id}/`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        setSelectedtrashcan(result);
+      })
+      .catch((error) => console.log('error', error));
+  };
 
   const menuPressed = (name) => {
-    if(name == 'login') {
-      setAuthModalVisible(true) 
-    } else if(name == 'addTrashcan') { 
-      if(user.token == null) {
-        setAlertVisible(true)
+    if (name == 'login') {
+      setAuthModalVisible(true);
+    } else if (name == 'addTrashcan') {
+      if (user.token == null) {
+        setAlertVisible(true);
       } else {
-        setModalVisible(true)
+        setModalVisible(true);
       }
-    } else if(name == 'leaderBoard') {
-      setLeaderBoardVisible(true)
+    } else if (name == 'leaderBoard') {
+      setLeaderBoardVisible(true);
     }
-  }
+  };
 
-  return(
+  return (
     <SafeAreaView style={styles.container}>
-      <NaverMapView style={{width: '100%', height: '100%'}}
+      <NaverMapView
+        style={{width: '100%', height: '100%'}}
         showsMyLocationButton={true}
         setLocationTrackingMode={2}
         center={{...currentPosition, zoom: 16}}
         //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
         //onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
-        
+
         //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
       >
-        {
-          trashcanLocation.map((point, idx)=>(
-            <Marker key={point.key} coordinate={point} onClick={()=>{onClicked(idx)}}/>
-          ))
-        }
-
+        {trashcanLocation.map((point, idx) => (
+          <Marker
+            key={idx}
+            coordinate={point}
+            onClick={async () => {
+              onClicked(idx);
+              await fetchData(point);
+            }}
+          />
+        ))}
       </NaverMapView>
       <FloatingAction
         actions={actions}
-        color={"#666666"}
-        onPressItem={name => {menuPressed(name)}}
+        color={'#666666'}
+        onPressItem={(name) => {
+          menuPressed(name);
+        }}
       />
-      
-      {
-        selectedIndex!==null ? (
-          <TrashcanInfo modalVisible={infoModalVisible} setModalVisible={setInfoModalVisible} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex}/>
-        ) : (
-          null
-        )
-      }
-      <AddTrashcan modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-      <Auth authModalVisible={authModalVisible} setAuthModalVisible={setAuthModalVisible}/>
-      <Alert alertVisible={alertVisible} setAlertVisible={setAlertVisible} message={"로그인을 먼저 해주세요!"}/>
-      <LeaderBoard leaderBoardVisible={leaderBoardVisible} setLeaderBoardVisible={setLeaderBoardVisible}/>
+
+      {selectedIndex !== null ? (
+        <TrashcanInfo
+          modalVisible={infoModalVisible}
+          setModalVisible={setInfoModalVisible}
+          selectedIndex={selectedIndex}
+          setSelectedIndex={setSelectedIndex}
+        />
+      ) : null}
+      <AddTrashcan
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+      />
+      <Auth
+        authModalVisible={authModalVisible}
+        setAuthModalVisible={setAuthModalVisible}
+      />
+      <Alert
+        alertVisible={alertVisible}
+        setAlertVisible={setAlertVisible}
+        message={'로그인을 먼저 해주세요!'}
+      />
+      <LeaderBoard
+        leaderBoardVisible={leaderBoardVisible}
+        setLeaderBoardVisible={setLeaderBoardVisible}
+      />
     </SafeAreaView>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
-   container: {
+  container: {
     flex: 1,
-  }
+  },
 });

@@ -9,134 +9,140 @@ import {
   ActivityIndicator,
   Button,
   TextInput,
-  TouchableHighlight
+  TouchableHighlight,
 } from 'react-native';
-import PositionContext from '../context/PositionContext'
+import PositionContext from '../context/PositionContext';
 
-export const RegisterScreen = ({isRegister, setIsRegister, setAuthModalVisible}) => {
+import {URL} from '../../env.json';
 
-  const { user, setUser } = React.useContext(PositionContext)
+export const RegisterScreen = ({
+  isRegister,
+  setIsRegister,
+  setAuthModalVisible,
+}) => {
+  const {user, setUser} = React.useContext(PositionContext);
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
   const [inputPassword2, setInputPassword2] = useState();
   const [errMessage, setErrMessage] = useState();
 
   const loginSuccess = (result) => {
-    setUser({"token":result.Token, "username": inputId})
-  }
+    setUser({token: result.Token, username: inputId});
+  };
 
   const fetchData = async () => {
-    if(inputPassword !== inputPassword2) {
-      setErrMessage('비밀번호가 서로 다릅니다!')
+    if (inputPassword !== inputPassword2) {
+      setErrMessage('비밀번호가 서로 다릅니다!');
     } else if (inputPassword.length < 8) {
-      setErrMessage('비밀번호가 너무 짧습니다!')
+      setErrMessage('비밀번호가 너무 짧습니다!');
     } else if (inputId.length > 12 || inputId.length < 4) {
-      setErrMessage('아이디가 너무 짧거나 깁니다!')
+      setErrMessage('아이디가 너무 짧거나 깁니다!');
     } else {
       var formdata = new FormData();
-      formdata.append("username", inputId);
-      formdata.append("password", inputPassword);
+      formdata.append('username', inputId);
+      formdata.append('password', inputPassword);
 
       var requestOptions = {
-        headers:{
+        headers: {
           'Content-Type': 'multipart/form-data',
         },
         method: 'POST',
         body: formdata,
-        redirect: 'follow'
+        redirect: 'follow',
       };
 
-      await fetch("http://121.171.155.192:8080/signup/", requestOptions)
-        .then(response => response.json())
-        .then(async result => {
-          console.log(result)
+      await fetch(`http://${URL}/signup/`, requestOptions)
+        .then((response) => response.json())
+        .then(async (result) => {
+          console.log(result);
           if (result.Token) {
-            await loginSuccess(result)
-            setAuthModalVisible(false) 
-          }          
+            await loginSuccess(result);
+            setAuthModalVisible(false);
+          }
         })
-        .catch(error => console.log('error', error));
+        .catch((error) => console.log('error', error));
     }
-    
-  }
+  };
 
   const onPress = () => {
-    setIsRegister(false)
-  }
+    setIsRegister(false);
+  };
 
-  return(
+  return (
     <SafeAreaView style={styles.container}>
-      {(errMessage) ? (
+      {errMessage ? (
         <Text style={{color: 'red'}}>{errMessage}</Text>
-        ) : (
+      ) : (
         <Text>회원가입</Text>
-        )}
-      
+      )}
+
       <TextInput
         style={styles.textInput}
-        onChangeText={text => setInputId(text)}
-        placeholder={"  아이디"}
+        onChangeText={(text) => setInputId(text)}
+        placeholder={'  아이디'}
       />
       <TextInput
         style={styles.textInput}
-        onChangeText={text => setInputPassword(text)}
-        placeholder={"  비밀번호"}
+        onChangeText={(text) => setInputPassword(text)}
+        placeholder={'  비밀번호'}
         secureTextEntry={true}
       />
-       <TextInput
+      <TextInput
         style={styles.textInput}
-        onChangeText={text => setInputPassword2(text)}
-        placeholder={"  비밀번호 재입력"}
+        onChangeText={(text) => setInputPassword2(text)}
+        placeholder={'  비밀번호 재입력'}
         secureTextEntry={true}
       />
       <View style={styles.buttonContainer}>
-        <Text style={styles.textButton} onPress={onPress}> 이미 계정이 있나요? </Text>
+        <Text style={styles.textButton} onPress={onPress}>
+          {' '}
+          이미 계정이 있나요?{' '}
+        </Text>
         <TouchableHighlight
-          style={{ ...styles.openButton, backgroundColor: "#2176FF" }}
+          style={{...styles.openButton, backgroundColor: '#2176FF'}}
           onPress={() => {
-            fetchData()
-          }}
-        >
+            fetchData();
+          }}>
           <Text style={styles.textStyle}>회원가입</Text>
         </TouchableHighlight>
-      </View>      
+      </View>
     </SafeAreaView>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
-   container: {
+  container: {
     flex: 1,
   },
   textInput: {
     marginVertical: 10,
-    height: 40, 
-    borderColor: 'gray', 
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 0.5,
-    borderRadius: 10
+    borderRadius: 10,
   },
   textButton: {
     textDecorationLine: 'underline',
     fontWeight: 'bold',
-    color: '#aaaaaa'
+    color: '#aaaaaa',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10
+    marginTop: 10,
   },
   openButton: {
-    backgroundColor: "#F194FF",
+    backgroundColor: '#F194FF',
     borderRadius: 10,
     padding: 10,
     elevation: 2,
     width: 70,
-    marginRight: 10
+    marginRight: 10,
   },
   textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
-    fontSize: 13
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 13,
   },
 });
