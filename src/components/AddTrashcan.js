@@ -94,7 +94,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Token ' + user.token,
+        Authorization: 'Bearer ' + user.accessToken,
       },
       method: 'POST',
       body: formdata,
