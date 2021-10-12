@@ -49,7 +49,7 @@ export const TrashcanInfo = ({
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Token ' + user.token,
+        Authorization: 'Bearer ' + user.accessToken,
       },
       method: 'DELETE',
       redirect: 'follow',
@@ -79,8 +79,8 @@ export const TrashcanInfo = ({
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
-              <Text>게시자 : {selectedtrashcan.name}</Text>
-              {user.username == selectedtrashcan.name ? (
+              <Text>게시자 : {selectedtrashcan.author.email}</Text>
+              {user._user !== undefined && user._user.email == selectedtrashcan.author.email ? (
                 <TouchableHighlight
                   style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                   onPress={async () => {
