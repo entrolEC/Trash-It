@@ -68,13 +68,11 @@ export const LoginScreen = ({
       .then((response) => response.json())
       .then((result) => {
         console.log('google login finished:', result);
-        // if (result.Token) {
-        //   await loginSuccess(result)
-        //   setAuthModalVisible(false)
-        // } else if (result.error) {
-        //   setErrMessage("아이디나 비밀번호가 일치하지 않습니다.")
-        //   console.log("adsflkajs;dlfkja;sdlkfj")
-        // }
+        setUser({
+          accessToken: result.access_token, 
+          refreshToken: result.refresh_token, 
+          _user: result.user
+        })
       })
       .catch((error) => console.log('error', error));
   };
