@@ -97,6 +97,7 @@ export const MapScreen = ({navigation}) => {
     await fetch(`http://${URL}/locations/${point.id}/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
+        console.log("clicked result", result)
         setSelectedtrashcan(result);
       })
       .catch((error) => console.log('error', error));
@@ -106,7 +107,7 @@ export const MapScreen = ({navigation}) => {
     if (name == 'login') {
       setAuthModalVisible(true);
     } else if (name == 'addTrashcan') {
-      if (user.token == null) {
+      if (user.accessToken == null) {
         setAlertVisible(true);
       } else {
         setModalVisible(true);
@@ -134,8 +135,8 @@ export const MapScreen = ({navigation}) => {
               key={point.key}
               coordinate={point}
               onClick={async () => {
-                onClicked(idx);
                 await fetchData(point);
+                onClicked(idx);
               }}
             />
           ))}
