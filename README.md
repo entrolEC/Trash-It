@@ -1,8 +1,8 @@
 # trashcanMap
-# trashcanMap_backend
+# trashcanMap
 ```
-cd trashcanMap
-python manage.py runserver 0.0.0.0:8000
+npm install
+npx react-native run-android
 ```
 
 #프로젝트 계획 동기
