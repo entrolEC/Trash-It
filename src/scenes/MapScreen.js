@@ -132,7 +132,7 @@ export const MapScreen = ({navigation}) => {
         {trashcanLocation &&
           trashcanLocation.map((point, idx) => (
             <Marker
-              key={point.key}
+              key={idx}
               coordinate={point}
               onClick={async () => {
                 await fetchData(point);

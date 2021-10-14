@@ -7,6 +7,8 @@ import PositionContext from '../context/PositionContext';
 import {set} from 'react-native-reanimated';
 import {Alert} from '../components/Alert';
 
+import LottieView from 'lottie-react-native';
+
 import {URL} from '../../env.json';
 
 const initialState = {
@@ -18,7 +20,7 @@ export default SplashScreen = () => {
   const [user, setUser] = useState({token: null, username: '로그인되지 않음'});
   const [trashcanLocation, setTrashcanLocation] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(initialState);
-  const [isLoaded, setIsLoaded] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [hasLocationPermission, setHasLocationPermission] = useState();
   const [alertVisible, setAlertVisible] = useState(false);
   const [selectedtrashcan, setSelectedtrashcan] = useState([]);
@@ -90,32 +92,62 @@ export default SplashScreen = () => {
   }, [hasLocationPermission]);
 
   useEffect(() => {
-    setIsLoaded(isLoaded + 1);
+    // setIsLoaded(isLoaded + 1);
     console.log('loading ... ', isLoaded);
     console.log('current', currentPosition);
   }, [trashcanLocation, currentPosition]);
 
   return (
-    <AnimatedSplash
-      translucent={true}
-      isLoaded={isLoaded > 2}
-      logoImage={require('../assets/logo/logo.png')}
-      backgroundColor={'#262626'}
-      logoHeight={300}
-      logoWidth={300}>
-      <PositionContext.Provider
-        value={{
-          currentPosition,
-          setCurrentPosition,
-          trashcanLocation,
-          setTrashcanLocation,
-          user,
-          setUser,
-          selectedtrashcan,
-          setSelectedtrashcan,
-        }}>
-        <MapScreen />
-      </PositionContext.Provider>
-    </AnimatedSplash>
+    // <AnimatedSplash
+    //   translucent={true}
+    //   isLoaded={isLoaded > 2}
+    //   logoImage={require('../assets/logo/logo.png')}
+    //   backgroundColor={'#262626'}
+    //   logoHeight={300}
+    //   logoWidth={300}>
+    //   <PositionContext.Provider
+    //     value={{
+    //       currentPosition,
+    //       setCurrentPosition,
+    //       trashcanLocation,
+    //       setTrashcanLocation,
+    //       user,
+    //       setUser,
+    //       selectedtrashcan,
+    //       setSelectedtrashcan,
+    //     }}>
+    //     <MapScreen />
+    //   </PositionContext.Provider>
+    // </AnimatedSplash>
+
+    <>
+      {isLoaded === true ? (
+        <PositionContext.Provider
+          value={{
+            currentPosition,
+            setCurrentPosition,
+            trashcanLocation,
+            setTrashcanLocation,
+            user,
+            setUser,
+            selectedtrashcan,
+            setSelectedtrashcan,
+          }}>
+          <MapScreen />
+        </PositionContext.Provider>
+      ) : (
+        <LottieView
+          source={require('../assets/splash.json')}
+          autoPlay
+          loop={false}
+          onAnimationFinish={() => {
+            if (trashcanLocation) {
+              setIsLoaded(true);
+            }
+          }}
+          style={{backgroundColor: '#73B5CE'}}
+        />
+      )}
+    </>
   );
 };
