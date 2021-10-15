@@ -24,7 +24,7 @@ import {
   getPin,
   PinContext,
 } from '../context/PinContext';
-import {getGeolocation} from '../service/Georocation';
+import {getGeolocation} from '../service/Geolocation';
 
 import {URL} from '../../env.json';
 
@@ -32,10 +32,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
   const [image, setImage] = useState();
-  const [isGeolocationLoaded, setIsGeolocationLoaded] = useState({
-    latitude: 30,
-    longitude: 30,
-  });
+  const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
@@ -59,7 +56,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     }).then((image) => {
       console.log(image);
       setImage(image);
-      //getGeolocation(setIsGeolocationLoaded);
+      getGeolocation(setIsGeolocationLoaded);
       //getPosition(positionDispatch);
     });
   };

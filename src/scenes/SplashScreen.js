@@ -18,7 +18,7 @@ import {
 import {UsersProvider} from '../context/UserContext';
 import {set} from 'react-native-reanimated';
 import {Alert} from '../components/Alert';
-import {getGeolocation} from '../service/Georocation';
+import {getGeolocation} from '../service/Geolocation';
 
 import LottieView from 'lottie-react-native';
 
