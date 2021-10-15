@@ -11,12 +11,13 @@ import {
   TextInput,
   TouchableHighlight,
 } from 'react-native';
-import PositionContext from '../context/PositionContext';
 import {
   GoogleSignin,
   GoogleSigninButton,
   statusCode,
 } from '@react-native-community/google-signin';
+
+import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
 
 import {URL, webClientId} from '../../env.json';
 
@@ -25,13 +26,16 @@ export const LoginScreen = ({
   setIsRegister,
   setAuthModalVisible,
 }) => {
-  const {user, setUser} = React.useContext(PositionContext);
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
   const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
   const [token, setToken] = useState();
+
+  const userState = useUserState();
+  const userDispatch = useUserDispatch();
+  const { user } = userState; // included : data, loading, error, success
 
   useEffect(() => {
     console.log(webClientId);
@@ -44,38 +48,11 @@ export const LoginScreen = ({
   }, []);
 
   useEffect(() => {
-    console.log('tokens are ready', token);
-    fetchGoogleLoginFinish();
+    if(token !== undefined) {
+      console.log('tokens are ready', token);
+      getUser(userDispatch, token)
+    }
   }, [token]);
-
-  const fetchGoogleLoginFinish = async () => {
-    var formdata = new FormData();
-
-    formdata.append('access_token', token.accessToken);
-    // formdata.append("code", token.code);
-    // formdata.append("id_token", token.idToken);
-    console.log('in fetchGoogleLoginFinish', formdata);
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('google login finished:', result);
-        setUser({
-          accessToken: result.access_token, 
-          refreshToken: result.refresh_token, 
-          _user: result.user
-        })
-      })
-      .catch((error) => console.log('error', error));
-  };
 
   const googleSignIn = async () => {
     try {

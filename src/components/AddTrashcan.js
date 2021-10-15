@@ -12,51 +12,28 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Geolocation from 'react-native-geolocation-service';
-import PositionContext from '../context/PositionContext';
+import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
+import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
+import { getGeolocation } from '../service/Georocation'
 
 import {URL} from '../../env.json';
 
 export const AddTrashcan = ({modalVisible, setModalVisible}) => {
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
-  const {currentPosition, setCurrentPosition} = React.useContext(
-    PositionContext,
-  );
-  const {user, setUser} = React.useContext(PositionContext);
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
   const [image, setImage] = useState();
+  const [isGeolocationLoaded, setIsGeolocationLoaded] = useState({latitude:30, longitude:30});
+
+  const userState = useUserState();
+  const userDispatch = useUserDispatch();
+  const { user } = userState; // included : data, loading, error, success
+
+  const pinState = usePinState();
+  const pinDispatch = usePinDispatch();
+  const { pin } = pinState; // included : data, loading, error, success
 
   const fetchData = async () => {
-    console.log('fetchdata!');
-
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/pin/`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        setTrashcanLocation(result);
-      })
-      .catch((error) => console.log('error', error));
-  };
-
-  const getLocation = () => {
-    Geolocation.getCurrentPosition(
-      (position) => {
-        setCurrentPosition({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      (error) => console.log(error),
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-    console.log('getlocation', currentPosition);
+    getPin(pinDispatch);
   };
 
   const addNewTrashcan = () => {
@@ -69,12 +46,12 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     }).then((image) => {
       console.log(image);
       setImage(image);
-      getLocation();
+      //getGeolocation(setIsGeolocationLoaded);
+      //getPosition(positionDispatch);
     });
   };
 
   useEffect(() => {
-    console.log(currentPosition);
     if (image) {
       let temp = {
         address: '인천 송도과학로27번길 15',
@@ -82,19 +59,19 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
       };
       setData(temp);
     }
-  }, [currentPosition, image]);
+  }, [image]);
 
   const postData = async () => {
     var formdata = new FormData();
-    formdata.append('latitude', currentPosition.latitude);
-    formdata.append('longitude', currentPosition.longitude);
+    formdata.append('latitude', isGeolocationLoaded.latitude);
+    formdata.append('longitude', isGeolocationLoaded.longitude);
     formdata.append('address', data.address);
     formdata.append('image', data.image);
     formdata.append('description', description);
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + user.accessToken,
+        Authorization: 'Bearer ' + user.data.accessToken,
       },
       method: 'POST',
       body: formdata,

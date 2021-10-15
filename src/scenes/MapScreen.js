@@ -29,10 +29,11 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {AddTrashcan} from '../components/AddTrashcan';
 import data from '../../dummy/data.json';
 import {TrashcanInfo} from '../components/TrashcanInfo';
-import PositionContext from '../context/PositionContext';
 import {Auth} from '../components/Auth';
 import {Alert} from '../components/Alert';
 import {LeaderBoard} from '../components/LeaderBoard';
+import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
+import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
 
 import {URL} from '../../env.json';
 
@@ -60,27 +61,28 @@ const actions = [
   },
 ];
 
-export const MapScreen = ({navigation}) => {
-  const {currentPosition, setCurrentPosition} = React.useContext(
-    PositionContext,
-  );
-  const {user, setUser} = React.useContext(PositionContext);
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
-  const {selectedtrashcan, setSelectedtrashcan} = React.useContext(
-    PositionContext,
-  );
+export const MapScreen = ({latitude, longitude}) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [leaderBoardVisible, setLeaderBoardVisible] = useState(false);
 
-  const onClicked = (idx) => {
+  const userState = useUserState();
+  const userDispatch = useUserDispatch();
+  const { user } = userState; // included : data, loading, error, success
+
+  const pinState = usePinState();
+  const pinDispatch = usePinDispatch();
+  const { pin } = pinState; // included : data, loading, error, success
+
+  const onClicked = (point, idx) => {
+    console.log("clicked", point, idx);
     setSelectedIndex(idx);
+    setSelectedId(point.id)
     setInfoModalVisible(true);
   };
 
@@ -107,7 +109,7 @@ export const MapScreen = ({navigation}) => {
     if (name == 'login') {
       setAuthModalVisible(true);
     } else if (name == 'addTrashcan') {
-      if (user.accessToken == null) {
+      if (user.success===false) {
         setAlertVisible(true);
       } else {
         setModalVisible(true);
@@ -123,20 +125,20 @@ export const MapScreen = ({navigation}) => {
         style={{width: '100%', height: '100%'}}
         showsMyLocationButton={true}
         setLocationTrackingMode={2}
-        center={{...currentPosition, zoom: 16}}
+        center={{latitude: latitude, longitude: longitude, zoom: 16}}
         //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
         //onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
 
         //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
       >
-        {trashcanLocation &&
-          trashcanLocation.map((point, idx) => (
+        {pin.data &&
+          pin.data.map((point, idx) => (
             <Marker
               key={idx}
               coordinate={point}
-              onClick={async () => {
-                await fetchData(point);
-                onClicked(idx);
+              onClick={() => {
+                //await fetchData(point);
+                onClicked(point, idx);
               }}
             />
           ))}
@@ -155,6 +157,8 @@ export const MapScreen = ({navigation}) => {
           setModalVisible={setInfoModalVisible}
           selectedIndex={selectedIndex}
           setSelectedIndex={setSelectedIndex}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
         />
       ) : null}
       <AddTrashcan

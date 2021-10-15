@@ -8,7 +8,6 @@ import {
   Image,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import PositionContext from '../context/PositionContext';
 
 export const Alert = ({
   alertVisible,
@@ -16,9 +15,6 @@ export const Alert = ({
   message,
   callback = null,
 }) => {
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
 
   return (
     <View style={styles.centeredView}>
@@ -37,8 +33,6 @@ export const Alert = ({
               onPress={() => {
                 setAlertVisible(!alertVisible);
                 if (callback !== null) callback();
-                console.log(trashcanLocation);
-                //addNewTrashcan()
               }}>
               <Text style={styles.textStyle}> 확인 </Text>
             </TouchableHighlight>
