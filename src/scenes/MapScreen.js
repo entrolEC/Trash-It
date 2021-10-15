@@ -80,9 +80,9 @@ export const MapScreen = ({latitude, longitude}) => {
   const { pin } = pinState; // included : data, loading, error, success
 
   const onClicked = (point, idx) => {
-    console.log("clicked", point, idx);
+    console.log('clicked', point, idx);
     setSelectedIndex(idx);
-    setSelectedId(point.id)
+    setSelectedId(point.id);
     setInfoModalVisible(true);
   };
 
@@ -99,7 +99,7 @@ export const MapScreen = ({latitude, longitude}) => {
     await fetch(`http://${URL}/locations/${point.id}/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log("clicked result", result)
+        console.log('clicked result', result)
         setSelectedtrashcan(result);
       })
       .catch((error) => console.log('error', error));
@@ -109,7 +109,7 @@ export const MapScreen = ({latitude, longitude}) => {
     if (name == 'login') {
       setAuthModalVisible(true);
     } else if (name == 'addTrashcan') {
-      if (user.success===false) {
+      if (user.success === false) {
         setAlertVisible(true);
       } else {
         setModalVisible(true);

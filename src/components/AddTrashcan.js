@@ -12,9 +12,19 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Geolocation from 'react-native-geolocation-service';
-import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
-import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
-import { getGeolocation } from '../service/Georocation'
+import {
+  useUserState,
+  useUserDispatch,
+  getUser,
+  UserContext,
+} from '../context/UserContext';
+import {
+  usePinState,
+  usePinDispatch,
+  getPin,
+  PinContext,
+} from '../context/PinContext';
+import {getGeolocation} from '../service/Georocation';
 
 import {URL} from '../../env.json';
 
@@ -22,15 +32,18 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
   const [image, setImage] = useState();
-  const [isGeolocationLoaded, setIsGeolocationLoaded] = useState({latitude:30, longitude:30});
+  const [isGeolocationLoaded, setIsGeolocationLoaded] = useState({
+    latitude: 30,
+    longitude: 30,
+  });
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
-  const { user } = userState; // included : data, loading, error, success
+  const {user} = userState; // included : data, loading, error, success
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const { pin } = pinState; // included : data, loading, error, success
+  const {pin} = pinState; // included : data, loading, error, success
 
   const fetchData = async () => {
     getPin(pinDispatch);
