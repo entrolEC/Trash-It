@@ -11,7 +11,6 @@ import {
   TextInput,
   TouchableHighlight,
 } from 'react-native';
-import PositionContext from '../context/PositionContext';
 
 import {URL} from '../../env.json';
 
@@ -20,7 +19,6 @@ export const RegisterScreen = ({
   setIsRegister,
   setAuthModalVisible,
 }) => {
-  const {user, setUser} = React.useContext(PositionContext);
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
   const [inputPassword2, setInputPassword2] = useState();

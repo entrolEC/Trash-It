@@ -9,54 +9,78 @@ import {
   Image,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import PositionContext from '../context/PositionContext';
 
 import {URL} from '../../env.json';
+import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
+import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
 
 export const TrashcanInfo = ({
   modalVisible,
   setModalVisible,
   selectedIndex,
   setSelectedIndex,
+  selectedId,
+  setSelectedId
 }) => {
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
-  const {selectedtrashcan, setSelectedtrashcan} = React.useContext(
-    PositionContext,
-  );
-
-  const {user, setUser} = React.useContext(PositionContext);
   const [tmp, setTmp] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedTrashcan, setSelectedTrashcan] = useState();
+
+  const userState = useUserState();
+  const userDispatch = useUserDispatch();
+  const { user } = userState; // included : data, loading, error, success
+
+  const pinState = usePinState();
+  const pinDispatch = usePinDispatch();
+  const { pin } = pinState; // included : data, loading, error, success
+
+  useEffect(() => {
+    console.log("trashcaninfo")
+    const getSelectedTrashcan = async () => {
+      var requestOptions = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'GET',
+        redirect: 'follow',
+      };
+      await fetch(
+        `http://${URL}/locations/${selectedId}/`,
+        requestOptions,
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          console.log("getSelectedTrashcan", result);
+          setSelectedTrashcan(result);
+          setLoading(false) // 로딩 제대로 작동 함.
+        })
+        .catch((error) => console.log('error', error));
+    }
+
+    if(selectedIndex !== null)
+      getSelectedTrashcan();
+  }, [selectedIndex])
+
+  if(user.success) console.log("user", user.data)
+
 
   const refreshData = async () => {
-    var requestOptions = {
-      method: 'GET',
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/pin/`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('refreshData', result);
-        setTrashcanLocation(result);
-      })
-      .catch((error) => console.log('error', error));
+    getPin(pinDispatch)
   };
 
   const deleteData = async () => {
-    console.log('selectedIndex.id', selectedtrashcan.id);
+    console.log('selectedIndex.id', selectedTrashcan.id);
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + user.accessToken,
+        Authorization: 'Bearer ' + user.data.accessToken,
       },
       method: 'DELETE',
       redirect: 'follow',
     };
 
     await fetch(
-      `http://${URL}/locations/${selectedtrashcan.id}/`,
+      `http://${URL}/locations/${selectedId}/`,
       requestOptions,
     )
       .then((response) => response.json())
@@ -66,6 +90,24 @@ export const TrashcanInfo = ({
 
       .catch((error) => console.log('error', error));
   };
+
+  if(loading) return (
+    <View style={styles.centeredView}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>로딩중입니다.</Text>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  )
 
   return (
     <View style={styles.centeredView}>
@@ -79,15 +121,17 @@ export const TrashcanInfo = ({
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
-              <Text>게시자 : {selectedtrashcan.author.email}</Text>
-              {user._user !== undefined && user._user.email == selectedtrashcan.author.email ? (
+              <Text>게시자 : {selectedTrashcan.author.email}</Text>
+              {user.success && user.data.user.email == selectedTrashcan.author.email ? (
                 <TouchableHighlight
                   style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                   onPress={async () => {
-                    setSelectedIndex(null);
-                    await setModalVisible(!modalVisible);
                     await deleteData();
-                    await refreshData();
+                    setSelectedIndex(null);
+                    setSelectedId(null);
+                    setLoading(true);
+                    setModalVisible(!modalVisible);
+                    refreshData();
                   }}>
                   <Text style={styles.textStyle}> 삭제 </Text>
                 </TouchableHighlight>
@@ -101,15 +145,18 @@ export const TrashcanInfo = ({
             <Image
               style={styles.image}
               source={{
-                uri: selectedtrashcan.image,
+                uri: selectedTrashcan.image,
               }}
             />
-            <Text style={styles.text}>{selectedtrashcan.description}</Text>
+            <Text style={styles.text}>{selectedTrashcan.description}</Text>
             <TouchableHighlight
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
+                setLoading(true);
                 setModalVisible(!modalVisible);
-                // console.log(`this is trashcanLocation`, selectedtrashcan);
+                setSelectedIndex(null);
+                setSelectedId(null);
+                // console.log(`this is trashcanLocation`, selectedTrashcan);
                 //addNewTrashcan()
               }}>
               <Text style={styles.textStyle}> 확인 </Text>

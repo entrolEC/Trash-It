@@ -10,7 +10,6 @@ import {
   Dimensions,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import PositionContext from '../context/PositionContext';
 import {AuthNavigator} from '../navigation/AuthNavigator';
 import {LoginScreen} from '../scenes/LoginScreen';
 import {RegisterScreen} from '../scenes/RegisterScreen';
@@ -23,9 +22,6 @@ export const Auth = ({
   setAuthModalVisible,
   selectedIndex,
 }) => {
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
   const [isRegister, setIsRegister] = useState(false);
 
   return (

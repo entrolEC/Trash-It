@@ -11,7 +11,6 @@ import {
   Dimensions,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import PositionContext from '../context/PositionContext';
 
 import {URL} from '../../env.json';
 
@@ -19,10 +18,6 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
-  const {trashcanLocation, setTrashcanLocation} = React.useContext(
-    PositionContext,
-  );
-  const {user, setUser} = React.useContext(PositionContext);
   const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
@@ -99,8 +94,6 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
                 setLeaderBoardVisible(!leaderBoardVisible);
-                console.log(trashcanLocation);
-                //addNewTrashcan()
               }}>
               <Text style={styles.textStyle}> 확인 </Text>
             </TouchableHighlight>
