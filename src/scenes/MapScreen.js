@@ -32,37 +32,24 @@ import {TrashcanInfo} from '../components/TrashcanInfo';
 import {Auth} from '../components/Auth';
 import {Alert} from '../components/Alert';
 import {LeaderBoard} from '../components/LeaderBoard';
-import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
-import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
+import {
+  usePinState,
+  usePinDispatch,
+  getPin,
+  PinContext,
+} from '../context/PinContext';
+import {
+  useUserState,
+  useUserDispatch,
+  getUser,
+  UserContext,
+} from '../context/UserContext';
+
+import {FloatingButton} from '../FloatingButton';
 
 import {URL} from '../../env.json';
 
-const actions = [
-  {
-    text: '리더보드',
-    icon: <Icon name="trophy-outline" color="#fff" size={24}></Icon>,
-    name: 'leaderBoard',
-    position: 2,
-    color: '#666666',
-  },
-  {
-    text: '쓰레기통 추가',
-    icon: <Icon name="trash" color="#fff" size={24}></Icon>,
-    name: 'addTrashcan',
-    position: 3,
-    color: '#666666',
-  },
-  {
-    text: '로그인',
-    icon: <Icon name="person-circle-outline" color="#fff" size={24}></Icon>,
-    name: 'login',
-    position: 4,
-    color: '#666666',
-  },
-];
-
 export const MapScreen = ({latitude, longitude}) => {
-
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -73,11 +60,11 @@ export const MapScreen = ({latitude, longitude}) => {
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
-  const { user } = userState; // included : data, loading, error, success
+  const {user} = userState; // included : data, loading, error, success
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const { pin } = pinState; // included : data, loading, error, success
+  const {pin} = pinState; // included : data, loading, error, success
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -99,13 +86,27 @@ export const MapScreen = ({latitude, longitude}) => {
     await fetch(`http://${URL}/locations/${point.id}/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log('clicked result', result)
+        console.log('clicked result', result);
         setSelectedtrashcan(result);
       })
       .catch((error) => console.log('error', error));
   };
 
   const menuPressed = (name) => {
+    if (name == 'login') {
+      setAuthModalVisible(true);
+    } else if (name == 'addTrashcan') {
+      if (user.success === false) {
+        setAlertVisible(true);
+      } else {
+        setModalVisible(true);
+      }
+    } else if (name == 'leaderBoard') {
+      setLeaderBoardVisible(true);
+    }
+  };
+
+  const handleMenuPress = (name) => {
     if (name == 'login') {
       setAuthModalVisible(true);
     } else if (name == 'addTrashcan') {
@@ -143,9 +144,8 @@ export const MapScreen = ({latitude, longitude}) => {
             />
           ))}
       </NaverMapView>
-      <FloatingAction
-        actions={actions}
-        color={'#666666'}
+
+      <FloatingButton
         onPressItem={(name) => {
           menuPressed(name);
         }}
@@ -185,5 +185,6 @@ export const MapScreen = ({latitude, longitude}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'flex-end',
   },
 });
