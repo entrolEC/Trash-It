@@ -17,7 +17,12 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
-import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
+import {
+  useUserState,
+  useUserDispatch,
+  getUser,
+  UserContext,
+} from '../context/UserContext';
 
 import {URL, webClientId} from '../../env.json';
 
@@ -144,12 +149,15 @@ export const LoginScreen = ({
           <Text style={styles.textStyle}>로그인</Text>
         </TouchableHighlight>
       </View>
-      <GoogleSigninButton
-        onPress={googleSignIn}
-        size={GoogleSigninButton.Size.Wide}
-        color={GoogleSigninButton.Color.Dark}
-        sytle={{width: 100, height: 100}}
-      />
+      <View>
+        <GoogleSigninButton
+          onPress={googleSignIn}
+          size={GoogleSigninButton.Size.Wide}
+          style={styles.googleloginbtn}
+          color={GoogleSigninButton.Color.Dark}
+          sytle={{width: 100, height: 100}}
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -187,5 +195,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  googleloginbtn: {
+    width: '100%',
+    height: 48,
+    marginTop: '10%',
+    marginRight: 100,
   },
 });
