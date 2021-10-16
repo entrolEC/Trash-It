@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   Alert,
-  Modal,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -13,6 +12,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {AuthNavigator} from '../navigation/AuthNavigator';
 import {LoginScreen} from '../scenes/LoginScreen';
 import {RegisterScreen} from '../scenes/RegisterScreen';
+
+import Modal from 'react-native-modal';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -27,10 +28,19 @@ export const Auth = ({
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
         transparent={true}
-        visible={authModalVisible}
-        onRequestClose={() => {}}>
+        isVisible={authModalVisible}
+        backdropColor="none"
+        onBackButtonPress={() => {
+          setAuthModalVisible(!authModalVisible);
+        }}
+        onBackdropPress={() => {
+          setAuthModalVisible(!authModalVisible);
+        }}>
         <View style={styles.centeredView}>
           <View
             style={{

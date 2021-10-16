@@ -106,20 +106,6 @@ export const MapScreen = ({latitude, longitude}) => {
     }
   };
 
-  const handleMenuPress = (name) => {
-    if (name == 'login') {
-      setAuthModalVisible(true);
-    } else if (name == 'addTrashcan') {
-      if (user.success === false) {
-        setAlertVisible(true);
-      } else {
-        setModalVisible(true);
-      }
-    } else if (name == 'leaderBoard') {
-      setLeaderBoardVisible(true);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <NaverMapView
