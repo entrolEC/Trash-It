@@ -64,8 +64,8 @@ export const TrashcanInfo = ({
         .catch((error) => console.log('error', error));
     };
 
-    if (selectedIndex !== null) getSelectedTrashcan();
-  }, [selectedIndex]);
+    if (modalVisible === true) getSelectedTrashcan();
+  }, [modalVisible]);
 
   if (user.success) console.log('user', user.data);
 
