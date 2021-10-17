@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
+import Modal from 'react-native-modal';
+
 export const Alert = ({
   alertVisible,
   setAlertVisible,
@@ -16,7 +18,6 @@ export const Alert = ({
   message,
   callback=null,
 }) => {
-
   return (
     <AwesomeAlert
     show={alertVisible}

@@ -2,7 +2,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   Alert,
-  Modal,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -25,6 +24,8 @@ import {
   PinContext,
 } from '../context/PinContext';
 import {getGeolocation} from '../service/Geolocation';
+
+import Modal from 'react-native-modal';
 
 import {URL} from '../../env.json';
 
@@ -100,7 +101,20 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
 
   return (
     <View style={styles.centeredView}>
-      <Modal animationType="fade" transparent={true} visible={modalVisible}>
+      <Modal
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
+        transparent={true}
+        isVisible={modalVisible}
+        backdropColor="none"
+        onBackButtonPress={() => {
+          setModalVisible(!modalVisible);
+        }}
+        onBackdropPress={() => {
+          setModalVisible(!modalVisible);
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>
