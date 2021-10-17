@@ -1,7 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
   Alert,
-  Modal,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -11,6 +11,8 @@ import {
   Dimensions,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
+
+import Modal from 'react-native-modal';
 
 import {URL} from '../../env.json';
 
@@ -73,9 +75,19 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
         transparent={true}
-        visible={leaderBoardVisible}>
+        isVisible={leaderBoardVisible}
+        backdropColor="none"
+        onBackButtonPress={() => {
+          setLeaderBoardVisible(!leaderBoardVisible);
+        }}
+        onBackdropPress={() => {
+          setLeaderBoardVisible(!leaderBoardVisible);
+        }}>
         <View style={styles.centeredView}>
           <View
             style={{

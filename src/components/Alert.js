@@ -1,13 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Modal,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  Image,
-} from 'react-native';
+import {StyleSheet, Text, TouchableHighlight, View, Image} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
+
+import Modal from 'react-native-modal';
 
 export const Alert = ({
   alertVisible,
@@ -15,15 +10,18 @@ export const Alert = ({
   message,
   callback = null,
 }) => {
-
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
         transparent={true}
-        visible={alertVisible}
+        isVisible={alertVisible}
+        backdropColor="none"
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+          Alert.alert('Modal has been closed');
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>

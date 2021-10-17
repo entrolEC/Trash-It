@@ -26,6 +26,7 @@
     "react-native-geolocation-service": "^5.3.0-beta.3",
     "react-native-gesture-handler": "^1.9.0",
     "react-native-image-crop-picker": "^0.35.1",
+    "react-native-modal": "^13.0.0",
     "react-native-nmap": "0.0.54",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
