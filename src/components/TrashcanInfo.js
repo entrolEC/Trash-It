@@ -11,8 +11,18 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {URL} from '../../env.json';
-import {useUserState, useUserDispatch, getUser, UserContext} from '../context/UserContext';
-import {usePinState, usePinDispatch, getPin, PinContext} from '../context/PinContext';
+import {
+  useUserState,
+  useUserDispatch,
+  getUser,
+  UserContext,
+} from '../context/UserContext';
+import {
+  usePinState,
+  usePinDispatch,
+  getPin,
+  PinContext,
+} from '../context/PinContext';
 
 export const TrashcanInfo = ({
   modalVisible,
@@ -20,7 +30,7 @@ export const TrashcanInfo = ({
   selectedIndex,
   setSelectedIndex,
   selectedId,
-  setSelectedId
+  setSelectedId,
 }) => {
   const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,14 +38,14 @@ export const TrashcanInfo = ({
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
-  const { user } = userState; // included : data, loading, error, success
+  const {user} = userState; // included : data, loading, error, success
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const { pin } = pinState; // included : data, loading, error, success
+  const {pin} = pinState; // included : data, loading, error, success
 
   useEffect(() => {
-    console.log("trashcaninfo")
+    console.log('trashcaninfo');
     const getSelectedTrashcan = async () => {
       var requestOptions = {
         headers: {
@@ -44,28 +54,23 @@ export const TrashcanInfo = ({
         method: 'GET',
         redirect: 'follow',
       };
-      await fetch(
-        `http://${URL}/locations/${selectedId}/`,
-        requestOptions,
-      )
+      await fetch(`http://${URL}/locations/${selectedId}/`, requestOptions)
         .then((response) => response.json())
         .then((result) => {
-          console.log("getSelectedTrashcan", result);
+          console.log('getSelectedTrashcan', result);
           setSelectedTrashcan(result);
-          setLoading(false) // 로딩 제대로 작동 함.
+          setLoading(false); // 로딩 제대로 작동 함.
         })
         .catch((error) => console.log('error', error));
-    }
+    };
 
-    if(selectedIndex !== null)
-      getSelectedTrashcan();
-  }, [selectedIndex])
+    if (selectedIndex !== null) getSelectedTrashcan();
+  }, [selectedIndex]);
 
-  if(user.success) console.log("user", user.data)
-
+  if (user.success) console.log('user', user.data);
 
   const refreshData = async () => {
-    getPin(pinDispatch)
+    getPin(pinDispatch);
   };
 
   const deleteData = async () => {
@@ -79,10 +84,7 @@ export const TrashcanInfo = ({
       redirect: 'follow',
     };
 
-    await fetch(
-      `http://${URL}/locations/${selectedId}/`,
-      requestOptions,
-    )
+    await fetch(`http://${URL}/locations/${selectedId}/`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log('log', result);
@@ -91,23 +93,24 @@ export const TrashcanInfo = ({
       .catch((error) => console.log('error', error));
   };
 
-  if(loading) return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>로딩중입니다.</Text>
+  if (loading)
+    return (
+      <View style={styles.centeredView}>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text>로딩중입니다.</Text>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
-  )
+        </Modal>
+      </View>
+    );
 
   return (
     <View style={styles.centeredView}>
@@ -122,7 +125,8 @@ export const TrashcanInfo = ({
           <View style={styles.modalView}>
             <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
               <Text>게시자 : {selectedTrashcan.author.email}</Text>
-              {user.success && user.data.user.email == selectedTrashcan.author.email ? (
+              {user.success &&
+              user.data.user.email == selectedTrashcan.author.email ? (
                 <TouchableHighlight
                   style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                   onPress={async () => {

@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     alignItems: 'center',
-    right: 50,
-    bottom: 50,
+    right: 30,
+    bottom: 30,
   },
   button: {
     // position: 'absolute',
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     shadowOffset: {height: 10},
   },
   menu: {
-    backgroundColor: '#F02A4B',
+    backgroundColor: '#FF8370',
   },
   item: {
     width: 48,

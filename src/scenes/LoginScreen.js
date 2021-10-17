@@ -40,7 +40,7 @@ export const LoginScreen = ({
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
-  const { user } = userState; // included : data, loading, error, success
+  const {user} = userState; // included : data, loading, error, success
 
   useEffect(() => {
     console.log(webClientId);
@@ -53,9 +53,9 @@ export const LoginScreen = ({
   }, []);
 
   useEffect(() => {
-    if(token !== undefined) {
+    if (token !== undefined) {
       console.log('tokens are ready', token);
-      getUser(userDispatch, token)
+      getUser(userDispatch, token);
     }
   }, [token]);
 
