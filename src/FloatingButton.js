@@ -63,7 +63,7 @@ export const FloatingButton = (props) => {
           props.onPressItem('leaderBoard');
         }}>
         <Animated.View style={[styles.button, styles.item, leaderBoardStyle]}>
-          <Icon name="trophy-outline" size={20} color="#F02A4B" />
+          <Icon name="trophy-outline" size={20} color="#EB9486" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
@@ -72,7 +72,7 @@ export const FloatingButton = (props) => {
           props.onPressItem('addTrashcan');
         }}>
         <Animated.View style={[styles.button, styles.item, trashCanStyle]}>
-          <Icon name="trash-outline" size={20} color="#F02A4B" />
+          <Icon name="trash-outline" size={20} color="#8CBA80" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
@@ -81,7 +81,7 @@ export const FloatingButton = (props) => {
           props.onPressItem('login');
         }}>
         <Animated.View style={[styles.button, styles.item, userStyle]}>
-          <Icon name="person-outline" size={20} color="#F02A4B" />
+          <Icon name="person-outline" size={20} color="#74B3CE" />
         </Animated.View>
       </TouchableWithoutFeedback>
 
@@ -120,9 +120,9 @@ const styles = StyleSheet.create({
     borderRadius: 60 / 2,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowRadius: 10,
-    elevation: 3,
-    shadowColor: '#F02A4B',
+    shadowRadius: 20,
+    elevation: 5,
+    shadowColor: 'black',
     shadowOpacity: 0.3,
     shadowOffset: {height: 10},
   },
