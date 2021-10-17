@@ -2,7 +2,11 @@
 # trashcanMap
 ```
 npm install
+or
+yarn install
+
 npx react-native run-android
+npx react-native run-ios
 ```
 
 #프로젝트 계획 동기
