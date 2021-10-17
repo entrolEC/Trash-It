@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Text} from 'react-native';
+import {BackHandler} from 'react-native';
 import AnimatedSplash from 'react-native-animated-splash-screen';
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
@@ -38,6 +38,7 @@ export const SplashScreen = () => {
   const [alertVisible, setAlertVisible] = useState(false);
   const [selectedtrashcan, setSelectedtrashcan] = useState([]);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
+  const [showConnectionAlert, setShowConnectionAlert] = useState(false); // 인터넷 연결 실패 경고창 보임 여부
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
@@ -58,10 +59,14 @@ export const SplashScreen = () => {
   }, [pinDispatch]);
 
   useEffect(() => {
-    // setIsLoaded(isLoaded + 1);
-    console.log('loading ... ', isLoaded);
-    console.log('current', currentPosition);
-  }, [trashcanLocation, currentPosition]);
+    console.log("pinerror:" ,pin.error)
+    if(isLoaded)
+      setTimeout(() => {
+        if(!pin.success)
+          setShowConnectionAlert(true);
+      },5000)
+  }, [isLoaded])
+
 
   return (
     <>
@@ -71,17 +76,26 @@ export const SplashScreen = () => {
           longitude={isGeolocationLoaded.longitude}
         />
       ) : (
-        <LottieView
-          source={require('../assets/splash.json')}
-          autoPlay
-          loop={false}
-          onAnimationFinish={() => {
-            if (trashcanLocation) {
-              setIsLoaded(true);
-            }
-          }}
-          style={{backgroundColor: '#73B5CE'}}
-        />
+        <>
+          <LottieView
+            source={require('../assets/splash.json')}
+            autoPlay
+            loop={false}
+            onAnimationFinish={() => {
+              if (trashcanLocation) {
+                setIsLoaded(true);
+              }
+            }}
+            style={{backgroundColor: '#73B5CE'}}
+          />
+          <Alert 
+            alertVisible={showConnectionAlert}
+            setAlertVisible={setShowConnectionAlert}
+            title={"인터넷 없음"}
+            message={"인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!"}
+            callback={() => BackHandler.exitApp()}
+          />
+        </>
       )}
     </>
   );
