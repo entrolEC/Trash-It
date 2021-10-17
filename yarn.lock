@@ -6012,6 +6012,13 @@
   dependencies:
     "prop-types" "^15.7.2"
 
+"react-native-awesome-alerts@^1.5.2":
+  "integrity" "sha512-PPTzKLpwDKbjeghvrRkg7OunND4C7d4bQORVLBnhqUK2z2PfZiI3UCULU0tczzeOyavv5hVSrYNXKPXlvhfmVg=="
+  "resolved" "https://registry.npmjs.org/react-native-awesome-alerts/-/react-native-awesome-alerts-1.5.2.tgz"
+  "version" "1.5.2"
+  dependencies:
+    "prop-types" "^15.7.2"
+
 "react-native-codegen@^0.0.6":
   "integrity" "sha512-cMvrUelD81wiPitEPiwE/TCNscIVauXxmt4NTGcy18HrUd0WRWXfYzAQGXm0eI87u3NMudNhqFj2NISJenxQHg=="
   "resolved" "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.0.6.tgz"

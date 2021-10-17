@@ -15,6 +15,8 @@ import {
   Text,
   Dimensions,
   ActivityIndicator,
+  Image,
+  ImageBackground
 } from 'react-native';
 
 import NaverMapView, {
