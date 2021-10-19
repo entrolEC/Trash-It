@@ -1,5 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
-import { URL } from '../../env.json';
+
+import * as api from '../service/Api';
+import createAsyncDispatcher from './AsyncActionUtils'
 
 // UsersContext 에서 사용 할 기본 상태
 const initialState = {
@@ -91,31 +93,33 @@ export const useUserDispatch = () => {
   return dispatch;
 }
 
-export const getUser = async (dispatch, token) => {
-  var formdata = new FormData();
+export const getUser = createAsyncDispatcher('GET_USER', api.getUser);
 
-  formdata.append('access_token', token.accessToken);
-  console.log('in fetchGoogleLoginFinish', formdata);
-  var requestOptions = {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-    method: 'POST',
-    body: formdata,
-    redirect: 'follow',
-  };
+// export const getUser = async (dispatch, token) => {
+//   var formdata = new FormData();
 
-  await fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
-    .then((response) => response.json())
-    .then((result) => {
-      dispatch({ 
-        type: 'GET_USER_SUCCESS', 
-        data: {
-          accessToken: result.access_token, 
-          refreshToken: result.refresh_token, 
-          user: result.user
-        } 
-      });
-    })
-    .catch((error) => dispatch({ type: 'GET_USER_ERROR', error: e }));
-}
+//   formdata.append('access_token', token.accessToken);
+//   console.log('in fetchGoogleLoginFinish', formdata);
+//   var requestOptions = {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//     },
+//     method: 'POST',
+//     body: formdata,
+//     redirect: 'follow',
+//   };
+
+//   await fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
+//     .then((response) => response.json())
+//     .then((result) => {
+//       dispatch({ 
+//         type: 'GET_USER_SUCCESS', 
+//         data: {
+//           accessToken: result.access_token, 
+//           refreshToken: result.refresh_token, 
+//           user: result.user
+//         } 
+//       });
+//     })
+//     .catch((error) => dispatch({ type: 'GET_USER_ERROR', error: e }));
+// }

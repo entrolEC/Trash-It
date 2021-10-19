@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BackHandler} from 'react-native';
+import {BackHandler, SafeAreaView} from 'react-native';
 import AnimatedSplash from 'react-native-animated-splash-screen';
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
@@ -91,7 +91,7 @@ export const SplashScreen = () => {
             setAlertVisible={setShowConnectionAlert}
             title={'인터넷 없음'}
             message={'인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!'}
-            callback={() => BackHandler.exitApp()}
+            callback={() => BackHandler.exitApp()} // not working in ios
           />
         </>
       )}

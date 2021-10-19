@@ -10,7 +10,6 @@ import {
   TextInput,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import Geolocation from 'react-native-geolocation-service';
 import {
   useUserState,
   useUserDispatch,

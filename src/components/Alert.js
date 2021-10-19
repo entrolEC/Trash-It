@@ -33,15 +33,23 @@ export const Alert = ({
         if (callback !== null) callback();
       }}
       setAlertVisible
-      contentContainerStyle={styles.alert}
+      contentContainerStyle={styles.contentContainer}
+      contentStyle={styles.contentStyle}
+      titleStyle={styles.title}
+      messageStyle={styles.message}
+      actionContainerStyle={styles.actionContainer}
+      confirmButtonStyle={styles.confrimButton}
+      confirmButtonTextStyle={styles.confirmButtonText}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  alert: {
+  contentContainer: {
     width: '70%',
-    height: 180,
-    overflow: 'hidden',
+    height: '22%',
+    padding: '-10%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
