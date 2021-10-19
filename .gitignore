@@ -63,3 +63,5 @@ env.json
 android/app/src/main/assets/index.android.bundle
 
 Icon&Splash Design
+
+*.cmd
