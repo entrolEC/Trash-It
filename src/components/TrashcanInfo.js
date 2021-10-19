@@ -205,7 +205,8 @@ export const TrashcanInfo = ({
             <Image
               style={styles.image}
               source={{
-                uri: selectedTrashcan.image,
+                // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
+                uri: `http://${URL}${selectedTrashcan.image}`,
               }}
             />
             <Text style={styles.text}>{selectedTrashcan.description}</Text>
