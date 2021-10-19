@@ -48,6 +48,8 @@ export const TrashcanInfo = ({
 
   const [likes, setLikes] = useState(0);
   const [dislikes, setDisLikes] = useState(0);
+  const [userLikes, setUserLikes] = useState(false);
+  const [userDislikes, setUserDisLikes] = useState(false);
 
   useEffect(() => {
     var formdata = new FormData();
@@ -71,6 +73,8 @@ export const TrashcanInfo = ({
           setSelectedTrashcan(result);
           setLikes(result.likes);
           setDisLikes(result.dislikes);
+          setUserLikes(result.userLikes);
+          setUserDisLikes(result.userDisLikes);
           setLoading(false); // 로딩 제대로 작동 함.
         })
         .catch((error) => console.log('error', error));
@@ -125,6 +129,8 @@ export const TrashcanInfo = ({
         console.log(result);
         setLikes(result.likes);
         setDisLikes(result.dislikes);
+        setUserLikes(result.userLikes);
+        setUserDisLikes(result.userDisLikes);
       })
       .catch((error) => console.log('error', error));
   };
@@ -223,20 +229,46 @@ export const TrashcanInfo = ({
               <Text style={styles.textStyle}> 확인 </Text>
             </TouchableHighlight>
 
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                postActions('like');
-              }}>
-              <Text style={styles.textStyle}> 좋아요 {likes} </Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                postActions('dislike');
-              }}>
-              <Text style={styles.textStyle}> 싫어요 {dislikes} </Text>
-            </TouchableHighlight>
+            {
+              !userLikes ? (
+                <TouchableHighlight
+                  style={{...styles.likes}}
+                  onPress={() => {
+                    postActions('like');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  style={{...styles.likes, backgroundColor: '#2196F3'}}
+                  onPress={() => {
+                    postActions('like');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
+                </TouchableHighlight>
+              )
+            }
+
+            {
+              !userDislikes ? (
+                <TouchableHighlight
+                  style={{...styles.likes}}
+                  onPress={() => {
+                    postActions('dislike');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'black'}}> 싫어요 {dislikes} </Text>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  style={{...styles.likes, backgroundColor: '#2196F3'}}
+                  onPress={() => {
+                    postActions('dislike');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'white'}}> 싫어요 {dislikes} </Text>
+                </TouchableHighlight>
+              )
+            }
+
           </View>
         </View>
       </Modal>
@@ -297,5 +329,12 @@ const styles = StyleSheet.create({
     padding: 5,
     elevation: 2,
     marginLeft: 50,
+  },
+  likes: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 10,
+    marginTop: 15,
+    elevation: 2,
   },
 });
