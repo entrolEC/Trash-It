@@ -1,7 +1,7 @@
+/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
 import {
   Alert,
-  Modal,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -24,6 +24,8 @@ import {
   PinContext,
 } from '../context/PinContext';
 
+import Modal from 'react-native-modal';
+
 export const TrashcanInfo = ({
   modalVisible,
   setModalVisible,
@@ -44,7 +46,14 @@ export const TrashcanInfo = ({
   const pinDispatch = usePinDispatch();
   const {pin} = pinState; // included : data, loading, error, success
 
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDisLikes] = useState(0);
+
   useEffect(() => {
+    var formdata = new FormData();
+    formdata.append('id', selectedId);
+    formdata.append('user_id', 5);
+
     console.log('trashcaninfo');
     const getSelectedTrashcan = async () => {
       var requestOptions = {
@@ -54,11 +63,14 @@ export const TrashcanInfo = ({
         method: 'GET',
         redirect: 'follow',
       };
-      await fetch(`http://${URL}/locations/${selectedId}/`, requestOptions)
+      // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
+      await fetch(`http://${URL}/locations/${selectedId}/?user_id=${user.data.user.id}`, requestOptions)
         .then((response) => response.json())
         .then((result) => {
           console.log('getSelectedTrashcan', result);
           setSelectedTrashcan(result);
+          setLikes(result.likes);
+          setDisLikes(result.dislikes);
           setLoading(false); // 로딩 제대로 작동 함.
         })
         .catch((error) => console.log('error', error));
@@ -93,13 +105,47 @@ export const TrashcanInfo = ({
       .catch((error) => console.log('error', error));
   };
 
+  const postActions = async (action) => {
+    var formdata = new FormData();
+    formdata.append('id', selectedTrashcan.id);
+    formdata.append('action', action);
+    formdata.append('user_id', user.data.user.id);
+    console.log(JSON.stringify(formdata));
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'POST',
+      body: formdata,
+    };
+
+    await fetch(`http://${URL}/action/`, requestOptions)
+      .then((response) => response.json())
+      .then(async (result) => {
+        console.log(result);
+        setLikes(result.likes);
+        setDisLikes(result.dislikes);
+      })
+      .catch((error) => console.log('error', error));
+  };
+
   if (loading)
     return (
       <View style={styles.centeredView}>
         <Modal
-          animationType="slide"
+          animationIn="pulse"
+          animationInTiming={500}
+          animationOut="bounceOutDown"
+          animationOutTiming={500}
           transparent={true}
-          visible={modalVisible}
+          isVisible={modalVisible}
+          backdropColor="none"
+          onBackButtonPress={() => {
+            setModalVisible(!modalVisible);
+          }}
+          onBackdropPress={() => {
+            setModalVisible(!modalVisible);
+          }}
           onRequestClose={() => {
             Alert.alert('Modal has been closed.');
           }}>
@@ -115,9 +161,19 @@ export const TrashcanInfo = ({
   return (
     <View style={styles.centeredView}>
       <Modal
-        animationType="slide"
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
         transparent={true}
-        visible={modalVisible}
+        isVisible={modalVisible}
+        backdropColor="none"
+        onBackButtonPress={() => {
+          setModalVisible(!modalVisible);
+        }}
+        onBackdropPress={() => {
+          setModalVisible(!modalVisible);
+        }}
         onRequestClose={() => {
           Alert.alert('Modal has been closed.');
         }}>
@@ -164,6 +220,21 @@ export const TrashcanInfo = ({
                 //addNewTrashcan()
               }}>
               <Text style={styles.textStyle}> 확인 </Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={{...styles.openButton, backgroundColor: '#2196F3'}}
+              onPress={() => {
+                postActions('like');
+              }}>
+              <Text style={styles.textStyle}> 좋아요 {likes} </Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              style={{...styles.openButton, backgroundColor: '#2196F3'}}
+              onPress={() => {
+                postActions('dislike');
+              }}>
+              <Text style={styles.textStyle}> 싫어요 {dislikes} </Text>
             </TouchableHighlight>
           </View>
         </View>

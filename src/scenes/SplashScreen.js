@@ -59,14 +59,12 @@ export const SplashScreen = () => {
   }, [pinDispatch]);
 
   useEffect(() => {
-    console.log("pinerror:" ,pin.error)
-    if(isLoaded)
+    console.log('pinerror:', pin.error);
+    if (isLoaded)
       setTimeout(() => {
-        if(!pin.success)
-          setShowConnectionAlert(true);
-      },5000)
-  }, [isLoaded])
-
+        if (!pin.success) setShowConnectionAlert(true);
+      }, 5000);
+  }, [isLoaded]);
 
   return (
     <>
@@ -88,11 +86,11 @@ export const SplashScreen = () => {
             }}
             style={{backgroundColor: '#73B5CE'}}
           />
-          <Alert 
+          <Alert
             alertVisible={showConnectionAlert}
             setAlertVisible={setShowConnectionAlert}
-            title={"인터넷 없음"}
-            message={"인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!"}
+            title={'인터넷 없음'}
+            message={'인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!'}
             callback={() => BackHandler.exitApp()}
           />
         </>
