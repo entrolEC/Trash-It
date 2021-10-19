@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BackHandler} from 'react-native';
+import {BackHandler, SafeAreaView} from 'react-native';
 import AnimatedSplash from 'react-native-animated-splash-screen';
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
@@ -71,10 +71,11 @@ export const SplashScreen = () => {
   return (
     <>
       {isLoaded === true && isGeolocationLoaded !== 0 && pin.success ? (
-        <MapScreen
-          latitude={isGeolocationLoaded.latitude}
-          longitude={isGeolocationLoaded.longitude}
-        />
+          <MapScreen
+            latitude={isGeolocationLoaded.latitude}
+            longitude={isGeolocationLoaded.longitude}
+          />
+
       ) : (
         <>
           <LottieView

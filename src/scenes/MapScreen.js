@@ -109,7 +109,7 @@ export const MapScreen = ({latitude, longitude}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <NaverMapView
         style={{width: '100%', height: '100%'}}
         showsMyLocationButton={true}
@@ -166,7 +166,7 @@ export const MapScreen = ({latitude, longitude}) => {
         leaderBoardVisible={leaderBoardVisible}
         setLeaderBoardVisible={setLeaderBoardVisible}
       />
-    </SafeAreaView>
+      </>
   );
 };
 

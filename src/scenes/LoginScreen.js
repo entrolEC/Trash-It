@@ -45,10 +45,11 @@ export const LoginScreen = ({
   useEffect(() => {
     console.log(webClientId);
     GoogleSignin.configure({
-      //scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
+      scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
       webClientId: webClientId,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
+      iosClientId: '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com'
     });
   }, []);
 
@@ -64,8 +65,9 @@ export const LoginScreen = ({
       await GoogleSignin.hasPlayServices();
       console.log('1');
       const userInfo = await GoogleSignin.signIn();
-      const tokens = await GoogleSignin.getTokens();
       console.log('2');
+      const tokens = await GoogleSignin.getTokens();
+      console.log('3');
       console.log('userInfo : ', userInfo);
       console.log('tokens :', tokens);
       setUserGoogleInfo(userInfo);

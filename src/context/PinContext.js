@@ -1,5 +1,7 @@
 import React, { createContext, useReducer, useContext } from 'react';
-import { URL } from '../../env.json';
+
+import * as api from '../service/Api';
+import createAsyncDispatcher from './AsyncActionUtils'
 
 // PinsContext 에서 사용 할 기본 상태
 const initialState = {
@@ -91,17 +93,4 @@ export const usePinDispatch = () => {
   return dispatch;
 }
 
-export const getPin = async (dispatch) => {
-  dispatch({ type: 'GET_PIN' });
-  var requestOptions = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  await fetch(`http://${URL}/pin/`, requestOptions)
-    .then((response) => response.json())
-    .then((result) => {
-      dispatch({ type: 'GET_PIN_SUCCESS', data: result });
-    })
-    .catch((error) => dispatch({ type: 'GET_PIN_ERROR', error: e }));
-}
+export const getPin = createAsyncDispatcher('GET_PIN', api.getPin);

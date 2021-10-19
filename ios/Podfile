@@ -9,6 +9,7 @@ target 'trashcanMap' do
   use_react_native!(:path => config["reactNativePath"])
 
   pod 'NMapsMap'
+  pod 'GoogleSignIn'
 
   target 'trashcanMapTests' do
     inherit! :complete

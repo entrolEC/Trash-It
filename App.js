@@ -7,7 +7,7 @@ import {getLocationPermission, hasLocationPermission} from './src/service/Permis
 
 export default App = () => { 
   // get location permission
-  if(hasLocationPermission())
+  if(!hasLocationPermission())
     getLocationPermission();
 
   return (
