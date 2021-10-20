@@ -52,10 +52,6 @@ export const TrashcanInfo = ({
   const [userDislikes, setUserDisLikes] = useState(false);
 
   useEffect(() => {
-    var formdata = new FormData();
-    formdata.append('id', selectedId);
-    formdata.append('user_id', 5);
-
     console.log('trashcaninfo');
     const getSelectedTrashcan = async () => {
       var requestOptions = {
@@ -66,18 +62,19 @@ export const TrashcanInfo = ({
         redirect: 'follow',
       };
       // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
-      await fetch(`http://${URL}/locations/${selectedId}/?user_id=${user.data.user.id}`, requestOptions)
-        .then((response) => response.json())
-        .then((result) => {
-          console.log('getSelectedTrashcan', result);
-          setSelectedTrashcan(result);
-          setLikes(result.likes);
-          setDisLikes(result.dislikes);
-          setUserLikes(result.userLikes);
-          setUserDisLikes(result.userDisLikes);
-          setLoading(false); // 로딩 제대로 작동 함.
-        })
-        .catch((error) => console.log('error', error));
+      const params = (user.data == null ? -1 : user.data.user.id);
+      await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log('getSelectedTrashcan', result);
+        setSelectedTrashcan(result);
+        setLikes(result.likes);
+        setDisLikes(result.dislikes);
+        setUserLikes(result.userLikes);
+        setUserDisLikes(result.userDisLikes);
+        setLoading(false); // 로딩 제대로 작동 함.
+      })
+      .catch((error) => console.log('error', error));
     };
 
     if (modalVisible === true) getSelectedTrashcan();
