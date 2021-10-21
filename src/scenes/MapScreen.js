@@ -147,6 +147,8 @@ export const MapScreen = ({latitude, longitude}) => {
           setSelectedIndex={setSelectedIndex}
           selectedId={selectedId}
           setSelectedId={setSelectedId}
+          alertVisible={alertVisible}
+          setAlertVisible={setAlertVisible}
         />
       ) : null}
       <AddTrashcan

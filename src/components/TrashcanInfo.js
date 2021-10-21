@@ -33,6 +33,8 @@ export const TrashcanInfo = ({
   setSelectedIndex,
   selectedId,
   setSelectedId,
+  alertVisible,
+  setAlertVisible,
 }) => {
   const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,10 @@ export const TrashcanInfo = ({
   const [userLikes, setUserLikes] = useState(false);
   const [userDislikes, setUserDisLikes] = useState(false);
 
+  // 처음에는 {user}님에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
+  // drag up 시 상세정보 표시
+  // 다른 핀을 눌렀을 시에는 그 핀에 대한 상세정보를 bottomsheet로 띄움
+
   useEffect(() => {
     console.log('trashcaninfo');
     const getSelectedTrashcan = async () => {
@@ -62,7 +68,7 @@ export const TrashcanInfo = ({
         redirect: 'follow',
       };
       // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
-      const params = (user.data == null ? -1 : user.data.user.id);
+      const params = (user.success ? user.data.user.id : -1);
       await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -107,36 +113,41 @@ export const TrashcanInfo = ({
   };
 
   const postActions = async (action) => {
-    var formdata = new FormData();
-    formdata.append('id', selectedTrashcan.id);
-    formdata.append('action', action);
-    formdata.append('user_id', user.data.user.id);
-    console.log(JSON.stringify(formdata));
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'POST',
-      body: formdata,
-    };
+    if (!user.success) {
+      setAlertVisible(true);
+    }
+    else {
+      var formdata = new FormData();
+      formdata.append('id', selectedTrashcan.id);
+      formdata.append('action', action);
+      formdata.append('user_id', user.data.user.id);
+      console.log(JSON.stringify(formdata));
+      var requestOptions = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        method: 'POST',
+        body: formdata,
+      };
 
-    await fetch(`http://${URL}/action/`, requestOptions)
-      .then((response) => response.json())
-      .then(async (result) => {
-        console.log(result);
-        setLikes(result.likes);
-        setDisLikes(result.dislikes);
-        setUserLikes(result.userLikes);
-        setUserDisLikes(result.userDisLikes);
-      })
-      .catch((error) => console.log('error', error));
+      await fetch(`http://${URL}/action/`, requestOptions)
+        .then((response) => response.json())
+        .then(async (result) => {
+          console.log(result);
+          setLikes(result.likes);
+          setDisLikes(result.dislikes);
+          setUserLikes(result.userLikes);
+          setUserDisLikes(result.userDisLikes);
+        })
+        .catch((error) => console.log('error', error));
+    }
   };
 
   if (loading)
     return (
       <View style={styles.centeredView}>
         <Modal
-          animationIn="pulse"
+          animationIn="slideInUp"
           animationInTiming={500}
           animationOut="bounceOutDown"
           animationOutTiming={500}
