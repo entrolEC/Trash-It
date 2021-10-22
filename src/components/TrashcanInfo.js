@@ -174,112 +174,94 @@ export const TrashcanInfo = ({
 
   return (
     <View style={styles.centeredView}>
-      <Modal
-        animationIn="pulse"
-        animationInTiming={500}
-        animationOut="bounceOutDown"
-        animationOutTiming={500}
-        transparent={true}
-        isVisible={modalVisible}
-        backdropColor="none"
-        onBackButtonPress={() => {
-          setModalVisible(!modalVisible);
-        }}
-        onBackdropPress={() => {
-          setModalVisible(!modalVisible);
-        }}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
-              <Text>게시자 : {selectedTrashcan.author.email}</Text>
-              {user.success &&
-              user.data.user.email == selectedTrashcan.author.email ? (
-                <TouchableHighlight
-                  style={{...styles.deleteButton, backgroundColor: '#b30000'}}
-                  onPress={async () => {
-                    await deleteData();
-                    setSelectedIndex(null);
-                    setSelectedId(null);
-                    setLoading(true);
-                    setModalVisible(!modalVisible);
-                    refreshData();
-                  }}>
-                  <Text style={styles.textStyle}> 삭제 </Text>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  style={{...styles.deleteButton, backgroundColor: '#aaaaaa'}}>
-                  <Text style={styles.textStyle}> 삭제 </Text>
-                </TouchableHighlight>
-              )}
-            </View>
-            <Image
-              style={styles.image}
-              source={{
-                // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
-                uri: `http://${URL}${selectedTrashcan.image}`,
-              }}
-            />
-            <Text style={styles.text}>{selectedTrashcan.description}</Text>
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                setLoading(true);
-                setModalVisible(!modalVisible);
-                setSelectedIndex(null);
-                setSelectedId(null);
-                // console.log(`this is trashcanLocation`, selectedTrashcan);
-                //addNewTrashcan()
-              }}>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-
-            {
-              !userLikes ? (
-                <TouchableHighlight
-                  style={{...styles.likes}}
-                  onPress={() => {
-                    postActions('like');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  style={{...styles.likes, backgroundColor: '#2196F3'}}
-                  onPress={() => {
-                    postActions('like');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
-                </TouchableHighlight>
-              )
-            }
-
-            {
-              !userDislikes ? (
-                <TouchableHighlight
-                  style={{...styles.likes}}
-                  onPress={() => {
-                    postActions('dislike');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'black'}}> 싫어요 {dislikes} </Text>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  style={{...styles.likes, backgroundColor: '#2196F3'}}
-                  onPress={() => {
-                    postActions('dislike');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'white'}}> 싫어요 {dislikes} </Text>
-                </TouchableHighlight>
-              )
-            }
-
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
+            <Text>게시자 : {selectedTrashcan.author.email}</Text>
+            {user.success &&
+            user.data.user.email == selectedTrashcan.author.email ? (
+              <TouchableHighlight
+                style={{...styles.deleteButton, backgroundColor: '#b30000'}}
+                onPress={async () => {
+                  await deleteData();
+                  setSelectedIndex(null);
+                  setSelectedId(null);
+                  setLoading(true);
+                  setModalVisible(!modalVisible);
+                  refreshData();
+                }}>
+                <Text style={styles.textStyle}> 삭제 </Text>
+              </TouchableHighlight>
+            ) : (
+              <TouchableHighlight
+                style={{...styles.deleteButton, backgroundColor: '#aaaaaa'}}>
+                <Text style={styles.textStyle}> 삭제 </Text>
+              </TouchableHighlight>
+            )}
           </View>
+          <Image
+            style={styles.image}
+            source={{
+              // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
+              uri: `http://${URL}${selectedTrashcan.image}`,
+            }}
+          />
+          <Text style={styles.text}>{selectedTrashcan.description}</Text>
+          <TouchableHighlight
+            style={{...styles.openButton, backgroundColor: '#2196F3'}}
+            onPress={() => {
+              setLoading(true);
+              setModalVisible(!modalVisible);
+              setSelectedIndex(null);
+              setSelectedId(null);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}>
+            <Text style={styles.textStyle}> 확인 </Text>
+          </TouchableHighlight>
+
+          {
+            !userLikes ? (
+              <TouchableHighlight
+                style={{...styles.likes}}
+                onPress={() => {
+                  postActions('like');
+                }}>
+                <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
+              </TouchableHighlight>
+            ) : (
+              <TouchableHighlight
+                style={{...styles.likes, backgroundColor: '#2196F3'}}
+                onPress={() => {
+                  postActions('like');
+                }}>
+                <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
+              </TouchableHighlight>
+            )
+          }
+
+          {
+            !userDislikes ? (
+              <TouchableHighlight
+                style={{...styles.likes}}
+                onPress={() => {
+                  postActions('dislike');
+                }}>
+                <Text style={{...styles.textStyle, color: 'black'}}> 싫어요 {dislikes} </Text>
+              </TouchableHighlight>
+            ) : (
+              <TouchableHighlight
+                style={{...styles.likes, backgroundColor: '#2196F3'}}
+                onPress={() => {
+                  postActions('dislike');
+                }}>
+                <Text style={{...styles.textStyle, color: 'white'}}> 싫어요 {dislikes} </Text>
+              </TouchableHighlight>
+            )
+          }
+
         </View>
-      </Modal>
+      </View>
     </View>
   );
 };
@@ -292,20 +274,9 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    margin: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
-    paddingHorizontal: 40,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    marginBottom: 20,
   },
   openButton: {
     backgroundColor: '#F194FF',

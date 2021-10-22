@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,7 +16,9 @@ import {
   Dimensions,
   ActivityIndicator,
   Image,
-  ImageBackground
+  ImageBackground,
+  TouchableOpacity,
+  Button,
 } from 'react-native';
 
 import NaverMapView, {
@@ -34,6 +36,7 @@ import {TrashcanInfo} from '../components/TrashcanInfo';
 import {Auth} from '../components/Auth';
 import {Alert} from '../components/Alert';
 import {LeaderBoard} from '../components/LeaderBoard';
+import {BottomSheetComponent} from '../components/BottomSheetComponent';
 import {
   usePinState,
   usePinDispatch,
@@ -48,6 +51,7 @@ import {
 } from '../context/UserContext';
 
 import {FloatingButton} from '../FloatingButton';
+import {Modalize} from 'react-native-modalize';
 
 import {URL} from '../../env.json';
 
@@ -67,6 +71,11 @@ export const MapScreen = ({latitude, longitude}) => {
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
   const {pin} = pinState; // included : data, loading, error, success
+
+  const modalizeRef = useRef<Modalize>(null);
+  const onOpen = () => {
+    modalizeRef.current?.open();
+  };
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -128,28 +137,38 @@ export const MapScreen = ({latitude, longitude}) => {
               onClick={() => {
                 //await fetchData(point);
                 onClicked(point, idx);
+                onOpen();
               }}
             />
           ))}
       </NaverMapView>
 
-      <FloatingButton
-        onPressItem={(name) => {
-          menuPressed(name);
-        }}
-      />
-
       {selectedIndex !== null ? (
-        <TrashcanInfo
-          modalVisible={infoModalVisible}
-          setModalVisible={setInfoModalVisible}
-          selectedIndex={selectedIndex}
-          setSelectedIndex={setSelectedIndex}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          alertVisible={alertVisible}
-          setAlertVisible={setAlertVisible}
-        />
+        <Modalize
+          ref={modalizeRef}
+          snapPoint={500}
+          handlePosition={'inside'}
+          closeSnapPointStraightEnabled={false}
+          modalStyle={{borderTopLeftRadius: 30, borderTopRightRadius: 30}}
+          withOverlay={false}
+          onClose={() => {
+            setSelectedIndex(null);
+            setSelectedId(null);
+            console.log(selectedIndex);
+            // console.log(`this is trashcanLocation`, selectedTrashcan);
+            //addNewTrashcan()
+          }}>
+          <TrashcanInfo
+            modalVisible={infoModalVisible}
+            setModalVisible={setInfoModalVisible}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            alertVisible={alertVisible}
+            setAlertVisible={setAlertVisible}
+          />
+        </Modalize>
       ) : null}
       <AddTrashcan
         modalVisible={modalVisible}
@@ -168,7 +187,13 @@ export const MapScreen = ({latitude, longitude}) => {
         leaderBoardVisible={leaderBoardVisible}
         setLeaderBoardVisible={setLeaderBoardVisible}
       />
-      </>
+
+      <FloatingButton
+        onPressItem={(name) => {
+          menuPressed(name);
+        }}
+      />
+    </>
   );
 };
 
