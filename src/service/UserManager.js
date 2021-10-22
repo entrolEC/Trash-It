@@ -8,9 +8,9 @@ const checkExpired = (accessToken) => {
   return decoded.exp < (Date.now() / 1000);
 }
 
-const getUser = async () => {
-  const accessToken = await getData('user');
-  return getData('user')
+export const getUser = async () => {
+  const user = await getData('user');
+  return user;
 }
 
 export const getNewToken = async () => {

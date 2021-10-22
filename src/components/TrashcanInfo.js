@@ -11,18 +11,16 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {URL} from '../../env.json';
-import {
-  useUserState,
-  useUserDispatch,
-  getUser,
-  UserContext,
-} from '../context/UserContext';
+
 import {
   usePinState,
   usePinDispatch,
   getPin,
   PinContext,
 } from '../context/PinContext';
+
+import { getData } from '../service/AsyncStorage';
+import { getNewToken, getUser } from '../service/UserManager';
 
 export const TrashcanInfo = ({
   modalVisible,
@@ -35,14 +33,20 @@ export const TrashcanInfo = ({
   const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrashcan, setSelectedTrashcan] = useState();
-
-  const userState = useUserState();
-  const userDispatch = useUserDispatch();
-  const {user} = userState; // included : data, loading, error, success
+  const [user, setUser] = useState();
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
   const {pin} = pinState; // included : data, loading, error, success
+
+  useEffect(() => {
+    getUser().then((_user) => {
+      console.log("user trashcaninfo",_user);
+      setUser(_user.user)
+    })
+    
+    
+  },[]);
 
   useEffect(() => {
     console.log('trashcaninfo');
@@ -67,18 +71,17 @@ export const TrashcanInfo = ({
     if (modalVisible === true) getSelectedTrashcan();
   }, [modalVisible]);
 
-  if (user.success) console.log('user', user.data);
-
   const refreshData = async () => {
     getPin(pinDispatch);
   };
 
   const deleteData = async () => {
     console.log('selectedIndex.id', selectedTrashcan.id);
+    const accessToken = await getNewToken();
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + user.data.accessToken,
+        Authorization: 'Bearer ' + accessToken,
       },
       method: 'DELETE',
       redirect: 'follow',
@@ -135,8 +138,7 @@ export const TrashcanInfo = ({
           <View style={styles.modalView}>
             <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
               <Text>게시자 : {selectedTrashcan.author.email}</Text>
-              {user.success &&
-              user.data.user.email == selectedTrashcan.author.email ? (
+              {user !==null && user.email === selectedTrashcan.author.email ? (
                 <TouchableHighlight
                   style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                   onPress={async () => {

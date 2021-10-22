@@ -40,8 +40,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     getPin(pinDispatch);
   };
 
-  const addNewTrashcan = async () => {
-    console.log("asyncdata", await getData('user'));
+  const addNewTrashcan = () => {
     ImagePicker.openCamera({
       width: 300,
       height: 400,
