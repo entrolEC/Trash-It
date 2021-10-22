@@ -17,13 +17,8 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
-import {
-  useUserState,
-  useUserDispatch,
-  getUser,
-  UserContext,
-} from '../context/UserContext';
-
+import { setGoogleLoginUser } from '../service/UserManager';
+import {getData} from '../service/AsyncStorage';
 import {URL, webClientId} from '../../env.json';
 
 export const LoginScreen = ({
@@ -37,10 +32,7 @@ export const LoginScreen = ({
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
   const [token, setToken] = useState();
-
-  const userState = useUserState();
-  const userDispatch = useUserDispatch();
-  const {user} = userState; // included : data, loading, error, success
+  const [user, setUser] = useState();
 
   useEffect(() => {
     console.log(webClientId);
@@ -51,12 +43,13 @@ export const LoginScreen = ({
       forceCodeForRefreshToken: true,
       iosClientId: '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com'
     });
+    setUser(getData('user').user);
   }, []);
 
   useEffect(() => {
     if (token !== undefined) {
       console.log('tokens are ready', token);
-      getUser(userDispatch, token);
+      setGoogleLoginUser(token);
     }
   }, [token]);
 
@@ -127,7 +120,7 @@ export const LoginScreen = ({
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>로그인된 계정 : {user.username}</Text>
+      <Text>로그인된 계정 : {}</Text>
       {errMessage && <Text style={{color: 'red'}}>{errMessage}</Text>}
       <TextInput
         style={styles.textInput}

@@ -15,13 +15,16 @@ export const getLocationPermission = async () => {
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log('You can use the location');
+      return true;
       //setHasLocationPermission(true);
     } else {
       console.log('location permission denied');
+      return false;
     }
   } catch (err) {
     console.warn(err);
   }
+  return false;
 };
 
 const hasPermissionIOS = async () => {
@@ -57,6 +60,7 @@ const hasPermissionIOS = async () => {
 export const hasLocationPermission = async () => {
   if (Platform.OS === 'ios') {
     const hasPermission = await hasPermissionIOS();
+    console.log("hasLocationPermissioni ios :", hasPermission);
     return hasPermission;
   }
 

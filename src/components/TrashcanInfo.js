@@ -11,12 +11,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {URL} from '../../env.json';
-import {
-  useUserState,
-  useUserDispatch,
-  getUser,
-  UserContext,
-} from '../context/UserContext';
+
 import {
   usePinState,
   usePinDispatch,
@@ -25,6 +20,8 @@ import {
 } from '../context/PinContext';
 
 import Modal from 'react-native-modal';
+import { getData } from '../service/AsyncStorage';
+import { getNewToken, getUser } from '../service/UserManager';
 
 export const TrashcanInfo = ({
   modalVisible,
@@ -39,10 +36,7 @@ export const TrashcanInfo = ({
   const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrashcan, setSelectedTrashcan] = useState();
-
-  const userState = useUserState();
-  const userDispatch = useUserDispatch();
-  const {user} = userState; // included : data, loading, error, success
+  const [user, setUser] = useState();
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -53,9 +47,18 @@ export const TrashcanInfo = ({
   const [userLikes, setUserLikes] = useState(false);
   const [userDislikes, setUserDisLikes] = useState(false);
 
-  // 처음에는 {user}님에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
+  // 처음에는 {user}에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
   // drag up 시 상세정보 표시
   // 다른 핀을 눌렀을 시에는 그 핀에 대한 상세정보를 bottomsheet로 띄움
+
+  useEffect(() => {
+    getUser().then((_user) => {
+      console.log("user trashcaninfo",_user);
+      setUser(_user.user)
+    })
+    
+    
+  },[]);
 
   useEffect(() => {
     console.log('trashcaninfo');
@@ -68,7 +71,7 @@ export const TrashcanInfo = ({
         redirect: 'follow',
       };
       // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
-      const params = (user.success ? user.data.user.id : -1);
+      const params = (user != null ? user.data.user.id : -1);
       await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -86,18 +89,17 @@ export const TrashcanInfo = ({
     if (modalVisible === true) getSelectedTrashcan();
   }, [modalVisible]);
 
-  if (user.success) console.log('user', user.data);
-
   const refreshData = async () => {
     getPin(pinDispatch);
   };
 
   const deleteData = async () => {
     console.log('selectedIndex.id', selectedTrashcan.id);
+    const accessToken = await getNewToken();
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + user.data.accessToken,
+        Authorization: 'Bearer ' + accessToken,
       },
       method: 'DELETE',
       redirect: 'follow',
@@ -113,7 +115,7 @@ export const TrashcanInfo = ({
   };
 
   const postActions = async (action) => {
-    if (!user.success) {
+    if (user == null) {
       setAlertVisible(true);
     }
     else {
@@ -166,6 +168,16 @@ export const TrashcanInfo = ({
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text>로딩중입니다.</Text>
+              <TouchableHighlight
+                style={{...styles.openButton, backgroundColor: '#2196F3'}}
+                onPress={() => {
+                  setLoading(true);
+                  setModalVisible(!modalVisible);
+                  setSelectedIndex(null);
+                  setSelectedId(null);
+                }}>
+                <Text style={styles.textStyle}> 취소 </Text>
+              </TouchableHighlight>
             </View>
           </View>
         </Modal>
@@ -178,8 +190,8 @@ export const TrashcanInfo = ({
         <View style={styles.modalView}>
           <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
             <Text>게시자 : {selectedTrashcan.author.email}</Text>
-            {user.success &&
-            user.data.user.email == selectedTrashcan.author.email ? (
+            {user != null &&
+            user.email == selectedTrashcan.author.email ? (
               <TouchableHighlight
                 style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                 onPress={async () => {
@@ -259,7 +271,6 @@ export const TrashcanInfo = ({
               </TouchableHighlight>
             )
           }
-
         </View>
       </View>
     </View>
@@ -289,6 +300,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingRight: 3
   },
   modalText: {
     marginBottom: 30,
