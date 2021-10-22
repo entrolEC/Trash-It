@@ -106,6 +106,16 @@ export const TrashcanInfo = ({
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text>로딩중입니다.</Text>
+              <TouchableHighlight
+                style={{...styles.openButton, backgroundColor: '#2196F3'}}
+                onPress={() => {
+                  setLoading(true);
+                  setModalVisible(!modalVisible);
+                  setSelectedIndex(null);
+                  setSelectedId(null);
+                }}>
+                <Text style={styles.textStyle}> 취소 </Text>
+              </TouchableHighlight>
             </View>
           </View>
         </Modal>
@@ -160,8 +170,6 @@ export const TrashcanInfo = ({
                 setModalVisible(!modalVisible);
                 setSelectedIndex(null);
                 setSelectedId(null);
-                // console.log(`this is trashcanLocation`, selectedTrashcan);
-                //addNewTrashcan()
               }}>
               <Text style={styles.textStyle}> 확인 </Text>
             </TouchableHighlight>
@@ -206,6 +214,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+    paddingRight: 3
   },
   modalText: {
     marginBottom: 30,

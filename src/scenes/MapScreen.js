@@ -48,7 +48,7 @@ import {
 } from '../context/UserContext';
 
 import {FloatingButton} from '../FloatingButton';
-
+import { getData } from '../service/AsyncStorage';
 import {URL} from '../../env.json';
 
 export const MapScreen = ({latitude, longitude}) => {
@@ -95,15 +95,16 @@ export const MapScreen = ({latitude, longitude}) => {
   };
 
   const menuPressed = (name) => {
-    if (name == 'login') {
+    const userData = getData('user');
+    if (name === 'login') {
       setAuthModalVisible(true);
-    } else if (name == 'addTrashcan') {
-      if (user.success === false) {
+    } else if (name === 'addTrashcan') {
+      if (userData === null) {
         setAlertVisible(true);
       } else {
         setModalVisible(true);
       }
-    } else if (name == 'leaderBoard') {
+    } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
     }
   };
