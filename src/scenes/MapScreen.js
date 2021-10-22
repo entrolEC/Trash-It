@@ -50,7 +50,7 @@ import {
   UserContext,
 } from '../context/UserContext';
 
-import {FloatingButton} from '../FloatingButton';
+import {FloatingButton} from '../components/FloatingButton';
 import {Modalize} from 'react-native-modalize';
 
 import { getData } from '../service/AsyncStorage';
@@ -59,7 +59,7 @@ import {URL} from '../../env.json';
 export const MapScreen = ({latitude, longitude}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedId, setSelectedId] = useState(null);
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
@@ -74,9 +74,6 @@ export const MapScreen = ({latitude, longitude}) => {
   const {pin} = pinState; // included : data, loading, error, success
 
   const modalizeRef = useRef<Modalize>(null);
-  const onOpen = () => {
-    modalizeRef.current?.open();
-  };
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -119,6 +116,10 @@ export const MapScreen = ({latitude, longitude}) => {
     }
   };
 
+  useEffect(() => {
+    setSelectedIndex(null);
+  }, [])
+
   return (
     <>
       <NaverMapView
@@ -136,10 +137,10 @@ export const MapScreen = ({latitude, longitude}) => {
             <Marker
               key={idx}
               coordinate={point}
-              onClick={() => {
+              onClick={async () => {
                 //await fetchData(point);
-                onClicked(point, idx);
-                onOpen();
+                await onClicked(point, idx);
+                modalizeRef.current?.open();
               }}
             />
           ))}
@@ -171,7 +172,13 @@ export const MapScreen = ({latitude, longitude}) => {
             setAlertVisible={setAlertVisible}
           />
         </Modalize>
-      ) : null}
+      ) : (
+        <FloatingButton
+        onPressItem={(name) => {
+          menuPressed(name);
+        }}
+      />
+      )}
       <AddTrashcan
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -188,12 +195,6 @@ export const MapScreen = ({latitude, longitude}) => {
       <LeaderBoard
         leaderBoardVisible={leaderBoardVisible}
         setLeaderBoardVisible={setLeaderBoardVisible}
-      />
-
-      <FloatingButton
-        onPressItem={(name) => {
-          menuPressed(name);
-        }}
       />
     </>
   );

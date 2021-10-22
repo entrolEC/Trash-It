@@ -55,39 +55,36 @@ export const TrashcanInfo = ({
     getUser().then((_user) => {
       console.log("user trashcaninfo",_user);
       setUser(_user.user)
-    })
-    
-    
-  },[]);
-
-  useEffect(() => {
-    console.log('trashcaninfo');
-    const getSelectedTrashcan = async () => {
-      var requestOptions = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        method: 'GET',
-        redirect: 'follow',
+      
+      console.log('trashcaninfo');
+      const getSelectedTrashcan = async () => {
+        var requestOptions = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          method: 'GET',
+          redirect: 'follow',
+        };
+        // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
+        const params = (_user.user != null ? _user.user.id : -1);
+        console.log('trashcaninfo_user', _user.user);
+        await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log('getSelectedTrashcan', result);
+          setSelectedTrashcan(result);
+          setLikes(result.likes);
+          setDisLikes(result.dislikes);
+          setUserLikes(result.userLikes);
+          setUserDisLikes(result.userDisLikes);
+          setLoading(false); // 로딩 제대로 작동 함.
+        })
+        .catch((error) => console.log('error', error));
       };
-      // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
-      const params = (user != null ? user.data.user.id : -1);
-      await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('getSelectedTrashcan', result);
-        setSelectedTrashcan(result);
-        setLikes(result.likes);
-        setDisLikes(result.dislikes);
-        setUserLikes(result.userLikes);
-        setUserDisLikes(result.userDisLikes);
-        setLoading(false); // 로딩 제대로 작동 함.
-      })
-      .catch((error) => console.log('error', error));
-    };
-
-    if (modalVisible === true) getSelectedTrashcan();
-  }, [modalVisible]);
+      
+      if (modalVisible === true) getSelectedTrashcan();
+    })
+  },[modalVisible]);
 
   const refreshData = async () => {
     getPin(pinDispatch);
@@ -122,7 +119,7 @@ export const TrashcanInfo = ({
       var formdata = new FormData();
       formdata.append('id', selectedTrashcan.id);
       formdata.append('action', action);
-      formdata.append('user_id', user.data.user.id);
+      formdata.append('user_id', user.id);
       console.log(JSON.stringify(formdata));
       var requestOptions = {
         headers: {
