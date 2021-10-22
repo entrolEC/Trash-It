@@ -4,8 +4,6 @@ import {
   Alert,
   StyleSheet,
   Text,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
   View,
   Image,
 } from 'react-native';
@@ -21,6 +19,12 @@ import {
 } from '../context/PinContext';
 
 import Modal from 'react-native-modal';
+import {
+  TouchableOpacity,
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet';
+
 import LottieView from 'lottie-react-native';
 
 import { getData } from '../service/AsyncStorage';
@@ -93,12 +97,6 @@ export const TrashcanInfo = ({
 
             setIsFirstRun(false);
           }
-          // if (!isFirstRun) {
-          //   if (result.userLikes && !result.userDisLikes) likeAnimation.current.play(10, 40);
-          //   if (!result.userLikes && !result.userDisLikes) likeAnimation.current.play(40, 10);
-          //   if (result.userDisLikes && !result.userLikes) disLikeAnimation.current.play(10, 40);
-          //   if (!result.userDisLikes && !result.userLikes) disLikeAnimation.current.play(40, 10);
-          // }
         })
         .catch((error) => console.log('error', error));
       };
@@ -164,9 +162,6 @@ export const TrashcanInfo = ({
         })
         .catch((error) => console.log('error', error));
 
-        // action이 like이고 현재 like상태이면 likeAnimation = 0
-        // action이 like이고 현재 like상태가 아니면 likeAnimation = 1
-        // action이 like이고 현재 dislike상태이면 likeAnimation = 1 dislikeAnimation = 0
         if (action == 'like' && !userLikes) {
           if (prevDisLikeState) disLikeAnimation.current.play(40, 10);
           likeAnimation.current.play(10, 40);
@@ -183,53 +178,81 @@ export const TrashcanInfo = ({
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <View style={styles.centeredView}>
-        <Modal
-          animationIn="slideInUp"
-          animationInTiming={500}
-          animationOut="bounceOutDown"
-          animationOutTiming={500}
-          transparent={true}
-          isVisible={modalVisible}
-          backdropColor="none"
-          onBackButtonPress={() => {
-            setModalVisible(!modalVisible);
-          }}
-          onBackdropPress={() => {
-            setModalVisible(!modalVisible);
-          }}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text>로딩중입니다.</Text>
-              <TouchableHighlight
-                style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                onPress={() => {
-                  setLoading(true);
-                  setModalVisible(!modalVisible);
-                  setSelectedIndex(null);
-                  setSelectedId(null);
-                }}>
-                <Text style={styles.textStyle}> 취소 </Text>
-              </TouchableHighlight>
-            </View>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text>로딩중입니다.</Text>
+            <TouchableHighlight
+              style={{...styles.openButton, backgroundColor: '#2196F3'}}
+              onPress={() => {
+                setLoading(true);
+                setModalVisible(!modalVisible);
+                setSelectedIndex(null);
+                setSelectedId(null);
+              }}>
+              <Text style={styles.textStyle}> 취소 </Text>
+            </TouchableHighlight>
           </View>
-        </Modal>
+        </View>
       </View>
     );
+  }
 
   return (
     <View style={styles.centeredView}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <View style={{flexDirection: 'row', alignContent: 'space-between'}}>
-            <Text>게시자 : {selectedTrashcan.author.email}</Text>
+          <View style={{flexDirection: 'row', paddingRight: 50}}>
+            <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '15%'}}>
+              <TouchableWithoutFeedback
+                underlayColor={"#000000"}
+                onPress={() => {
+                  postActions('like');
+                }}>
+                <LottieView
+                  ref={likeAnimation}
+                  style={{width: 80, height: 80}}
+                  source={require('../assets/like.json')}
+                  autoPlay={false}
+                  loop={false}
+                />
+              </TouchableWithoutFeedback>
+
+              <Text>
+                    {likes - dislikes}
+              </Text>
+
+              <TouchableWithoutFeedback
+                underlayColor={"#000000"}
+                onPress={() => {
+                  postActions('dislike');
+                }}>
+                <LottieView
+                  ref={disLikeAnimation}
+                  style={{width: 80, height: 80}}
+                  source={require('../assets/dislike.json')}
+                  autoPlay={false}
+                  loop={false}
+                />
+              </TouchableWithoutFeedback>
+            </View>
+            <Image
+              style={styles.image}
+              source={{
+                // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
+                uri: `http://${URL}${selectedTrashcan.image}`,
+              }}
+            />
+          </View>
+          <Text style={styles.text}>{selectedTrashcan.description}</Text>
+          
+          
+          <Text>게시자 : {selectedTrashcan.author.email}</Text>
+          <View style={{flexDirection: 'row', alignItem: 'center'}}>
             {user != null &&
-            user.email == selectedTrashcan.author.email ? (
+              user.email == selectedTrashcan.author.email ? (
               <TouchableHighlight
                 style={{...styles.deleteButton, backgroundColor: '#b30000'}}
                 onPress={async () => {
@@ -249,69 +272,6 @@ export const TrashcanInfo = ({
               </TouchableHighlight>
             )}
           </View>
-          <Image
-            style={styles.image}
-            source={{
-              // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
-              uri: `http://${URL}${selectedTrashcan.image}`,
-            }}
-          />
-          <Text style={styles.text}>{selectedTrashcan.description}</Text>
-          
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* {
-              !userLikes ? (
-                <TouchableHighlight
-                  style={{...styles.likes}}
-                  onPress={() => {
-                    postActions('like');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  style={{...styles.likes, backgroundColor: '#2196F3'}}
-                  onPress={() => {
-                    postActions('like');
-                  }}>
-                  <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
-                </TouchableHighlight>
-              )
-            } */}
-            <TouchableWithoutFeedback
-              underlayColor={"#000000"}
-              onPress={() => {
-                postActions('like');
-              }}>
-              <LottieView
-                ref={likeAnimation}
-                style={{width: 80, height: 80}}
-                source={require('../assets/like.json')}
-                autoPlay={false}
-                loop={false}
-              />
-            </TouchableWithoutFeedback>
-            <Text>
-                  {likes}
-            </Text>
-
-            <TouchableWithoutFeedback
-              underlayColor={"#000000"}
-              onPress={() => {
-                postActions('dislike');
-              }}>
-              <LottieView
-                ref={disLikeAnimation}
-                style={{width: 80, height: 80}}
-                source={require('../assets/dislike.json')}
-                autoPlay={false}
-                loop={false}
-              />
-            </TouchableWithoutFeedback>
-            <Text>
-                  {dislikes}
-            </Text>
-          </View>
         </View>
       </View>
     </View>
@@ -323,12 +283,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginBottom: '20%',
   },
   modalView: {
     backgroundColor: 'white',
     alignItems: 'center',
-    marginBottom: 20,
   },
   openButton: {
     backgroundColor: '#F194FF',
@@ -348,8 +307,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   image: {
-    width: 300,
-    height: 300,
+    width: 250,
+    height: 250,
     marginVertical: 10,
   },
   text: {
@@ -359,8 +318,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F194FF',
     borderRadius: 10,
     padding: 5,
-    elevation: 2,
-    marginLeft: 50,
+    marginVertical: '10%',
   },
   likes: {
     backgroundColor: '#ffffff',
@@ -369,7 +327,6 @@ const styles = StyleSheet.create({
     borderColor: '#252525',
     borderStyle: 'solid',
     padding: 10,
-    marginLeft: 10,
     marginRight: 10,
   },
 });
