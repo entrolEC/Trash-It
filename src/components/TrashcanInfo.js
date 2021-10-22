@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Alert,
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableWithoutFeedback,
   View,
   Image,
 } from 'react-native';
@@ -20,6 +21,8 @@ import {
 } from '../context/PinContext';
 
 import Modal from 'react-native-modal';
+import LottieView from 'lottie-react-native';
+
 import { getData } from '../service/AsyncStorage';
 import { getNewToken, getUser } from '../service/UserManager';
 
@@ -45,12 +48,15 @@ export const TrashcanInfo = ({
   const [likes, setLikes] = useState(0);
   const [dislikes, setDisLikes] = useState(0);
   const [userLikes, setUserLikes] = useState(false);
-  const [userDislikes, setUserDisLikes] = useState(false);
+  const [userDisLikes, setUserDisLikes] = useState(false);
+
+  const likeAnimation = useRef(null);
+  const disLikeAnimation = useRef(null);
+  const [isFirstRun, setIsFirstRun] = useState(true);
 
   // 처음에는 {user}에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
   // drag up 시 상세정보 표시
   // 다른 핀을 눌렀을 시에는 그 핀에 대한 상세정보를 bottomsheet로 띄움
-
   useEffect(() => {
     getUser().then((_user) => {
       console.log("user trashcaninfo",_user);
@@ -78,13 +84,28 @@ export const TrashcanInfo = ({
           setUserLikes(result.userLikes);
           setUserDisLikes(result.userDisLikes);
           setLoading(false); // 로딩 제대로 작동 함.
+
+          if (isFirstRun) {
+            if (result.userLikes) likeAnimation.current.play(48, 48);
+            else likeAnimation.current.play(0, 0);
+            if (result.userDisLikes) disLikeAnimation.current.play(50, 50);
+            else disLikeAnimation.current.play(0, 0);
+
+            setIsFirstRun(false);
+          }
+          // if (!isFirstRun) {
+          //   if (result.userLikes && !result.userDisLikes) likeAnimation.current.play(10, 40);
+          //   if (!result.userLikes && !result.userDisLikes) likeAnimation.current.play(40, 10);
+          //   if (result.userDisLikes && !result.userLikes) disLikeAnimation.current.play(10, 40);
+          //   if (!result.userDisLikes && !result.userLikes) disLikeAnimation.current.play(40, 10);
+          // }
         })
         .catch((error) => console.log('error', error));
       };
       
       if (modalVisible === true) getSelectedTrashcan();
     })
-  },[modalVisible]);
+  },[modalVisible, userLikes, userDisLikes]);
 
   const refreshData = async () => {
     getPin(pinDispatch);
@@ -129,6 +150,9 @@ export const TrashcanInfo = ({
         body: formdata,
       };
 
+      const prevLikeState = userLikes;
+      const prevDisLikeState = userDisLikes;
+
       await fetch(`http://${URL}/action/`, requestOptions)
         .then((response) => response.json())
         .then(async (result) => {
@@ -139,6 +163,23 @@ export const TrashcanInfo = ({
           setUserDisLikes(result.userDisLikes);
         })
         .catch((error) => console.log('error', error));
+
+        // action이 like이고 현재 like상태이면 likeAnimation = 0
+        // action이 like이고 현재 like상태가 아니면 likeAnimation = 1
+        // action이 like이고 현재 dislike상태이면 likeAnimation = 1 dislikeAnimation = 0
+        if (action == 'like' && !userLikes) {
+          if (prevDisLikeState) disLikeAnimation.current.play(40, 10);
+          likeAnimation.current.play(10, 40);
+        }
+        else if (action == 'like' && userLikes) likeAnimation.current.play(40, 10);
+        else if (action == 'dislike' && !userDisLikes) {
+          if (prevLikeState) likeAnimation.current.play(40, 10);
+          disLikeAnimation.current.play(10, 40);
+        }
+        else if (action == 'dislike' && userDisLikes) disLikeAnimation.current.play(40, 10);
+
+        console.log('likeanimation', likeAnimation);
+        console.log('dislikeanimation', disLikeAnimation);
     }
   };
 
@@ -216,58 +257,61 @@ export const TrashcanInfo = ({
             }}
           />
           <Text style={styles.text}>{selectedTrashcan.description}</Text>
-          <TouchableHighlight
-            style={{...styles.openButton, backgroundColor: '#2196F3'}}
-            onPress={() => {
-              setLoading(true);
-              setModalVisible(!modalVisible);
-              setSelectedIndex(null);
-              setSelectedId(null);
-              // console.log(`this is trashcanLocation`, selectedTrashcan);
-              //addNewTrashcan()
-            }}>
-            <Text style={styles.textStyle}> 확인 </Text>
-          </TouchableHighlight>
+          
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {/* {
+              !userLikes ? (
+                <TouchableHighlight
+                  style={{...styles.likes}}
+                  onPress={() => {
+                    postActions('like');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  style={{...styles.likes, backgroundColor: '#2196F3'}}
+                  onPress={() => {
+                    postActions('like');
+                  }}>
+                  <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
+                </TouchableHighlight>
+              )
+            } */}
+            <TouchableWithoutFeedback
+              underlayColor={"#000000"}
+              onPress={() => {
+                postActions('like');
+              }}>
+              <LottieView
+                ref={likeAnimation}
+                style={{width: 80, height: 80}}
+                source={require('../assets/like.json')}
+                autoPlay={false}
+                loop={false}
+              />
+            </TouchableWithoutFeedback>
+            <Text>
+                  {likes}
+            </Text>
 
-          {
-            !userLikes ? (
-              <TouchableHighlight
-                style={{...styles.likes}}
-                onPress={() => {
-                  postActions('like');
-                }}>
-                <Text style={{...styles.textStyle, color: 'black'}}> 좋아요 {likes} </Text>
-              </TouchableHighlight>
-            ) : (
-              <TouchableHighlight
-                style={{...styles.likes, backgroundColor: '#2196F3'}}
-                onPress={() => {
-                  postActions('like');
-                }}>
-                <Text style={{...styles.textStyle, color: 'white'}}> 좋아요 {likes} </Text>
-              </TouchableHighlight>
-            )
-          }
-
-          {
-            !userDislikes ? (
-              <TouchableHighlight
-                style={{...styles.likes}}
-                onPress={() => {
-                  postActions('dislike');
-                }}>
-                <Text style={{...styles.textStyle, color: 'black'}}> 싫어요 {dislikes} </Text>
-              </TouchableHighlight>
-            ) : (
-              <TouchableHighlight
-                style={{...styles.likes, backgroundColor: '#2196F3'}}
-                onPress={() => {
-                  postActions('dislike');
-                }}>
-                <Text style={{...styles.textStyle, color: 'white'}}> 싫어요 {dislikes} </Text>
-              </TouchableHighlight>
-            )
-          }
+            <TouchableWithoutFeedback
+              underlayColor={"#000000"}
+              onPress={() => {
+                postActions('dislike');
+              }}>
+              <LottieView
+                ref={disLikeAnimation}
+                style={{width: 80, height: 80}}
+                source={require('../assets/dislike.json')}
+                autoPlay={false}
+                loop={false}
+              />
+            </TouchableWithoutFeedback>
+            <Text>
+                  {dislikes}
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -309,7 +353,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   text: {
-    marginVertical: 20,
+    marginTop: 15,
   },
   deleteButton: {
     backgroundColor: '#F194FF',
@@ -321,8 +365,11 @@ const styles = StyleSheet.create({
   likes: {
     backgroundColor: '#ffffff',
     borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#252525',
+    borderStyle: 'solid',
     padding: 10,
-    marginTop: 15,
-    elevation: 2,
+    marginLeft: 10,
+    marginRight: 10,
   },
 });

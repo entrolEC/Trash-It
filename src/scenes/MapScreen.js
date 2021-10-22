@@ -155,6 +155,7 @@ export const MapScreen = ({latitude, longitude}) => {
           modalStyle={{borderTopLeftRadius: 30, borderTopRightRadius: 30}}
           withOverlay={false}
           onClose={() => {
+            setInfoModalVisible(false);
             setSelectedIndex(null);
             setSelectedId(null);
             console.log(selectedIndex);
