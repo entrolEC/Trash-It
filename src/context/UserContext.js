@@ -1,7 +1,8 @@
 import React, { createContext, useReducer, useContext } from 'react';
 
 import * as api from '../service/Api';
-import createAsyncDispatcher from './AsyncActionUtils'
+import createAsyncDispatcher from './AsyncActionUtils';
+import jwt_decode from 'jwt-decode';
 
 // UsersContext 에서 사용 할 기본 상태
 const initialState = {
@@ -33,11 +34,13 @@ const success = data => ({
 const error = error => ({
   loading: false,
   data: null,
-  error: error
+  error: error,
+  success: false
 });
 
 // 위에서 만든 객체 / 유틸 함수들을 사용하여 리듀서 작성
 const userReducer = (state, action) => {
+  console.log("usercontext reducer", state);
   switch (action.type) {
     case 'GET_USER':
       return {
@@ -93,7 +96,25 @@ export const useUserDispatch = () => {
   return dispatch;
 }
 
+const checkExpired = (accessToken) => {
+  const decoded = jwt_decode(accessToken);
+  console.log("checkExpired", decoded);
+  return decoded.exp < (Date.now() / 1000);
+}
+
 export const getUser = createAsyncDispatcher('GET_USER', api.getUser);
+export const getToken = () => {
+  console.log("here is getToken")
+  const state = useUserState();
+  const dispatch = useUserDispatch();
+  console.log("userContext getToken state ",  state);
+  if(checkExpired(state.user.data.accessToken)) {
+    console.log("userContext getUser token has expired");
+    const getNewToken =  createAsyncDispatcher('GET_TOKEN', api.getToken);
+    getNewToken(dispatch);
+  }
+  return state.user.data.accessToken;
+}
 
 // export const getUser = async (dispatch, token) => {
 //   var formdata = new FormData();

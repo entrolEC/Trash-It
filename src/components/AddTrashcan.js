@@ -10,21 +10,19 @@ import {
   TextInput,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
-import {
-  useUserState,
-  useUserDispatch,
-  getUser,
-  UserContext,
-} from '../context/UserContext';
+
 import {
   usePinState,
   usePinDispatch,
   getPin,
   PinContext,
 } from '../context/PinContext';
+import {getNewToken} from '../service/UserManager';
 import {getGeolocation} from '../service/Geolocation';
 
 import Modal from 'react-native-modal';
+
+import {getData} from '../service/AsyncStorage'
 
 import {URL} from '../../env.json';
 
@@ -33,10 +31,6 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
   const [data, setData] = useState(0);
   const [image, setImage] = useState();
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
-
-  const userState = useUserState();
-  const userDispatch = useUserDispatch();
-  const {user} = userState; // included : data, loading, error, success
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -73,6 +67,9 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
 
   const postData = async () => {
     var formdata = new FormData();
+    console.log("here1");
+    const accessToken = await getNewToken();
+    console.log("addtrashcan postdata", accessToken);
     formdata.append('latitude', isGeolocationLoaded.latitude);
     formdata.append('longitude', isGeolocationLoaded.longitude);
     formdata.append('address', data.address);
@@ -81,7 +78,7 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + user.data.accessToken,
+        Authorization: 'Bearer ' + accessToken,
       },
       method: 'POST',
       body: formdata,
@@ -156,13 +153,17 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
                 <TouchableHighlight
                   style={{...styles.openButton, backgroundColor: '#2196F3'}}
                   onPress={async () => {
+                    console.log("pressed");
                     if (data) {
                       console.log('here');
-                      setModalVisible(!modalVisible);
+                      
                       await postData();
                       await fetchData();
                       //setTimeout(()=>{ fetchData() }, 1000)
                       setData(0);
+                      setModalVisible(!modalVisible);
+                    } else {
+                      console.log("data is null")
                     }
                   }}>
                   <Text style={styles.textStyle}> 확인 </Text>

@@ -4,12 +4,6 @@ import AnimatedSplash from 'react-native-animated-splash-screen';
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
 import {
-  useUserState,
-  useUserDispatch,
-  getUser,
-  UserContext,
-} from '../context/UserContext';
-import {
   usePinState,
   usePinDispatch,
   getPin,
@@ -40,11 +34,6 @@ export const SplashScreen = () => {
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
   const [showConnectionAlert, setShowConnectionAlert] = useState(false); // 인터넷 연결 실패 경고창 보임 여부
 
-  const userState = useUserState();
-  const userDispatch = useUserDispatch();
-  //const { data: user, loading, error, success } = userState.user;
-  const {user} = userState;
-
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
   //const { data: user, loading, error, success } = userState.user;
@@ -59,23 +48,24 @@ export const SplashScreen = () => {
   }, [pinDispatch]);
 
   useEffect(() => {
-    console.log("pinerror:" ,pin.error)
-    if(isLoaded)
+    console.log('pinerror:', pin.error);
+    if (isLoaded)
       setTimeout(() => {
         if(!pin.success)
           setShowConnectionAlert(true);
       },5000)
   }, [isLoaded])
 
-
+  useEffect(() => {
+    console.log("splash",isLoaded, isGeolocationLoaded, pin.success);
+  }, [isLoaded, isGeolocationLoaded, pin.success]);
   return (
     <>
       {isLoaded === true && isGeolocationLoaded !== 0 && pin.success ? (
-          <MapScreen
-            latitude={isGeolocationLoaded.latitude}
-            longitude={isGeolocationLoaded.longitude}
-          />
-
+        <MapScreen
+          latitude={isGeolocationLoaded.latitude}
+          longitude={isGeolocationLoaded.longitude}
+        />
       ) : (
         <>
           <LottieView
@@ -89,11 +79,11 @@ export const SplashScreen = () => {
             }}
             style={{backgroundColor: '#73B5CE'}}
           />
-          <Alert 
+          <Alert
             alertVisible={showConnectionAlert}
             setAlertVisible={setShowConnectionAlert}
-            title={"인터넷 없음"}
-            message={"인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!"}
+            title={'인터넷 없음'}
+            message={'인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!'}
             callback={() => BackHandler.exitApp()} // not working in ios
           />
         </>

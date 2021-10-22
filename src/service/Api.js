@@ -1,6 +1,28 @@
 import { URL } from '../../env.json';
+import { setData, getData } from './AsyncStorage';
 
-export const getUser = async (token) => {
+export const getNewAccessToken = async (refreshToken) => {
+  let formdata = new FormData();
+
+  formdata.append('refresh', refreshToken);
+  let requestOptions = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'POST',
+    body: formdata,
+    redirect: 'follow',
+  };
+  const result = fetch(`http://${URL}/accounts/token/refresh/`, requestOptions)
+  .then((response) => response.json())
+  .then((result) => {
+    return result.access;
+  })
+  console.log('getNewAccessToken', result);
+  return result;
+}
+
+export const googleLoginFinish = async (token) => {
   let formdata = new FormData();
 
   formdata.append('access_token', token.accessToken);
@@ -16,12 +38,13 @@ export const getUser = async (token) => {
   
   const result = fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
   .then((response) => response.json())
-  .then((result) => { 
+  .then(async (result) => { 
       const data = {
         accessToken: result.access_token, 
         refreshToken: result.refresh_token, 
         user: result.user
       } 
+      console.log('getUser', data);
       return data;
   })
   console.log("getUser api method", result);
