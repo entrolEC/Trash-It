@@ -240,6 +240,7 @@ export const TrashcanInfo = ({
               />
             </TouchableWithoutFeedback>
           </View>
+
           <ImageModal
             style={styles.image}
             source={{
@@ -249,11 +250,11 @@ export const TrashcanInfo = ({
           />
         </View>
 
-        
-        <Text style={styles.text}>{selectedTrashcan.description}</Text>
-        
-        <View style={{marginTop:50}}>
-          <Text>게시자 : {selectedTrashcan.author.email}</Text>
+        <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center'}}>
+          <View>
+            <Text style={{marginTop: '40%'}}>{selectedTrashcan.description}</Text>
+          </View>
+          <Text style={{marginTop: '25%'}}>게시자 : {selectedTrashcan.author.email}</Text>
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
@@ -300,10 +301,10 @@ const styles = StyleSheet.create({
   image: {
     width: 225,
     height: 225,
-    marginVertical: 10,
+    marginTop: 10,
   },
   text: {
-    marginTop: 10,
+    marginTop: 0,
   },
   deleteButton: {
     justifyContent: "center",
