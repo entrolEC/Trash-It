@@ -19,6 +19,7 @@ import {
   PinContext,
 } from '../context/PinContext';
 
+import ImageModal from 'react-native-image-modal';
 import {
   TouchableOpacity,
   TouchableHighlight,
@@ -239,7 +240,7 @@ export const TrashcanInfo = ({
               />
             </TouchableWithoutFeedback>
           </View>
-          <Image
+          <ImageModal
             style={styles.image}
             source={{
               // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
