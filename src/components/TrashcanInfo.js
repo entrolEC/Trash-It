@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect, useRef} from 'react';
+import {Dimensions} from 'react-native';
 import {
   Alert,
   StyleSheet,
@@ -18,7 +19,6 @@ import {
   PinContext,
 } from '../context/PinContext';
 
-import Modal from 'react-native-modal';
 import {
   TouchableOpacity,
   TouchableHighlight,
@@ -58,6 +58,8 @@ export const TrashcanInfo = ({
   const disLikeAnimation = useRef(null);
   const [isFirstRun, setIsFirstRun] = useState(true);
 
+  const [likeTextColor, setLikeTextColor] = useState('#000000');
+
   // 처음에는 {user}에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
   // drag up 시 상세정보 표시
   // 다른 핀을 눌렀을 시에는 그 핀에 대한 상세정보를 bottomsheet로 띄움
@@ -88,6 +90,10 @@ export const TrashcanInfo = ({
           setUserLikes(result.userLikes);
           setUserDisLikes(result.userDisLikes);
           setLoading(false); // 로딩 제대로 작동 함.
+
+          if (userLikes) setLikeTextColor('#00ADB5');
+          else if (userDisLikes) setLikeTextColor('#F05945');
+          else if (!userLikes && !userDisLikes) setLikeTextColor('#000000');
 
           if (isFirstRun) {
             if (result.userLikes) likeAnimation.current.play(48, 48);
@@ -182,19 +188,17 @@ export const TrashcanInfo = ({
     return (
       <View style={styles.centeredView}>
         <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text>로딩중입니다.</Text>
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                setLoading(true);
-                setModalVisible(!modalVisible);
-                setSelectedIndex(null);
-                setSelectedId(null);
-              }}>
-              <Text style={styles.textStyle}> 취소 </Text>
-            </TouchableHighlight>
-          </View>
+          <Text>로딩중입니다.</Text>
+          <TouchableHighlight
+            style={{...styles.openButton, backgroundColor: '#2196F3'}}
+            onPress={() => {
+              setLoading(true);
+              setModalVisible(!modalVisible);
+              setSelectedIndex(null);
+              setSelectedId(null);
+            }}>
+            <Text style={styles.textStyle}> 취소 </Text>
+          </TouchableHighlight>
         </View>
       </View>
     );
@@ -203,75 +207,70 @@ export const TrashcanInfo = ({
   return (
     <View style={styles.centeredView}>
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <View style={{flexDirection: 'row', paddingRight: 50}}>
-            <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '15%'}}>
-              <TouchableWithoutFeedback
-                underlayColor={"#000000"}
-                onPress={() => {
-                  postActions('like');
-                }}>
-                <LottieView
-                  ref={likeAnimation}
-                  style={{width: 80, height: 80}}
-                  source={require('../assets/like.json')}
-                  autoPlay={false}
-                  loop={false}
-                />
-              </TouchableWithoutFeedback>
+        <View style={{flexDirection: 'row', paddingRight: 50}}>
+          <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
+            <TouchableWithoutFeedback
+              onPress={() => {
+                postActions('like');
+              }}>
+              <LottieView
+                ref={likeAnimation}
+                style={{width: 80, height: 80}}
+                source={require('../assets/like.json')}
+                autoPlay={false}
+                loop={false}
+              />
+            </TouchableWithoutFeedback>
 
-              <Text>
-                    {likes - dislikes}
-              </Text>
+            <Text style={{color: likeTextColor}}>
+                  {likes - dislikes}
+            </Text>
 
-              <TouchableWithoutFeedback
-                underlayColor={"#000000"}
-                onPress={() => {
-                  postActions('dislike');
-                }}>
-                <LottieView
-                  ref={disLikeAnimation}
-                  style={{width: 80, height: 80}}
-                  source={require('../assets/dislike.json')}
-                  autoPlay={false}
-                  loop={false}
-                />
-              </TouchableWithoutFeedback>
-            </View>
-            <Image
-              style={styles.image}
-              source={{
-                // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
-                uri: `http://${URL}${selectedTrashcan.image}`,
-              }}
-            />
+            <TouchableWithoutFeedback
+              onPress={() => {
+                postActions('dislike');
+              }}>
+              <LottieView
+                ref={disLikeAnimation}
+                style={{width: 80, height: 80}}
+                source={require('../assets/dislike.json')}
+                autoPlay={false}
+                loop={false}
+              />
+            </TouchableWithoutFeedback>
           </View>
-          <Text style={styles.text}>{selectedTrashcan.description}</Text>
-          
-          
+          <Image
+            style={styles.image}
+            source={{
+              // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
+              uri: `http://${URL}${selectedTrashcan.image}`,
+            }}
+          />
+        </View>
+
+        
+        <Text style={styles.text}>{selectedTrashcan.description}</Text>
+        
+        <View style={{marginTop:50}}>
           <Text>게시자 : {selectedTrashcan.author.email}</Text>
-          <View style={{flexDirection: 'row', alignItem: 'center'}}>
-            {user != null &&
-              user.email == selectedTrashcan.author.email ? (
-              <TouchableHighlight
-                style={{...styles.deleteButton, backgroundColor: '#b30000'}}
-                onPress={async () => {
-                  await deleteData();
-                  setSelectedIndex(null);
-                  setSelectedId(null);
-                  setLoading(true);
-                  setModalVisible(!modalVisible);
-                  refreshData();
-                }}>
-                <Text style={styles.textStyle}> 삭제 </Text>
-              </TouchableHighlight>
-            ) : (
-              <TouchableHighlight
-                style={{...styles.deleteButton, backgroundColor: '#aaaaaa'}}>
-                <Text style={styles.textStyle}> 삭제 </Text>
-              </TouchableHighlight>
-            )}
-          </View>
+        </View>
+
+        <View style={{flex: 1, justifyContent: 'flex-end'}}>
+          {user != null &&
+            user.email == selectedTrashcan.author.email ? (
+            <TouchableHighlight
+              style={{...styles.deleteButton}}
+              onPress={async () => {
+                await deleteData();
+                setSelectedIndex(null);
+                setSelectedId(null);
+                setLoading(true);
+                setModalVisible(!modalVisible);
+                refreshData();
+              }}>
+              <Text style={styles.textStyle}> 삭제 </Text>
+            </TouchableHighlight>
+          ) : null}
         </View>
       </View>
     </View>
@@ -282,11 +281,6 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '20%',
-  },
-  modalView: {
-    backgroundColor: 'white',
     alignItems: 'center',
   },
   openButton: {
@@ -302,31 +296,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingRight: 3
   },
-  modalText: {
-    marginBottom: 30,
-    textAlign: 'center',
-  },
   image: {
-    width: 250,
-    height: 250,
+    width: 225,
+    height: 225,
     marginVertical: 10,
   },
   text: {
-    marginTop: 15,
+    marginTop: 10,
   },
   deleteButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: 'center',
+    backgroundColor: '#B30000',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     padding: 5,
-    marginVertical: '10%',
-  },
-  likes: {
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#252525',
-    borderStyle: 'solid',
-    padding: 10,
-    marginRight: 10,
+    width: Dimensions.get('window').width,
+    height: 40,
   },
 });
