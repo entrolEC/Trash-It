@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@gorhom/bottom-sheet": "2",
@@ -48,6 +49,8 @@
     "eslint": "^6.5.1",
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.59.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "react-test-renderer": "16.13.1"
   },
   "jest": {

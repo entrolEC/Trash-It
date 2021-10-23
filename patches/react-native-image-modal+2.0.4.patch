@@ -1,0 +1,72 @@
+diff --git a/node_modules/react-native-image-modal/dist/ImageDetail/index.js b/node_modules/react-native-image-modal/dist/ImageDetail/index.js
+index e132b47..afd49d1 100644
+--- a/node_modules/react-native-image-modal/dist/ImageDetail/index.js
++++ b/node_modules/react-native-image-modal/dist/ImageDetail/index.js
+@@ -12,7 +12,8 @@ var __extends = (this && this.__extends) || (function () {
+     };
+ })();
+ import React from 'react';
+-import { StyleSheet, View, TouchableOpacity, Text, Dimensions, Animated, PanResponder, Modal, SafeAreaView, StatusBar, } from 'react-native';
++import { StyleSheet, View, Text, Dimensions, Animated, PanResponder, Modal, SafeAreaView, StatusBar, } from 'react-native';
++import {TouchableOpacity} from '@gorhom/bottom-sheet';
+ import FastImage from 'react-native-fast-image';
+ var LONG_PRESS_TIME = 800;
+ var DOUBLE_CLICK_INTERVAL = 250;
+diff --git a/node_modules/react-native-image-modal/dist/index.js b/node_modules/react-native-image-modal/dist/index.js
+index 3a2f220..7b66b74 100644
+--- a/node_modules/react-native-image-modal/dist/index.js
++++ b/node_modules/react-native-image-modal/dist/index.js
+@@ -12,7 +12,8 @@ var __extends = (this && this.__extends) || (function () {
+     };
+ })();
+ import React from 'react';
+-import { Animated, View, TouchableOpacity, StatusBar, Platform, Dimensions } from 'react-native';
++import { Animated, View, StatusBar, Platform, Dimensions } from 'react-native';
++import {TouchableOpacity} from '@gorhom/bottom-sheet';
+ import FastImage from 'react-native-fast-image';
+ import ImageDetail from './ImageDetail';
+ var ImageModal = (function (_super) {
+@@ -40,9 +41,9 @@ var ImageModal = (function (_super) {
+                     _this.setState({
+                         origin: {
+                             width: width,
+-                            height: height,
++                            height: height - 20,
+                             x: newX,
+-                            y: newY,
++                            y: newY + 10,
+                         },
+                     });
+                 });
+diff --git a/node_modules/react-native-image-modal/src/ImageDetail/index.tsx b/node_modules/react-native-image-modal/src/ImageDetail/index.tsx
+index f654ec6..af6e9e0 100644
+--- a/node_modules/react-native-image-modal/src/ImageDetail/index.tsx
++++ b/node_modules/react-native-image-modal/src/ImageDetail/index.tsx
+@@ -2,7 +2,6 @@ import React from 'react';
+ import {
+   StyleSheet,
+   View,
+-  TouchableOpacity,
+   Text,
+   Dimensions,
+   Animated,
+@@ -12,6 +11,7 @@ import {
+   PanResponderInstance,
+   StatusBar,
+ } from 'react-native';
++import {TouchableOpacity} from '@gorhom/bottom-sheet';
+ import FastImage from 'react-native-fast-image';
+ import type { Source, ResizeMode, ImageStyle } from 'react-native-fast-image';
+ 
+diff --git a/node_modules/react-native-image-modal/src/index.tsx b/node_modules/react-native-image-modal/src/index.tsx
+index 7ee94a0..76f529d 100644
+--- a/node_modules/react-native-image-modal/src/index.tsx
++++ b/node_modules/react-native-image-modal/src/index.tsx
+@@ -1,5 +1,6 @@
+ import React, { LegacyRef } from 'react';
+-import { Animated, View, TouchableOpacity, StatusBar, Platform, Dimensions } from 'react-native';
++import { Animated, View, StatusBar, Platform, Dimensions } from 'react-native';
++import {TouchableOpacity} from '@gorhom/bottom-sheet';
+ import FastImage from 'react-native-fast-image';
+ import type { ResizeMode } from 'react-native-fast-image';
+ import type { ImageStyle, FastImageProps } from 'react-native-fast-image';
