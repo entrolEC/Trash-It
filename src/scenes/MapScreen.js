@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useMemo} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -51,7 +51,7 @@ import {
 } from '../context/UserContext';
 
 import {FloatingButton} from '../components/FloatingButton';
-import {Modalize} from 'react-native-modalize';
+import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 import { getData } from '../service/AsyncStorage';
 import {URL} from '../../env.json';
@@ -73,7 +73,8 @@ export const MapScreen = ({latitude, longitude}) => {
   const pinDispatch = usePinDispatch();
   const {pin} = pinState; // included : data, loading, error, success
 
-  const modalizeRef = useRef<Modalize>(null);
+  const bottomSheetModalRef = useRef<Modalize>(null);
+  const snapPoints = useMemo(() => ['40%', '70%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -122,6 +123,7 @@ export const MapScreen = ({latitude, longitude}) => {
 
   return (
     <>
+    <BottomSheetModalProvider>
       <NaverMapView
         style={{width: '100%', height: '100%'}}
         showsMyLocationButton={true}
@@ -140,28 +142,25 @@ export const MapScreen = ({latitude, longitude}) => {
               onClick={async () => {
                 //await fetchData(point);
                 await onClicked(point, idx);
-                modalizeRef.current?.open();
+                bottomSheetModalRef.current?.present();
               }}
             />
           ))}
       </NaverMapView>
 
       {selectedIndex !== null ? (
-        <Modalize
-          ref={modalizeRef}
-          snapPoint={500}
-          handlePosition={'inside'}
-          closeSnapPointStraightEnabled={false}
-          modalStyle={{borderTopLeftRadius: 30, borderTopRightRadius: 30}}
-          withOverlay={false}
-          onClose={() => {
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          snapPoints={snapPoints}
+          onDismiss={() => {
             setInfoModalVisible(false);
             setSelectedIndex(null);
             setSelectedId(null);
-            console.log(selectedIndex);
             // console.log(`this is trashcanLocation`, selectedTrashcan);
             //addNewTrashcan()
-          }}>
+          }}
+          backgroundComponent={props => <BottomSheetBackground {...props} />}
+          >
           <TrashcanInfo
             modalVisible={infoModalVisible}
             setModalVisible={setInfoModalVisible}
@@ -172,7 +171,7 @@ export const MapScreen = ({latitude, longitude}) => {
             alertVisible={alertVisible}
             setAlertVisible={setAlertVisible}
           />
-        </Modalize>
+        </BottomSheetModal>
       ) : (
         <FloatingButton
         onPressItem={(name) => {
@@ -197,6 +196,7 @@ export const MapScreen = ({latitude, longitude}) => {
         leaderBoardVisible={leaderBoardVisible}
         setLeaderBoardVisible={setLeaderBoardVisible}
       />
+      </BottomSheetModalProvider>
     </>
   );
 };
@@ -207,3 +207,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 });
+
+const BottomSheetBackground = ({style}) => {
+  return (
+    <View 
+      style={[
+        {
+          backgroundColor: 'white',
+          borderRadius: 30,
+        },
+        {...style},
+      ]}
+    />
+  )
+}

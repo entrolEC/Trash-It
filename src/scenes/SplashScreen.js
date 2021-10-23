@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {BackHandler, SafeAreaView} from 'react-native';
+import {BackHandler, SafeAreaView, LogBox} from 'react-native';
 import AnimatedSplash from 'react-native-animated-splash-screen';
 import {MapScreen} from './MapScreen';
 import Geolocation from 'react-native-geolocation-service';
@@ -22,6 +22,8 @@ const initialState = {
   latitude: 37.3677,
   longitude: 126.6603,
 };
+
+LogBox.ignoreAllLogs();
 
 export const SplashScreen = () => {
   //const [user, setUser] = useState({token: null, username: '로그인되지 않음'});
