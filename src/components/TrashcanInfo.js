@@ -58,6 +58,8 @@ export const TrashcanInfo = ({
   const disLikeAnimation = useRef(null);
   const [isFirstRun, setIsFirstRun] = useState(true);
 
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
   const [likeTextColor, setLikeTextColor] = useState('#000000');
 
   // 처음에는 {user}에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
@@ -104,12 +106,59 @@ export const TrashcanInfo = ({
             setIsFirstRun(false);
           }
         })
-        .catch((error) => console.log('error', error));
+        .catch((error) => console.log('error', error, isFirstLoad));
+        setIsFirstLoad(false);
       };
 
       if (modalVisible === true) getSelectedTrashcan();
-    })
+    });
   },[modalVisible, userLikes, userDisLikes]);
+
+  const reloadPinData = async () => {
+    getUser().then((_user) => {
+      setUser(_user.user);
+
+      console.log('trashcaninfo');
+      const getSelectedTrashcan = async () => {
+        var requestOptions = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          method: 'GET',
+          redirect: 'follow',
+        };
+        // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
+        const params = (_user.user != null ? _user.user.id : -1);
+        console.log('trashcaninfo_user', _user.user);
+        await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log('getSelectedTrashcan', result);
+          setSelectedTrashcan(result);
+          setLikes(result.likes);
+          setDisLikes(result.dislikes);
+          setUserLikes(result.userLikes);
+          setUserDisLikes(result.userDisLikes);
+          setLoading(false); // 로딩 제대로 작동 함.
+
+          if (userLikes) setLikeTextColor('#00ADB5');
+          else if (userDisLikes) setLikeTextColor('#F05945');
+          else if (!userLikes && !userDisLikes) setLikeTextColor('#000000');
+
+          if (isFirstRun) {
+            if (result.userLikes) likeAnimation.current.play(48, 48);
+            else likeAnimation.current.play(0, 0);
+            if (result.userDisLikes) disLikeAnimation.current.play(50, 50);
+            else disLikeAnimation.current.play(0, 0);
+
+            setIsFirstRun(false);
+          }
+        })
+        .catch((error) => console.log('error', error));
+      };
+      if (modalVisible === true) getSelectedTrashcan();
+    });
+  };
 
   const refreshData = async () => {
     getPin(pinDispatch);
@@ -185,21 +234,20 @@ export const TrashcanInfo = ({
   };
 
   if (loading) {
+    if (isFirstLoad === false) {
+      setTimeout(async () => {
+        await reloadPinData();
+      }, 3000);
+    }
+
     return (
-      <View style={styles.centeredView}>
-        <View style={styles.centeredView}>
-          <Text>로딩중입니다.</Text>
-          <TouchableHighlight
-            style={{...styles.openButton, backgroundColor: '#2196F3'}}
-            onPress={() => {
-              setLoading(true);
-              setModalVisible(!modalVisible);
-              setSelectedIndex(null);
-              setSelectedId(null);
-            }}>
-            <Text style={styles.textStyle}> 취소 </Text>
-          </TouchableHighlight>
-        </View>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '20%'}}>
+        <LottieView
+          style={{width: 150, height: 150}}
+          source={require('../assets/lottie/loading.json')}
+          autoPlay
+          loop
+        />
       </View>
     );
   }
