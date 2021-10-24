@@ -41,7 +41,6 @@ export const TrashcanInfo = ({
   alertVisible,
   setAlertVisible,
 }) => {
-  const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrashcan, setSelectedTrashcan] = useState();
   const [user, setUser] = useState();
@@ -67,8 +66,8 @@ export const TrashcanInfo = ({
   useEffect(() => {
     getUser().then((_user) => {
       console.log("user trashcaninfo",_user);
-      setUser(_user.user)
-      
+      setUser(_user.user);
+
       console.log('trashcaninfo');
       const getSelectedTrashcan = async () => {
         var requestOptions = {
@@ -107,7 +106,7 @@ export const TrashcanInfo = ({
         })
         .catch((error) => console.log('error', error));
       };
-      
+
       if (modalVisible === true) getSelectedTrashcan();
     })
   },[modalVisible, userLikes, userDisLikes]);
@@ -217,7 +216,7 @@ export const TrashcanInfo = ({
               <LottieView
                 ref={likeAnimation}
                 style={{width: 80, height: 80}}
-                source={require('../assets/like.json')}
+                source={require('../assets/lottie/like.json')}
                 autoPlay={false}
                 loop={false}
               />
@@ -234,7 +233,7 @@ export const TrashcanInfo = ({
               <LottieView
                 ref={disLikeAnimation}
                 style={{width: 80, height: 80}}
-                source={require('../assets/dislike.json')}
+                source={require('../assets/lottie/dislike.json')}
                 autoPlay={false}
                 loop={false}
               />

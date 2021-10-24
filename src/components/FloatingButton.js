@@ -8,9 +8,27 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+import {
+  usePinState,
+  usePinDispatch,
+  getPin,
+  PinContext,
+} from '../context/PinContext';
+
+import {getData} from '../service/AsyncStorage';
+
+
 export const FloatingButton = (props) => {
+  const pinState = usePinState();
+  const pinDispatch = usePinDispatch();
+  const {pin} = pinState; // included : data, loading, error, success
+
   const [animation, setAnimation] = useState(new Animated.Value(0));
   const [open, setOpen] = useState(0);
+
+  const refreshData = async () => {
+    getPin(pinDispatch);
+  };
 
   const userStyle = {
     transform: [
@@ -45,6 +63,18 @@ export const FloatingButton = (props) => {
       },
     ],
   };
+  const syncStyle = {
+    transform: [
+      {scale: animation},
+      {
+        translateY: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -60],
+        }),
+      },
+    ],
+  };
+
   const rotation = {
     transform: [
       {
@@ -58,6 +88,15 @@ export const FloatingButton = (props) => {
 
   return (
     <View style={styles.container}>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          refreshData();
+        }}>
+        <Animated.View style={[styles.button, styles.item, syncStyle]}>
+          <Icon name="sync-outline" size={20} color="#8B3FBF" />
+        </Animated.View>
+      </TouchableWithoutFeedback>
+
       <TouchableWithoutFeedback
         onPress={() => {
           props.onPressItem('leaderBoard');

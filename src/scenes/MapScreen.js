@@ -53,7 +53,7 @@ import {
 import {FloatingButton} from '../components/FloatingButton';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
-import { getData } from '../service/AsyncStorage';
+import {getData} from '../service/AsyncStorage';
 import {URL} from '../../env.json';
 
 export const MapScreen = ({latitude, longitude}) => {
@@ -64,6 +64,8 @@ export const MapScreen = ({latitude, longitude}) => {
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [leaderBoardVisible, setLeaderBoardVisible] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDisLikes] = useState(0);
 
   const userState = useUserState();
   const userDispatch = useUserDispatch();
@@ -119,83 +121,107 @@ export const MapScreen = ({latitude, longitude}) => {
 
   useEffect(() => {
     setSelectedIndex(null);
-  }, [])
+  }, []);
 
   return (
     <>
-    <BottomSheetModalProvider>
-      <NaverMapView
-        style={{width: '100%', height: '100%'}}
-        showsMyLocationButton={true}
-        setLocationTrackingMode={2}
-        center={{latitude: latitude, longitude: longitude, zoom: 16}}
-        //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
-        //onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
+      <BottomSheetModalProvider>
+        <NaverMapView
+          style={{width: '100%', height: '100%'}}
+          showsMyLocationButton={true}
+          setLocationTrackingMode={2}
+          center={{latitude: latitude, longitude: longitude, zoom: 16}}
+          //onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
+          //onCameraChange={e => console.log('onCameraChange', JSON.stringify(e))}
 
-        //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
-      >
-        {pin.data &&
-          pin.data.map((point, idx) => (
-            <Marker
-              key={idx}
-              coordinate={point}
-              onClick={async () => {
-                //await fetchData(point);
-                await onClicked(point, idx);
-                bottomSheetModalRef.current?.present();
-              }}
+          //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
+        >
+          {pin.data &&
+            pin.data.map((point, idx) => (
+              <Marker
+                key={idx}
+                coordinate={point}
+                width={60}
+                height={60}
+                onClick={async () => {
+                  // await fetchData(point);
+                  await onClicked(point, idx);
+                  bottomSheetModalRef.current?.present();
+                }}>
+                <View style={{flexDirection: 'row'}}>
+                  {pin.data[idx].likes - pin.data[idx].dislikes > 0 ? (
+                    <Image
+                      source={require('../assets/marker/marker_green.png')}
+                      style={{width: 60, height: 60}}
+                      fadeDuration={0}
+                    />
+                  ) : pin.data[idx].likes - pin.data[idx].dislikes < 0 ? (
+                    <Image
+                      source={require('../assets/marker/marker_red.png')}
+                      style={{width: 60, height: 60}}
+                      fadeDuration={0}
+                    />
+                  ) : (
+                    <Image
+                      source={require('../assets/marker/marker_gray.png')}
+                      style={{width: 60, height: 60}}
+                      fadeDuration={0}
+                    />
+                  )}
+                </View>
+              </Marker>
+            ))}
+        </NaverMapView>
+
+        {selectedIndex !== null ? (
+          <BottomSheetModal
+            ref={bottomSheetModalRef}
+            snapPoints={snapPoints}
+            onDismiss={() => {
+              setInfoModalVisible(false);
+              setSelectedIndex(null);
+              setSelectedId(null);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}
+            backgroundComponent={(props) => (
+              <BottomSheetBackground {...props} />
+            )}>
+            <TrashcanInfo
+              modalVisible={infoModalVisible}
+              setModalVisible={setInfoModalVisible}
+              selectedIndex={selectedIndex}
+              setSelectedIndex={setSelectedIndex}
+              selectedId={selectedId}
+              setSelectedId={setSelectedId}
+              alertVisible={alertVisible}
+              setAlertVisible={setAlertVisible}
             />
-          ))}
-      </NaverMapView>
-
-      {selectedIndex !== null ? (
-        <BottomSheetModal
-          ref={bottomSheetModalRef}
-          snapPoints={snapPoints}
-          onDismiss={() => {
-            setInfoModalVisible(false);
-            setSelectedIndex(null);
-            setSelectedId(null);
-            // console.log(`this is trashcanLocation`, selectedTrashcan);
-            //addNewTrashcan()
-          }}
-          backgroundComponent={props => <BottomSheetBackground {...props} />}
-          >
-          <TrashcanInfo
-            modalVisible={infoModalVisible}
-            setModalVisible={setInfoModalVisible}
-            selectedIndex={selectedIndex}
-            setSelectedIndex={setSelectedIndex}
-            selectedId={selectedId}
-            setSelectedId={setSelectedId}
-            alertVisible={alertVisible}
-            setAlertVisible={setAlertVisible}
+          </BottomSheetModal>
+        ) : (
+          <FloatingButton
+            onPressItem={(name) => {
+              menuPressed(name);
+            }}
           />
-        </BottomSheetModal>
-      ) : (
-        <FloatingButton
-        onPressItem={(name) => {
-          menuPressed(name);
-        }}
-      />
-      )}
-      <AddTrashcan
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
-      <Auth
-        authModalVisible={authModalVisible}
-        setAuthModalVisible={setAuthModalVisible}
-      />
-      <Alert
-        alertVisible={alertVisible}
-        setAlertVisible={setAlertVisible}
-        message={'로그인을 먼저 해주세요!'}
-      />
-      <LeaderBoard
-        leaderBoardVisible={leaderBoardVisible}
-        setLeaderBoardVisible={setLeaderBoardVisible}
-      />
+        )}
+        <AddTrashcan
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+        <Auth
+          authModalVisible={authModalVisible}
+          setAuthModalVisible={setAuthModalVisible}
+        />
+        <Alert
+          alertVisible={alertVisible}
+          setAlertVisible={setAlertVisible}
+          message={'로그인을 먼저 해주세요!'}
+        />
+        <LeaderBoard
+          leaderBoardVisible={leaderBoardVisible}
+          setLeaderBoardVisible={setLeaderBoardVisible}
+        />
       </BottomSheetModalProvider>
     </>
   );
@@ -210,7 +236,7 @@ const styles = StyleSheet.create({
 
 const BottomSheetBackground = ({style}) => {
   return (
-    <View 
+    <View
       style={[
         {
           backgroundColor: 'white',
@@ -219,5 +245,5 @@ const BottomSheetBackground = ({style}) => {
         {...style},
       ]}
     />
-  )
-}
+  );
+};
