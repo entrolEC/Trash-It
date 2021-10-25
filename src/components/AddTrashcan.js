@@ -42,8 +42,8 @@ export const AddTrashcan = ({modalVisible, setModalVisible}) => {
 
   const addNewTrashcan = () => {
     ImagePicker.openCamera({
-      width: 300,
-      height: 400,
+      width: 900,
+      height: 1200,
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
