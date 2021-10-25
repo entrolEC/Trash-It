@@ -137,7 +137,15 @@ export const MapScreen = ({latitude, longitude}) => {
           //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
         >
           {pin.data &&
-            pin.data.map((point, idx) => (
+            pin.data.map((point, idx) => (Platform.OS === 'ios') ? (
+              <Marker
+                key={idx}
+                coordinate={point}
+                onClick={async () => {
+                  await onClicked(point, idx);
+                  bottomSheetModalRef.current?.present();
+                }}/>
+            ):(
               <Marker
                 key={idx}
                 coordinate={point}
