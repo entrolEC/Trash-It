@@ -141,6 +141,9 @@ export const MapScreen = ({latitude, longitude}) => {
               <Marker
                 key={idx}
                 coordinate={point}
+                pinColor={pin.data[idx].likes - pin.data[idx].dislikes > 0 ? "blue"
+                  : (pin.data[idx].likes - pin.data[idx].dislikes < 0 ? "red" : null)
+                }
                 onClick={async () => {
                   await onClicked(point, idx);
                   bottomSheetModalRef.current?.present();
