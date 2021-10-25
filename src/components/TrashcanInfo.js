@@ -40,6 +40,8 @@ export const TrashcanInfo = ({
   setSelectedId,
   alertVisible,
   setAlertVisible,
+  loadingVisible,
+  setLoadingVisible,
 }) => {
   const [loading, setLoading] = useState(true);
   const [selectedTrashcan, setSelectedTrashcan] = useState();
@@ -177,7 +179,10 @@ export const TrashcanInfo = ({
     };
 
     await fetch(`http://${URL}/locations/${selectedId}/`, requestOptions)
-      .then((response) => response.json())
+      .then((response) => {
+        response.json();
+        setLoadingVisible(false);
+      })
       .then((result) => {
         console.log('log', result);
       })
@@ -311,6 +316,7 @@ export const TrashcanInfo = ({
             <TouchableHighlight
               style={{...styles.deleteButton}}
               onPress={async () => {
+                setLoadingVisible(true);
                 await deleteData();
                 setSelectedIndex(null);
                 setSelectedId(null);

@@ -64,6 +64,7 @@ export const MapScreen = ({latitude, longitude}) => {
   const [authModalVisible, setAuthModalVisible] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
   const [leaderBoardVisible, setLeaderBoardVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
   const [likes, setLikes] = useState(0);
   const [dislikes, setDisLikes] = useState(0);
 
@@ -137,51 +138,58 @@ export const MapScreen = ({latitude, longitude}) => {
           //onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}
         >
           {pin.data &&
-            pin.data.map((point, idx) => (Platform.OS === 'ios') ? (
-              <Marker
-                key={idx}
-                coordinate={point}
-                pinColor={pin.data[idx].likes - pin.data[idx].dislikes > 0 ? "blue"
-                  : (pin.data[idx].likes - pin.data[idx].dislikes < 0 ? "red" : null)
-                }
-                onClick={async () => {
-                  await onClicked(point, idx);
-                  bottomSheetModalRef.current?.present();
-                }}/>
-            ):(
-              <Marker
-                key={idx}
-                coordinate={point}
-                width={60}
-                height={60}
-                onClick={async () => {
-                  // await fetchData(point);
-                  await onClicked(point, idx);
-                  bottomSheetModalRef.current?.present();
-                }}>
-                <View style={{flexDirection: 'row'}}>
-                  {pin.data[idx].likes - pin.data[idx].dislikes > 0 ? (
-                    <Image
-                      source={require('../assets/marker/marker_green.png')}
-                      style={{width: 60, height: 60}}
-                      fadeDuration={0}
-                    />
-                  ) : pin.data[idx].likes - pin.data[idx].dislikes < 0 ? (
-                    <Image
-                      source={require('../assets/marker/marker_red.png')}
-                      style={{width: 60, height: 60}}
-                      fadeDuration={0}
-                    />
-                  ) : (
-                    <Image
-                      source={require('../assets/marker/marker_gray.png')}
-                      style={{width: 60, height: 60}}
-                      fadeDuration={0}
-                    />
-                  )}
-                </View>
-              </Marker>
-            ))}
+            pin.data.map((point, idx) =>
+              Platform.OS === 'ios' ? (
+                <Marker
+                  key={idx}
+                  coordinate={point}
+                  pinColor={
+                    pin.data[idx].likes - pin.data[idx].dislikes > 0
+                      ? 'blue'
+                      : pin.data[idx].likes - pin.data[idx].dislikes < 0
+                      ? 'red'
+                      : null
+                  }
+                  onClick={async () => {
+                    await onClicked(point, idx);
+                    bottomSheetModalRef.current?.present();
+                  }}
+                />
+              ) : (
+                <Marker
+                  key={idx}
+                  coordinate={point}
+                  width={60}
+                  height={60}
+                  onClick={async () => {
+                    // await fetchData(point);
+                    await onClicked(point, idx);
+                    bottomSheetModalRef.current?.present();
+                  }}>
+                  <View style={{flexDirection: 'row'}}>
+                    {pin.data[idx].likes - pin.data[idx].dislikes > 0 ? (
+                      <Image
+                        source={require('../assets/marker/marker_green.png')}
+                        style={{width: 60, height: 60}}
+                        fadeDuration={0}
+                      />
+                    ) : pin.data[idx].likes - pin.data[idx].dislikes < 0 ? (
+                      <Image
+                        source={require('../assets/marker/marker_red.png')}
+                        style={{width: 60, height: 60}}
+                        fadeDuration={0}
+                      />
+                    ) : (
+                      <Image
+                        source={require('../assets/marker/marker_gray.png')}
+                        style={{width: 60, height: 60}}
+                        fadeDuration={0}
+                      />
+                    )}
+                  </View>
+                </Marker>
+              ),
+            )}
         </NaverMapView>
 
         {selectedIndex !== null ? (
@@ -207,6 +215,8 @@ export const MapScreen = ({latitude, longitude}) => {
               setSelectedId={setSelectedId}
               alertVisible={alertVisible}
               setAlertVisible={setAlertVisible}
+              loadingVisible={loadingVisible}
+              setLoadingVisible={setLoadingVisible}
             />
           </BottomSheetModal>
         ) : (
@@ -219,6 +229,8 @@ export const MapScreen = ({latitude, longitude}) => {
         <AddTrashcan
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
+          loadingVisible={loadingVisible}
+          setLoadingVisible={setLoadingVisible}
         />
         <Auth
           authModalVisible={authModalVisible}
