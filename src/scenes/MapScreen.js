@@ -144,9 +144,9 @@ export const MapScreen = ({latitude, longitude}) => {
                   key={idx}
                   coordinate={point}
                   pinColor={
-                    pin.data[idx].likes - pin.data[idx].dislikes > 0
+                    pin.data[idx].likes - pin.data[idx].dislikes > 1
                       ? 'blue'
-                      : pin.data[idx].likes - pin.data[idx].dislikes < 0
+                      : pin.data[idx].likes - pin.data[idx].dislikes < -1
                       ? 'red'
                       : null
                   }
@@ -167,13 +167,13 @@ export const MapScreen = ({latitude, longitude}) => {
                     bottomSheetModalRef.current?.present();
                   }}>
                   <View style={{flexDirection: 'row'}}>
-                    {pin.data[idx].likes - pin.data[idx].dislikes > 0 ? (
+                    {pin.data[idx].likes - pin.data[idx].dislikes > 1 ? (
                       <Image
                         source={require('../assets/marker/marker_green.png')}
                         style={{width: 60, height: 60}}
                         fadeDuration={0}
                       />
-                    ) : pin.data[idx].likes - pin.data[idx].dislikes < 0 ? (
+                    ) : pin.data[idx].likes - pin.data[idx].dislikes < -1 ? (
                       <Image
                         source={require('../assets/marker/marker_red.png')}
                         style={{width: 60, height: 60}}
