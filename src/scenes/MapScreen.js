@@ -142,7 +142,7 @@ export const MapScreen = ({latitude, longitude}) => {
                 key={idx}
                 coordinate={point}
                 pinColor={pin.data[idx].likes - pin.data[idx].dislikes > 1 ? "blue"
-                  : (pin.data[idx].likes - pin.data[idx].dislikes < 1 ? "red" : null)
+                  : (pin.data[idx].likes - pin.data[idx].dislikes < -1 ? "red" : null)
                 }
                 onClick={async () => {
                   await onClicked(point, idx);
@@ -166,7 +166,7 @@ export const MapScreen = ({latitude, longitude}) => {
                       style={{width: 60, height: 60}}
                       fadeDuration={0}
                     />
-                  ) : pin.data[idx].likes - pin.data[idx].dislikes < 1 ? (
+                  ) : pin.data[idx].likes - pin.data[idx].dislikes < -1 ? (
                     <Image
                       source={require('../assets/marker/marker_red.png')}
                       style={{width: 60, height: 60}}
