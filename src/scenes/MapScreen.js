@@ -105,8 +105,8 @@ export const MapScreen = ({latitude, longitude}) => {
       .catch((error) => console.log('error', error));
   };
 
-  const menuPressed = (name) => {
-    const userData = getData('user');
+  const menuPressed = async (name) => {
+    const userData = await getData('user');
     if (name === 'login') {
       setAuthModalVisible(true);
     } else if (name === 'addTrashcan') {
