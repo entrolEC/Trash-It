@@ -17,7 +17,7 @@ import {
   getPin,
   PinContext,
 } from '../context/PinContext';
-import {getNewToken} from '../service/UserManager';
+import {getNewToken, getUser} from '../service/UserManager';
 import {getGeolocation} from '../service/Geolocation';
 
 import Modal from 'react-native-modal';
@@ -41,6 +41,8 @@ export const AddTrashcan = ({
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
   const {pin} = pinState; // included : data, loading, error, success
+
+  const [user, setUser] = useState();
 
   const fetchData = async () => {
     getPin(pinDispatch);
@@ -101,9 +103,21 @@ export const AddTrashcan = ({
   };
 
   useEffect(() => {
-    //setModalVisible(modalVisible)
+    getUser().then((_user) => {
+      console.log('user trashcaninfo', _user);
+      setUser(_user.user);
+    });
   }, []);
 
+  if (user === null) {
+    return (
+      <View>
+        <Text>
+          로그인을 먼저 해주세요.
+        </Text>
+      </View>
+    )
+  }
   return (
     <View>
       <View style={styles.centeredView}>

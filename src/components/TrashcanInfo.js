@@ -70,7 +70,7 @@ export const TrashcanInfo = ({
   useEffect(() => {
     getUser().then((_user) => {
       console.log("user trashcaninfo",_user);
-      setUser(_user.user);
+      if (_user) setUser(_user.user);
 
       console.log('trashcaninfo');
       const getSelectedTrashcan = async () => {
@@ -82,8 +82,7 @@ export const TrashcanInfo = ({
           redirect: 'follow',
         };
         // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
-        const params = (_user.user != null ? _user.user.id : -1);
-        console.log('trashcaninfo_user', _user.user);
+        const params = (_user != null ? _user.user.id : -1);
         await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
         .then((response) => response.json())
         .then((result) => {
