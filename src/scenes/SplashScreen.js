@@ -71,7 +71,7 @@ export const SplashScreen = () => {
       ) : (
         <>
           <LottieView
-            source={require('../assets/splash.json')}
+            source={require('../assets/lottie/splash.json')}
             autoPlay
             loop={false}
             onAnimationFinish={() => {

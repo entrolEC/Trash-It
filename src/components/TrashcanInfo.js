@@ -40,8 +40,9 @@ export const TrashcanInfo = ({
   setSelectedId,
   alertVisible,
   setAlertVisible,
+  loadingVisible,
+  setLoadingVisible,
 }) => {
-  const [tmp, setTmp] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTrashcan, setSelectedTrashcan] = useState();
   const [user, setUser] = useState();
@@ -59,6 +60,8 @@ export const TrashcanInfo = ({
   const disLikeAnimation = useRef(null);
   const [isFirstRun, setIsFirstRun] = useState(true);
 
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
   const [likeTextColor, setLikeTextColor] = useState('#000000');
 
   // 처음에는 {user}에게서 가장 가까운 쓰레기통을 bottomsheet로 띄워줌
@@ -67,8 +70,55 @@ export const TrashcanInfo = ({
   useEffect(() => {
     getUser().then((_user) => {
       console.log("user trashcaninfo",_user);
-      setUser(_user.user)
-      
+      if (_user) setUser(_user.user);
+
+      console.log('trashcaninfo');
+      const getSelectedTrashcan = async () => {
+        var requestOptions = {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          method: 'GET',
+          redirect: 'follow',
+        };
+        // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
+        const params = (_user != null ? _user.user.id : -1);
+        await fetch(`http://${URL}/locations/${selectedId}/?user_id=${params}`, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log('getSelectedTrashcan', result);
+          setSelectedTrashcan(result);
+          setLikes(result.likes);
+          setDisLikes(result.dislikes);
+          setUserLikes(result.userLikes);
+          setUserDisLikes(result.userDisLikes);
+          setLoading(false); // 로딩 제대로 작동 함.
+
+          if (userLikes) setLikeTextColor('#00ADB5');
+          else if (userDisLikes) setLikeTextColor('#F05945');
+          else if (!userLikes && !userDisLikes) setLikeTextColor('#000000');
+
+          if (isFirstRun) {
+            if (result.userLikes) likeAnimation.current.play(48, 48);
+            else likeAnimation.current.play(0, 0);
+            if (result.userDisLikes) disLikeAnimation.current.play(50, 50);
+            else disLikeAnimation.current.play(0, 0);
+
+            setIsFirstRun(false);
+          }
+        })
+        .catch((error) => console.log('error', error, isFirstLoad));
+        setIsFirstLoad(false);
+      };
+
+      if (modalVisible === true) getSelectedTrashcan();
+    });
+  },[modalVisible, userLikes, userDisLikes]);
+
+  const reloadPinData = async () => {
+    getUser().then((_user) => {
+      setUser(_user.user);
+
       console.log('trashcaninfo');
       const getSelectedTrashcan = async () => {
         var requestOptions = {
@@ -107,10 +157,9 @@ export const TrashcanInfo = ({
         })
         .catch((error) => console.log('error', error));
       };
-      
       if (modalVisible === true) getSelectedTrashcan();
-    })
-  },[modalVisible, userLikes, userDisLikes]);
+    });
+  };
 
   const refreshData = async () => {
     getPin(pinDispatch);
@@ -129,7 +178,10 @@ export const TrashcanInfo = ({
     };
 
     await fetch(`http://${URL}/locations/${selectedId}/`, requestOptions)
-      .then((response) => response.json())
+      .then((response) => {
+        response.json();
+        setLoadingVisible(false);
+      })
       .then((result) => {
         console.log('log', result);
       })
@@ -186,21 +238,20 @@ export const TrashcanInfo = ({
   };
 
   if (loading) {
+    if (isFirstLoad === false) {
+      setTimeout(async () => {
+        await reloadPinData();
+      }, 3000);
+    }
+
     return (
-      <View style={styles.centeredView}>
-        <View style={styles.centeredView}>
-          <Text>로딩중입니다.</Text>
-          <TouchableHighlight
-            style={{...styles.openButton, backgroundColor: '#2196F3'}}
-            onPress={() => {
-              setLoading(true);
-              setModalVisible(!modalVisible);
-              setSelectedIndex(null);
-              setSelectedId(null);
-            }}>
-            <Text style={styles.textStyle}> 취소 </Text>
-          </TouchableHighlight>
-        </View>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '20%'}}>
+        <LottieView
+          style={{width: 150, height: 150}}
+          source={require('../assets/lottie/loading.json')}
+          autoPlay
+          loop
+        />
       </View>
     );
   }
@@ -217,7 +268,7 @@ export const TrashcanInfo = ({
               <LottieView
                 ref={likeAnimation}
                 style={{width: 80, height: 80}}
-                source={require('../assets/like.json')}
+                source={require('../assets/lottie/like.json')}
                 autoPlay={false}
                 loop={false}
               />
@@ -234,14 +285,16 @@ export const TrashcanInfo = ({
               <LottieView
                 ref={disLikeAnimation}
                 style={{width: 80, height: 80}}
-                source={require('../assets/dislike.json')}
+                source={require('../assets/lottie/dislike.json')}
                 autoPlay={false}
                 loop={false}
               />
             </TouchableWithoutFeedback>
           </View>
+
           <ImageModal
             style={styles.image}
+            resizeMode="contain"
             source={{
               // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
               uri: `http://${URL}${selectedTrashcan.image}`,
@@ -249,11 +302,11 @@ export const TrashcanInfo = ({
           />
         </View>
 
-        
-        <Text style={styles.text}>{selectedTrashcan.description}</Text>
-        
-        <View style={{marginTop:50}}>
-          <Text>게시자 : {selectedTrashcan.author.email}</Text>
+        <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center'}}>
+          <View>
+            <Text style={{marginTop: '40%'}}>{selectedTrashcan.description}</Text>
+          </View>
+          <Text style={{marginTop: '25%'}}>게시자 : {selectedTrashcan.author.email}</Text>
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
@@ -262,6 +315,7 @@ export const TrashcanInfo = ({
             <TouchableHighlight
               style={{...styles.deleteButton}}
               onPress={async () => {
+                setLoadingVisible(true);
                 await deleteData();
                 setSelectedIndex(null);
                 setSelectedId(null);
@@ -300,10 +354,10 @@ const styles = StyleSheet.create({
   image: {
     width: 225,
     height: 225,
-    marginVertical: 10,
+    marginTop: 10,
   },
   text: {
-    marginTop: 10,
+    marginTop: 0,
   },
   deleteButton: {
     justifyContent: "center",
