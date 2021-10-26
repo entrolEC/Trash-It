@@ -37,7 +37,11 @@ export const LoginScreen = ({
   useEffect(() => {
     console.log(webClientId);
     GoogleSignin.configure({
-      scopes: [ 'https://www.googleapis.com/auth/drive.photos.readonly'],
+      scopes: [ 
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "openid"
+    ],
       webClientId: webClientId,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
