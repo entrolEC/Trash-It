@@ -15,3 +15,5 @@ npx react-native run-ios
 > 쓰레기통의 위치정보를 쉽게 알 수 있는 앱을 만들면 좋을것 같다는 생각을 하게 됨.
 
 시연영상 >> https://youtu.be/WLQHEkW0I7A
+
+Backend Link  https://github.com/qoquma/trashcanMap_backend
