@@ -103,6 +103,7 @@ export const SplashScreen = () => {
             setAlertVisible={setShowConnectionAlert}
             title={'인터넷 없음'}
             message={'인터넷 연결을 확인하고 \n앱을 다시 실행해주세요!'}
+            confirmText={'알겠어요!'}
             callback={() => BackHandler.exitApp()} // not working in ios
           />
         </>

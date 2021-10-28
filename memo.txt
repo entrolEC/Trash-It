@@ -6,3 +6,6 @@ npx react-native bundle --platform android --dev false --entry-file index.js --b
 https://stackoverflow.com/questions/61593821/generate-an-apk-failed-on-react-native
 
 # 에러날시 build폴더 android안,  app안 2개 다 지우기
+
+# android 인증서 전부 조회하는 법
+cd android && ./gradlew signingReport

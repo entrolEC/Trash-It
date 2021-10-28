@@ -9,6 +9,9 @@ export const Alert = ({
   setAlertVisible,
   title,
   message,
+  showCancel=false,
+  confirmText,
+  cancelText="",
   callback = null,
 }) => {
   return (
@@ -20,9 +23,9 @@ export const Alert = ({
       message={message}
       closeOnTouchOutside={true}
       closeOnHardwareBackPress={false}
-      showCancelButton={false}
+      showCancelButton={showCancel}
       showConfirmButton={true}
-      cancelText=""
+      cancelText="취소"
       confirmText="알겠어요!"
       confirmButtonColor="#DD6B55"
       onCancelPressed={() => {
