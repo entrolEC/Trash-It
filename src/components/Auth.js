@@ -12,11 +12,13 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {AuthNavigator} from '../navigation/AuthNavigator';
 import {LoginScreen} from '../scenes/LoginScreen';
 import {RegisterScreen} from '../scenes/RegisterScreen';
+import {UserDetailScreen} from '../scenes/UserDetailScreen';
 
 import Modal from 'react-native-modal';
-
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
+import {getNewToken, getUser} from '../service/UserManager';
 
 export const Auth = ({
   authModalVisible,
@@ -24,6 +26,14 @@ export const Auth = ({
   selectedIndex,
 }) => {
   const [isRegister, setIsRegister] = useState(false);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    getUser().then((_user) => {
+      console.log('user trashcaninfo', _user);
+      if (_user) setUser(_user);
+    });
+  }, []);
 
   return (
     <View style={styles.centeredView}>
@@ -48,17 +58,15 @@ export const Auth = ({
               width: windowWidth * 0.85,
               height: windowHeight * 0.6,
             }}>
-            {isRegister ? (
-              <RegisterScreen
-                isResister={isRegister}
-                setIsRegister={setIsRegister}
-                setAuthModalVisible={setAuthModalVisible}
-              />
+            {user ? (
+              <UserDetailScreen user={user} />
             ) : (
               <LoginScreen
                 isResister={isRegister}
                 setIsRegister={setIsRegister}
                 setAuthModalVisible={setAuthModalVisible}
+                user={user}
+                setUser={setUser}
               />
             )}
             <TouchableHighlight

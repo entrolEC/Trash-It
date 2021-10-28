@@ -43,6 +43,23 @@ export const SplashScreen = () => {
 
   useEffect(() => {
     getGeolocation(setIsGeolocationLoaded);
+    const backAction = () => {
+      Alert.alert('Hold on!', '앱을 종료하시겠습니까?', [
+        {
+          text: '취소',
+          onPress: () => null,
+        },
+        {text: '확인', onPress: () => BackHandler.exitApp()},
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+
+    return () => backHandler.remove();
   }, []);
 
   useEffect(() => {
@@ -59,7 +76,7 @@ export const SplashScreen = () => {
   }, [isLoaded])
 
   useEffect(() => {
-    console.log("splash",isLoaded, isGeolocationLoaded, pin.success);
+    console.log('splash',isLoaded, isGeolocationLoaded, pin.success);
   }, [isLoaded, isGeolocationLoaded, pin.success]);
   return (
     <>
