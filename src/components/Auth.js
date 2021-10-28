@@ -20,6 +20,16 @@ const windowHeight = Dimensions.get('window').height;
 
 import {getNewToken, getUser} from '../service/UserManager';
 
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCode,
+} from '@react-native-community/google-signin';
+
+import {setGoogleLoginUser} from '../service/UserManager';
+import {getData} from '../service/AsyncStorage';
+import {URL, webClientId} from '../../env.json';
+
 export const Auth = ({
   authModalVisible,
   setAuthModalVisible,
@@ -27,6 +37,26 @@ export const Auth = ({
 }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [user, setUser] = useState();
+  const [userGoogleInfo, setUserGoogleInfo] = useState();
+  const [googleLoaded, setGoogleLoaded] = useState();
+  const [token, setToken] = useState();
+
+  useEffect(() => {
+    console.log(webClientId);
+    GoogleSignin.configure({
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'openid',
+      ],
+      webClientId: webClientId,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+      iosClientId:
+        '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com',
+    });
+    setUser(getData('user').user);
+  }, []);
 
   useEffect(() => {
     getUser().then((_user) => {
@@ -34,6 +64,45 @@ export const Auth = ({
       if (_user) setUser(_user);
     });
   }, []);
+
+  useEffect(() => {
+    if (token !== undefined) {
+      console.log('tokens are ready', token);
+      setGoogleLoginUser(token, userGoogleInfo.user);
+    }
+  }, [token]);
+
+  const googleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      console.log('1');
+      const userInfo = await GoogleSignin.signIn();
+      console.log('2');
+      const tokens = await GoogleSignin.getTokens();
+      console.log('3');
+      console.log('userInfo : ', userInfo);
+      console.log('tokens :', tokens);
+      setUserGoogleInfo(userInfo);
+      setToken({
+        accessToken: tokens.accessToken,
+        code: userInfo.serverAuthCode,
+        idToken: userInfo.idToken,
+      });
+      setGoogleLoaded(true);
+      console.log('getData', getData('user'));
+      setUser(userInfo);
+    } catch (error) {
+      console.log('message____________', error.message);
+      if (error.code === statusCode.SIGN_IN_CANCELLED)
+        console.log('USER CANCELLED');
+      else if (error.code === statusCode.IN_PROGRESS) console.log('signin in');
+      else if (error.code === statusCode.PLAY_SERVICES_NOT_AVAILABLE)
+        console.log('PLAY_SERVICES_NOT_AVAILABLE');
+      else console.log('some other error happened');
+    }
+  };
+
+  if (!user && authModalVisible) googleSignIn();
 
   return (
     <View style={styles.centeredView}>
@@ -58,17 +127,7 @@ export const Auth = ({
               width: windowWidth * 0.85,
               height: windowHeight * 0.6,
             }}>
-            {user ? (
-              <UserDetailScreen user={user} />
-            ) : (
-              <LoginScreen
-                isResister={isRegister}
-                setIsRegister={setIsRegister}
-                setAuthModalVisible={setAuthModalVisible}
-                user={user}
-                setUser={setUser}
-              />
-            )}
+            {user ? <UserDetailScreen user={user} /> : null}
             <TouchableHighlight
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
