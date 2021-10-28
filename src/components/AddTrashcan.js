@@ -112,12 +112,11 @@ export const AddTrashcan = ({
   if (user === null) {
     return (
       <View>
-        <Text>
-          로그인을 먼저 해주세요.
-        </Text>
+        <Text>로그인을 먼저 해주세요.</Text>
       </View>
-    )
+    );
   }
+
   return (
     <View>
       <View style={styles.centeredView}>
@@ -174,25 +173,35 @@ export const AddTrashcan = ({
                     }}>
                     <Text style={styles.textStyle}> 취소 </Text>
                   </TouchableHighlight>
-                  <TouchableHighlight
-                    style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                    onPress={async () => {
-                      setLoadingVisible(true);
-                      console.log('pressed');
-                      if (data) {
-                        console.log('here');
+                  {image ? (
+                    <TouchableHighlight
+                      style={{...styles.openButton, backgroundColor: '#2196F3'}}
+                      onPress={async () => {
+                        setLoadingVisible(true);
+                        console.log('pressed');
+                        if (data) {
+                          console.log('here');
 
-                        await postData();
-                        await fetchData();
-                        //setTimeout(()=>{ fetchData() }, 1000)
-                        setData(0);
-                        setModalVisible(!modalVisible);
-                      } else {
-                        console.log('data is null');
-                      }
-                    }}>
-                    <Text style={styles.textStyle}> 확인 </Text>
-                  </TouchableHighlight>
+                          await postData();
+                          await fetchData();
+                          //setTimeout(()=>{ fetchData() }, 1000)
+                          setData(0);
+                          setModalVisible(!modalVisible);
+                        } else {
+                          console.log('data is null');
+                        }
+                      }}>
+                      <Text style={styles.textStyle}> 확인 </Text>
+                    </TouchableHighlight>
+                  ) : (
+                    <TouchableHighlight
+                      style={{
+                        ...styles.openButton,
+                        backgroundColor: '#808080',
+                      }}>
+                      <Text style={styles.textStyle}> 확인 </Text>
+                    </TouchableHighlight>
+                  )}
                 </View>
               </View>
             </View>

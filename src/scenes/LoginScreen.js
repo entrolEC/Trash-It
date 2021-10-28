@@ -17,7 +17,7 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
-import { setGoogleLoginUser } from '../service/UserManager';
+import {setGoogleLoginUser} from '../service/UserManager';
 import {getData} from '../service/AsyncStorage';
 import {URL, webClientId} from '../../env.json';
 
@@ -25,6 +25,8 @@ export const LoginScreen = ({
   isRegister,
   setIsRegister,
   setAuthModalVisible,
+  user,
+  setUser,
 }) => {
   const [inputId, setInputId] = useState();
   const [inputPassword, setInputPassword] = useState();
@@ -32,20 +34,20 @@ export const LoginScreen = ({
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
   const [token, setToken] = useState();
-  const [user, setUser] = useState();
 
   useEffect(() => {
     console.log(webClientId);
     GoogleSignin.configure({
-      scopes: [ 
-        "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/userinfo.email",
-        "openid"
-    ],
+      scopes: [
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'openid',
+      ],
       webClientId: webClientId,
       offlineAccess: true,
       forceCodeForRefreshToken: true,
-      iosClientId: '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com'
+      iosClientId:
+        '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com',
     });
     setUser(getData('user').user);
   }, []);
@@ -74,6 +76,8 @@ export const LoginScreen = ({
         idToken: userInfo.idToken,
       });
       setGoogleLoaded(true);
+      console.log('getData', getData('user'));
+      setUser(userInfo);
     } catch (error) {
       console.log('message____________', error.message);
       if (error.code === statusCode.SIGN_IN_CANCELLED)
