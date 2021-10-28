@@ -29,6 +29,7 @@ import {
 import {setGoogleLoginUser} from '../service/UserManager';
 import {getData} from '../service/AsyncStorage';
 import {URL, webClientId} from '../../env.json';
+import {googleLogout} from '../service/UserManager';
 
 export const Auth = ({
   authModalVisible,
@@ -128,6 +129,15 @@ export const Auth = ({
               height: windowHeight * 0.6,
             }}>
             {user ? <UserDetailScreen user={user} /> : null}
+            <TouchableHighlight 
+              style={{...styles.deleteButton}}
+              onPress={async () => {
+                setAuthModalVisible(false);
+                await googleLogout();
+              }}
+            >
+              <Text style={styles.textStyle}> 로그아웃 </Text>
+            </TouchableHighlight>
             <TouchableHighlight
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
@@ -181,5 +191,15 @@ const styles = StyleSheet.create({
   },
   text: {
     marginVertical: 20,
+  },
+  deleteButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B30000',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 5,
+    width: '100%',
+    height: 30,
   },
 });

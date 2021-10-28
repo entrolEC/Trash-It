@@ -39,3 +39,7 @@ export const setGoogleLoginUser = async (token, userGoogleInfo) => {
   user.user.id = userId;
   await setData('user', user);
 }
+
+export const googleLogout = async () => {
+  await setData('user', null);
+}
