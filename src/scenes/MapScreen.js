@@ -240,6 +240,7 @@ export const MapScreen = ({latitude, longitude}) => {
           alertVisible={alertVisible}
           setAlertVisible={setAlertVisible}
           message={'로그인을 먼저 해주세요!'}
+          confirmText={'확인'}
         />
         <LeaderBoard
           leaderBoardVisible={leaderBoardVisible}
