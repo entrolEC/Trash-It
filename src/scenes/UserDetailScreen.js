@@ -26,7 +26,7 @@ export const UserDetailScreen = ({user}) => {
   const [errMessage, setErrMessage] = useState();
 
   useEffect(() => {
-    
+    console.log(user.user.photo);
   }, []);
   return (
     <SafeAreaView style={styles.container}>
@@ -34,6 +34,7 @@ export const UserDetailScreen = ({user}) => {
         source={{
           uri: user.user.photo,
         }}
+        style={{width: 200, height: 200}}
       />
       <Text>{user.email}</Text>
     </SafeAreaView>

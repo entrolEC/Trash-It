@@ -28,9 +28,6 @@ export const LoginScreen = ({
   user,
   setUser,
 }) => {
-  const [inputId, setInputId] = useState();
-  const [inputPassword, setInputPassword] = useState();
-  const [errMessage, setErrMessage] = useState();
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
   const [token, setToken] = useState();
@@ -56,6 +53,8 @@ export const LoginScreen = ({
     if (token !== undefined) {
       console.log('tokens are ready', token);
       setGoogleLoginUser(token, userGoogleInfo.user);
+    } else {
+      googleSignIn();
     }
   }, [token]);
 
@@ -89,120 +88,9 @@ export const LoginScreen = ({
     }
   };
 
-  const loginSuccess = (result) => {
-    setUser({token: result.Token, username: inputId});
-  };
-
-  const fetchData = async () => {
-    var formdata = new FormData();
-    formdata.append('username', inputId);
-    formdata.append('password', inputPassword);
-
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/signin/`, requestOptions)
-      .then((response) => response.json())
-      .then(async (result) => {
-        console.log(result);
-        if (result.Token) {
-          await loginSuccess(result);
-          setAuthModalVisible(false);
-        } else if (result.error) {
-          setErrMessage('아이디나 비밀번호가 일치하지 않습니다.');
-          console.log('adsflkajs;dlfkja;sdlkfj');
-        }
-      })
-      .catch((error) => console.log('error', error));
-  };
-
-  const onPress = () => {
-    setIsRegister(true);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>로그인된 계정 : {}</Text>
-      {errMessage && <Text style={{color: 'red'}}>{errMessage}</Text>}
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(text) => setInputId(text)}
-        placeholder={'  아이디'}
-      />
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(text) => setInputPassword(text)}
-        placeholder={'  비밀번호'}
-        secureTextEntry={true}
-      />
-      <View style={styles.buttonContainer}>
-        <Text style={styles.textButton} onPress={onPress}>
-          {' '}
-          회원이 아니신가요?{' '}
-        </Text>
-        <TouchableHighlight
-          style={{...styles.openButton, backgroundColor: '#2176FF'}}
-          onPress={fetchData}>
-          <Text style={styles.textStyle}>로그인</Text>
-        </TouchableHighlight>
-      </View>
-      <View>
-        <GoogleSigninButton
-          onPress={googleSignIn}
-          size={GoogleSigninButton.Size.Wide}
-          style={styles.googleloginbtn}
-          color={GoogleSigninButton.Color.Dark}
-          sytle={{width: 100, height: 100}}
-        />
-      </View>
+    <SafeAreaView>
+      <Text>fea</Text>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  textInput: {
-    marginVertical: 10,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 0.5,
-    borderRadius: 10,
-  },
-  textButton: {
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-    color: '#aaaaaa',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
-    width: 70,
-    marginRight: 10,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  googleloginbtn: {
-    width: '100%',
-    height: 48,
-    marginTop: '10%',
-    marginRight: 100,
-  },
-});
