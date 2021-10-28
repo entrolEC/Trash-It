@@ -55,7 +55,7 @@ export const LoginScreen = ({
   useEffect(() => {
     if (token !== undefined) {
       console.log('tokens are ready', token);
-      setGoogleLoginUser(token);
+      setGoogleLoginUser(token, userGoogleInfo.user);
     }
   }, [token]);
 
