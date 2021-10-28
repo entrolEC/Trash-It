@@ -28,6 +28,7 @@ export const UserDetailScreen = ({user}) => {
   useEffect(() => {
     console.log(user.user.photo);
   }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <Image
@@ -37,6 +38,11 @@ export const UserDetailScreen = ({user}) => {
         style={{width: 200, height: 200}}
       />
       <Text>{user.email}</Text>
+      <View style={{flex: 1, justifyContent: 'flex-end'}}>
+        <TouchableHighlight style={{...styles.deleteButton}}>
+          <Text style={styles.textStyle}> 로그아웃 </Text>
+        </TouchableHighlight>
+      </View>
     </SafeAreaView>
   );
 };
@@ -45,40 +51,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  textInput: {
-    marginVertical: 10,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 0.5,
-    borderRadius: 10,
+  text: {
+    marginTop: 0,
   },
-  textButton: {
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-    color: '#aaaaaa',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
-    width: 70,
-    marginRight: 10,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  googleloginbtn: {
+  deleteButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B30000',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    padding: 5,
     width: '100%',
-    height: 48,
-    marginTop: '10%',
-    marginRight: 100,
+    height: 30,
   },
 });

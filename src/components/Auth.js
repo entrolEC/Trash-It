@@ -58,11 +58,11 @@ export const Auth = ({
   }, []);
 
   useEffect(() => {
-    if(authModalVisible === true) {      
+    if (authModalVisible === true) {
       getUser().then(async (_user) => {
         console.log('user trashcaninfo', _user);
         setUser(_user);
-        if(_user===null) await googleSignIn();
+        if (_user === null) await googleSignIn();
       });
     }
   }, [authModalVisible]);

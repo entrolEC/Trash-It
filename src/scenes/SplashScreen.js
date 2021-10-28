@@ -53,13 +53,12 @@ export const SplashScreen = () => {
     console.log('pinerror:', pin.error);
     if (isLoaded)
       setTimeout(() => {
-        if(!pin.success)
-          setShowConnectionAlert(true);
-      },5000)
-  }, [isLoaded])
+        if (!pin.success) setShowConnectionAlert(true);
+      }, 5000);
+  }, [isLoaded]);
 
   useEffect(() => {
-    console.log('splash',isLoaded, isGeolocationLoaded, pin.success);
+    console.log('splash', isLoaded, isGeolocationLoaded, pin.success);
   }, [isLoaded, isGeolocationLoaded, pin.success]);
   return (
     <>
