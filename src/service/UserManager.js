@@ -32,7 +32,8 @@ export const getNewToken = async () => {
   }
 }
 
-export const setGoogleLoginUser = async (token) => {
-  const user = await googleLoginFinish(token);
+export const setGoogleLoginUser = async (token, userGoogleInfo) => {
+  let user = await googleLoginFinish(token);
+  user.user = userGoogleInfo
   await setData('user', user);
 }
