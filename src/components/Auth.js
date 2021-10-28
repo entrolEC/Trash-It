@@ -36,7 +36,7 @@ export const Auth = ({
   selectedIndex,
 }) => {
   const [isRegister, setIsRegister] = useState(false);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(0);
   const [userGoogleInfo, setUserGoogleInfo] = useState();
   const [googleLoaded, setGoogleLoaded] = useState();
   const [token, setToken] = useState();
@@ -55,15 +55,17 @@ export const Auth = ({
       iosClientId:
         '954273909234-9d9amhh149brmim1gatunqbc14pjjf14.apps.googleusercontent.com',
     });
-    setUser(getData('user').user);
   }, []);
 
   useEffect(() => {
-    getUser().then((_user) => {
-      console.log('user trashcaninfo', _user);
-      if (_user) setUser(_user);
-    });
-  }, []);
+    if(authModalVisible === true) {      
+      getUser().then(async (_user) => {
+        console.log('user trashcaninfo', _user);
+        setUser(_user);
+        if(_user===null) await googleSignIn();
+      });
+    }
+  }, [authModalVisible]);
 
   useEffect(() => {
     if (token !== undefined) {
@@ -101,8 +103,6 @@ export const Auth = ({
       else console.log('some other error happened');
     }
   };
-
-  if (!user && authModalVisible) googleSignIn();
 
   return (
     <View style={styles.centeredView}>
