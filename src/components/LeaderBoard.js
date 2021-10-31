@@ -13,7 +13,7 @@ import {
 import ImagePicker from 'react-native-image-crop-picker';
 
 import Modal from 'react-native-modal';
-
+import {getNewToken, getUser} from '../service/UserManager';
 import {URL} from '../../env.json';
 
 const windowWidth = Dimensions.get('window').width;
@@ -23,7 +23,12 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
   const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
+    const accessToken = await getNewToken();
     var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + accessToken,
+      },
       method: 'GET',
       redirect: 'follow',
     };
@@ -31,7 +36,7 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
     await fetch(`http://${URL}/users/`, requestOptions)
       .then((response) => response.json())
       .then(async (result) => {
-        console.log(result);
+        console.log("leaderBoard!!", result);
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
         console.log('result : ', result);
