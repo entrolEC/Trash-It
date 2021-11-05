@@ -19,7 +19,7 @@ import {URL} from '../../env.json';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
+export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible, loadingVisible, setLoadingVisible}) => {
   const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
@@ -39,14 +39,19 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
         console.log("leaderBoard!!", result);
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
+        setLoadingVisible(false);
         console.log('result : ', result);
       })
       .catch((error) => console.log('error', error));
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if(leaderBoardVisible) {
+      fetchData();
+      setLoadingVisible(true);
+    }
+      
+  }, [leaderBoardVisible]);
 
   const renderSeparator = () => (
     <View
@@ -101,7 +106,7 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible}) => {
               height: windowHeight * 0.6,
             }}>
             <FlatList
-              data={users}
+              data={loadingVisible ? null : users}
               renderItem={renderItem}
               keyExtractor={(item) => item.id}
               ItemSeparatorComponent={renderSeparator}

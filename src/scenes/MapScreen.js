@@ -245,6 +245,8 @@ export const MapScreen = ({latitude, longitude}) => {
         <LeaderBoard
           leaderBoardVisible={leaderBoardVisible}
           setLeaderBoardVisible={setLeaderBoardVisible}
+          loadingVisible={loadingVisible}
+          setLoadingVisible={setLoadingVisible}
         />
       </BottomSheetModalProvider>
     </>
