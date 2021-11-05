@@ -28,11 +28,8 @@ LogBox.ignoreAllLogs();
 export const SplashScreen = () => {
   //const [user, setUser] = useState({token: null, username: '로그인되지 않음'});
   const [trashcanLocation, setTrashcanLocation] = useState([]);
-  const [currentPosition, setCurrentPosition] = useState(initialState);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [hasLocationPermission, setHasLocationPermission] = useState();
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [selectedtrashcan, setSelectedtrashcan] = useState([]);
+  const [isPinLoaded, setIsPinLoaded] = useState(false);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
   const [showConnectionAlert, setShowConnectionAlert] = useState(false); // 인터넷 연결 실패 경고창 보임 여부
 
@@ -58,11 +55,13 @@ export const SplashScreen = () => {
   }, [isLoaded]);
 
   useEffect(() => {
-    console.log('splash', isLoaded, isGeolocationLoaded, pin.success);
-  }, [isLoaded, isGeolocationLoaded, pin.success]);
+    if(pin.success)
+      setIsPinLoaded(true);
+  }, [pin.success]);
+
   return (
     <>
-      {isLoaded === true && isGeolocationLoaded !== 0 && pin.success ? (
+      {isLoaded === true && isGeolocationLoaded !== 0 && isPinLoaded ? (
         <MapScreen
           latitude={isGeolocationLoaded.latitude}
           longitude={isGeolocationLoaded.longitude}
