@@ -1,13 +1,9 @@
 import React, {useState, useEffect} from 'react';
+import {Alert, StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import {
-  Alert,
-  StyleSheet,
-  Text,
   TouchableHighlight,
-  View,
-  Image,
-  Dimensions,
-} from 'react-native';
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import {AuthNavigator} from '../navigation/AuthNavigator';
 import {LoginScreen} from '../scenes/LoginScreen';
@@ -107,47 +103,16 @@ export const Auth = ({
 
   return (
     <View style={styles.centeredView}>
-      <Modal
-        animationIn="pulse"
-        animationInTiming={500}
-        animationOut="bounceOutDown"
-        animationOutTiming={500}
-        transparent={true}
-        isVisible={authModalVisible}
-        backdropColor="none"
-        onBackButtonPress={() => {
-          setAuthModalVisible(!authModalVisible);
-        }}
-        onBackdropPress={() => {
-          setAuthModalVisible(!authModalVisible);
+      {user ? <UserDetailScreen user={user} /> : null}
+      <TouchableHighlight
+        style={{...styles.logoutButton}}
+        onPress={async () => {
+          console.log('logout button clecked!!');
+          await googleLogout();
+          setAuthModalVisible(false);
         }}>
-        <View style={styles.centeredView}>
-          <View
-            style={{
-              ...styles.modalView,
-              width: windowWidth * 0.85,
-              height: windowHeight * 0.6,
-            }}>
-            {user ? <UserDetailScreen user={user} /> : null}
-            <TouchableHighlight 
-              style={{...styles.deleteButton}}
-              onPress={async () => {
-                setAuthModalVisible(false);
-                await googleLogout();
-              }}
-            >
-              <Text style={styles.textStyle}> 로그아웃 </Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                setAuthModalVisible(!authModalVisible);
-              }}>
-              <Text style={styles.textStyle}> 닫기 </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
+        <Text style={styles.textStyle}> 로그아웃 </Text>
+      </TouchableHighlight>
     </View>
   );
 };
@@ -159,27 +124,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 15,
-    elevation: 2,
-  },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
@@ -189,17 +133,14 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
-  text: {
-    marginVertical: 20,
-  },
-  deleteButton: {
+  logoutButton: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#B30000',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 5,
-    width: '100%',
-    height: 30,
+    width: windowWidth,
+    height: windowHeight * 0.05,
   },
 });

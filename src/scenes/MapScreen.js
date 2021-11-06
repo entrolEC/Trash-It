@@ -77,7 +77,9 @@ export const MapScreen = ({latitude, longitude}) => {
   const {pin} = pinState; // included : data, loading, error, success
 
   const bottomSheetModalRef = useRef<Modalize>(null);
-  const snapPoints = useMemo(() => ['40%', '70%'], []);
+  const authBottomSheetModalRef = useRef<Modalize>(null);
+  const trashcanSnapPoints = useMemo(() => ['40%', '70%'], []);
+  const authSnapPoints = useMemo(() => ['30%', '70%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -109,6 +111,7 @@ export const MapScreen = ({latitude, longitude}) => {
     const userData = await getData('user');
     if (name === 'login') {
       setAuthModalVisible(true);
+      authBottomSheetModalRef.current?.present();
     } else if (name === 'addTrashcan') {
       if (userData === null) {
         setAlertVisible(true);
@@ -195,7 +198,7 @@ export const MapScreen = ({latitude, longitude}) => {
         {selectedIndex !== null ? (
           <BottomSheetModal
             ref={bottomSheetModalRef}
-            snapPoints={snapPoints}
+            snapPoints={trashcanSnapPoints}
             onDismiss={() => {
               setInfoModalVisible(false);
               setSelectedIndex(null);
@@ -219,6 +222,23 @@ export const MapScreen = ({latitude, longitude}) => {
               setLoadingVisible={setLoadingVisible}
             />
           </BottomSheetModal>
+        ) : authModalVisible ? (
+          <BottomSheetModal
+            ref={authBottomSheetModalRef}
+            snapPoints={authSnapPoints}
+            onDismiss={() => {
+              setAuthModalVisible(false);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}
+            backgroundComponent={(props) => (
+              <BottomSheetBackground {...props} />
+            )}>
+            <Auth
+              authModalVisible={authModalVisible}
+              setAuthModalVisible={setAuthModalVisible}
+            />
+          </BottomSheetModal>
         ) : (
           <FloatingButton
             onPressItem={(name) => {
@@ -231,10 +251,6 @@ export const MapScreen = ({latitude, longitude}) => {
           setModalVisible={setModalVisible}
           loadingVisible={loadingVisible}
           setLoadingVisible={setLoadingVisible}
-        />
-        <Auth
-          authModalVisible={authModalVisible}
-          setAuthModalVisible={setAuthModalVisible}
         />
         <Alert
           alertVisible={alertVisible}
