@@ -18,15 +18,41 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
+import {LineChart} from 'react-native-chart-kit';
+import dateFormat, {masks} from 'dateformat';
+
 export const UserDetailScreen = ({user}) => {
   const [errMessage, setErrMessage] = useState();
+  const [trashcanNum, setTrashcanNum] = useState();
+  const [userData, setUserData] = useState([0, 0, 0, 0, 0, 0, 0]);
+  const [chartData, setChartData] = useState({});
+  const chartLabels = [];
+  for (let i = 0; i < 7; i++) {
+    chartLabels.push(
+      dateFormat(new Date().getTime() - i * 24 * 60 * 60 * 1000, 'mm-dd'),
+    );
+  }
+  chartLabels.reverse();
+
+  const chartConfig = {
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientFromOpacity: 0,
+    backgroundGradientTo: '#ffffff',
+    backgroundGradientToOpacity: 0.5,
+    color: (opacity = 1) => `rgba(37, 37, 37, ${opacity})`,
+    strokeWidth: 2, // optional, default 3
+    barPercentage: 0.5,
+    useShadowColorFromDataset: false, // optional
+  };
+
+  const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
-    // getUserUploadedData();
+    getUserData();
     console.log(user);
   }, []);
 
-  const getUserUploadedData = async () => {
+  const getUserData = async () => {
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -34,15 +60,22 @@ export const UserDetailScreen = ({user}) => {
       method: 'GET',
       redirect: 'follow',
     };
-    // params에 user.id를 넘겨줘서 이미 좋아요가 되있는지 확인(userLikes, userDisLikes)
+
     const params = user.user.id;
-    await fetch(
-      `http://${URL}/accounts/detail/?user_id=${params}`,
-      requestOptions,
-    )
+    await fetch(`http://192.168.0.2:8000/users/${params}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
-        console.log('getUserData', result);
+        console.log('getUserData', result.log);
+        let tmpUserData = [];
+        for (let i = 0; i < 7; i++) {
+          tmpUserData.push(
+            result.log[chartLabels[i]] == null
+              ? 0
+              : result.log[chartLabels[i]].length,
+          );
+        }
+        setUserData(tmpUserData);
+        setTrashcanNum(result.total);
       })
       .catch((error) => console.log('error'));
   };
@@ -62,8 +95,26 @@ export const UserDetailScreen = ({user}) => {
         </View>
       </View>
       <View style={styles.content}>
-        <Text>지금까지 총 {22}개의 쓰레기통의 사진을 올리셨습니다.</Text>
+        <Text>
+          지금까지 총 {trashcanNum}개의 쓰레기통의 사진을 올리셨습니다.
+        </Text>
       </View>
+      <LineChart
+        data={{
+          labels: chartLabels,
+          datasets: [
+            {
+              data: userData,
+            },
+          ],
+        }}
+        width={Dimensions.get('window').width - 20}
+        height={220}
+        verticalLabelRotation={0}
+        chartConfig={chartConfig}
+        bezier
+        style={styles.chart}
+      />
     </SafeAreaView>
   );
 };
@@ -92,6 +143,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   content: {
-    marginTop: 20,
+    marginTop: '10%',
+  },
+  chart: {
+    marginTop: '20%',
   },
 });

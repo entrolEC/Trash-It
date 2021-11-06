@@ -79,7 +79,7 @@ export const MapScreen = ({latitude, longitude}) => {
   const bottomSheetModalRef = useRef<Modalize>(null);
   const authBottomSheetModalRef = useRef<Modalize>(null);
   const trashcanSnapPoints = useMemo(() => ['40%', '70%'], []);
-  const authSnapPoints = useMemo(() => ['45%', '70%'], []);
+  const authSnapPoints = useMemo(() => ['30%', '70%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);

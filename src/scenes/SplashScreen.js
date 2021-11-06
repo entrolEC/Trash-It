@@ -55,8 +55,7 @@ export const SplashScreen = () => {
   }, [isLoaded]);
 
   useEffect(() => {
-    if(pin.success)
-      setIsPinLoaded(true);
+    if (pin.success) setIsPinLoaded(true);
   }, [pin.success]);
 
   return (

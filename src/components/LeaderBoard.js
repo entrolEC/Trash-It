@@ -19,7 +19,12 @@ import {URL} from '../../env.json';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible, loadingVisible, setLoadingVisible}) => {
+export const LeaderBoard = ({
+  leaderBoardVisible,
+  setLeaderBoardVisible,
+  loadingVisible,
+  setLoadingVisible,
+}) => {
   const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
@@ -36,7 +41,7 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible, loadingV
     await fetch(`http://${URL}/users/`, requestOptions)
       .then((response) => response.json())
       .then(async (result) => {
-        console.log("leaderBoard!!", result);
+        console.log('leaderBoard!!', result);
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
         setLoadingVisible(false);
@@ -46,11 +51,10 @@ export const LeaderBoard = ({leaderBoardVisible, setLeaderBoardVisible, loadingV
   };
 
   useEffect(() => {
-    if(leaderBoardVisible) {
+    if (leaderBoardVisible) {
       fetchData();
       setLoadingVisible(true);
     }
-      
   }, [leaderBoardVisible]);
 
   const renderSeparator = () => (
