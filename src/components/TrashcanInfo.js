@@ -153,6 +153,7 @@ export const TrashcanInfo = ({
             else disLikeAnimation.current.play(0, 0);
 
             setIsFirstRun(false);
+            refreshData();
           }
         })
         .catch((error) => console.log('error', error));

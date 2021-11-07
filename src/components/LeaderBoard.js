@@ -28,11 +28,9 @@ export const LeaderBoard = ({
   const [users, setUsers] = useState([]);
 
   const fetchData = async () => {
-    const accessToken = await getNewToken();
     var requestOptions = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + accessToken,
       },
       method: 'GET',
       redirect: 'follow',
@@ -101,6 +99,7 @@ export const LeaderBoard = ({
         }}
         onBackdropPress={() => {
           setLeaderBoardVisible(!leaderBoardVisible);
+          setLoadingVisible(false);
         }}>
         <View style={styles.centeredView}>
           <View
@@ -119,6 +118,8 @@ export const LeaderBoard = ({
             <TouchableHighlight
               style={{...styles.openButton, backgroundColor: '#2196F3'}}
               onPress={() => {
+                setLoadingVisible(false);
+                console.log('touched!');
                 setLeaderBoardVisible(!leaderBoardVisible);
               }}>
               <Text style={styles.textStyle}> 확인 </Text>
