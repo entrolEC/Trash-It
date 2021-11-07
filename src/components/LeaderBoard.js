@@ -50,8 +50,8 @@ export const LeaderBoard = ({
 
   useEffect(() => {
     if (leaderBoardVisible) {
-      fetchData();
       setLoadingVisible(true);
+      fetchData();
     }
   }, [leaderBoardVisible]);
 

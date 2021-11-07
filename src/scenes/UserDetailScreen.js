@@ -18,6 +18,7 @@ import {
   statusCode,
 } from '@react-native-community/google-signin';
 
+import {URL} from '../../env.json';
 import {LineChart} from 'react-native-chart-kit';
 import dateFormat, {masks} from 'dateformat';
 
@@ -62,7 +63,7 @@ export const UserDetailScreen = ({user}) => {
     };
 
     const params = user.user.id;
-    await fetch(`http://192.168.0.2:8000/users/${params}`, requestOptions)
+    await fetch(`http://${URL}/users/${params}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         console.log('getUserData', result.log);
@@ -77,7 +78,7 @@ export const UserDetailScreen = ({user}) => {
         setUserData(tmpUserData);
         setTrashcanNum(result.total);
       })
-      .catch((error) => console.log('error'));
+      .catch((error) => console.log('error', error));
   };
 
   return (
