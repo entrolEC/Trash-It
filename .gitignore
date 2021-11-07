@@ -65,3 +65,10 @@ android/app/src/main/assets/index.android.bundle
 Icon&Splash Design
 
 *.cmd
+ios/Podfile.lock
+ios/trashcanMap.xcodeproj/project.pbxproj
+package-lock.json
+.gitignore
+podfilea
+yarn.lock
+ios/trashcanMap/Info.plist
