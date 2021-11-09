@@ -307,7 +307,7 @@ export const TrashcanInfo = ({
           <View>
             <Text style={{marginTop: '40%'}}>{selectedTrashcan.description}</Text>
           </View>
-          <Text style={{marginTop: '25%'}}>게시자 : {selectedTrashcan.author.email}</Text>
+          <Text style={{marginTop: 40}}>게시자 : {selectedTrashcan.author.username}</Text>
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>
