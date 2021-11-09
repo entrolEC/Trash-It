@@ -51,7 +51,7 @@ export const UserDetailScreen = ({user}) => {
   useEffect(() => {
     getUserData();
     console.log(user);
-  }, []);
+  }, [user]);
 
   const getUserData = async () => {
     var requestOptions = {
@@ -78,7 +78,7 @@ export const UserDetailScreen = ({user}) => {
         setUserData(tmpUserData);
         setTrashcanNum(result.total);
       })
-      .catch((error) => console.log('error', error));
+      .catch((error) => console.log('error on userdetail ', error, params));
   };
 
   return (

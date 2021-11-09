@@ -55,21 +55,23 @@ export const Auth = ({
   }, []);
 
   useEffect(() => {
-    if (authModalVisible === true) {
-      getUser().then(async (_user) => {
+    const checkUser = async () => {
+      if (authModalVisible === true) {
+        const _user = await getUser();
         console.log('user trashcaninfo', _user);
         setUser(_user);
-        if (_user === null) await googleSignIn();
-      });
+        if (_user === null) {
+          await googleSignIn();
+          const _user = await getUser();
+          console.log("checkUser aaaa", _user);
+          
+;         setUser(_user);
+        };
+      }
     }
-  }, [authModalVisible]);
 
-  useEffect(() => {
-    if (token !== undefined) {
-      console.log('tokens are ready', token);
-      setGoogleLoginUser(token, userGoogleInfo.user);
-    }
-  }, [token]);
+    checkUser();
+  }, [authModalVisible]);
 
   const googleSignIn = async () => {
     try {
@@ -81,15 +83,15 @@ export const Auth = ({
       console.log('3');
       console.log('userInfo : ', userInfo);
       console.log('tokens :', tokens);
-      setUserGoogleInfo(userInfo);
-      setToken({
+      await setGoogleLoginUser({
         accessToken: tokens.accessToken,
         code: userInfo.serverAuthCode,
         idToken: userInfo.idToken,
-      });
-      setGoogleLoaded(true);
-      console.log('getData', getData('user'));
-      setUser(userInfo);
+      }, userInfo.user);
+      
+      //setGoogleLoaded(true);
+      //console.log('getData', getData('user'));
+      //return userInfo;
     } catch (error) {
       console.log('message____________', error.message);
       if (error.code === statusCode.SIGN_IN_CANCELLED)

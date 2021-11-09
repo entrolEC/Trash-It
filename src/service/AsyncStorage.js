@@ -7,6 +7,7 @@ export const setData = async (key, value, callbacks = null) => {
       JSON.stringify(value),
       callbacks
     );
+    console.log("setdata complete");
   } catch(err) {
     console.log("setData error", err);
   }

@@ -12,10 +12,16 @@ export default App = () => {
   // get location permission
   useEffect(() => {
     if(!hasLocationPermission()) {
-      if(getLocationPermission()){}
-        setPermissionLoaded(1);
+      console.log('permission 1');
+      getLocationPermission()
+      .then((permission) => {
+        console.log('permission 2');
+        permission && setPermissionLoaded(1);
+      })
+        
     } else {
       setPermissionLoaded(1);
+      console.log('permission 3');
     }
 
     const backAction = () => {
@@ -30,6 +36,8 @@ export default App = () => {
 
     return () => backHandler.remove();
   },[]);
+
+  useEffect(() => {console.log("permissionLoaded", permissionLoaded)},[permissionLoaded]);
 
   if(permissionLoaded) {
     return (

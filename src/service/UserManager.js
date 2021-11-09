@@ -46,6 +46,8 @@ export const setGoogleLoginUser = async (token, userGoogleInfo) => {
     }
   }
   await setData('user', newObj);
+  console.log("setData User complete", newObj);
+  
 }
 
 export const googleLogout = async () => {
