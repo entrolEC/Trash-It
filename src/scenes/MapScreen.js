@@ -78,8 +78,10 @@ export const MapScreen = ({latitude, longitude}) => {
 
   const bottomSheetModalRef = useRef<Modalize>(null);
   const authBottomSheetModalRef = useRef<Modalize>(null);
+  const addBottomSheetModalRef = useRef<Modalize>(null);
   const trashcanSnapPoints = useMemo(() => ['40%', '70%'], []);
   const authSnapPoints = useMemo(() => ['30%', '70%'], []);
+  const addSnapPoints = useMemo(() => ['100%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -117,6 +119,7 @@ export const MapScreen = ({latitude, longitude}) => {
         setAlertVisible(true);
       } else {
         setModalVisible(true);
+        addBottomSheetModalRef.current?.present();
       }
     } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
@@ -239,6 +242,22 @@ export const MapScreen = ({latitude, longitude}) => {
               setAuthModalVisible={setAuthModalVisible}
             />
           </BottomSheetModal>
+        ) : modalVisible ? (
+            <BottomSheetModal
+            ref={addBottomSheetModalRef}
+            snapPoints={addSnapPoints}
+            onDismiss={() => {
+              setModalVisible(false);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}>
+            <AddTrashcan
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              loadingVisible={loadingVisible}
+              setLoadingVisible={setLoadingVisible}
+            />
+          </BottomSheetModal>
         ) : (
           <FloatingButton
             onPressItem={(name) => {
@@ -246,12 +265,6 @@ export const MapScreen = ({latitude, longitude}) => {
             }}
           />
         )}
-        <AddTrashcan
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          loadingVisible={loadingVisible}
-          setLoadingVisible={setLoadingVisible}
-        />
         <Alert
           alertVisible={alertVisible}
           setAlertVisible={setAlertVisible}
