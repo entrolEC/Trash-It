@@ -35,8 +35,9 @@ export const AddTrashcan = ({
 }) => {
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
-  const [image, setImage] = useState();
+  const [image, setImage] = useState(null);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -60,7 +61,13 @@ export const AddTrashcan = ({
       setImage(image);
       getGeolocation(setIsGeolocationLoaded);
       //getPosition(positionDispatch);
+      setIsImageLoading(false);
     });
+  };
+
+  const initStates = () => {
+    setImage(null);
+    setIsImageLoading(false);
   };
 
   useEffect(() => {
@@ -117,97 +124,104 @@ export const AddTrashcan = ({
     );
   }
 
+  if (modalVisible && image === null && !isImageLoading) {
+    setIsImageLoading(true);
+    addNewTrashcan();
+  }
+
   return (
     <View>
-      <View style={styles.centeredView}>
-        <Modal
-          animationIn="pulse"
-          animationInTiming={500}
-          animationOut="bounceOutDown"
-          animationOutTiming={500}
-          transparent={true}
-          isVisible={modalVisible}
-          backdropColor="none"
-          onBackButtonPress={() => {
-            setModalVisible(!modalVisible);
-          }}
-          onBackdropPress={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>
-                현재 위치에 쓰레기통을 추가합니다.
-              </Text>
-              <View style={styles.itemsContainer}>
-                <View style={{...styles.itemContainer, flexDirection: 'row'}}>
-                  <Text style={styles.itemText}>이미지</Text>
-                  <TouchableHighlight
-                    style={styles.cameraButton}
-                    onPress={() => {
-                      addNewTrashcan();
-                    }}>
-                    <Text style={styles.textStyle}> 촬영 </Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemText}>설명</Text>
-                  <TextInput
-                    style={{
-                      height: 80,
-                      borderColor: '#aaaaaa',
-                      borderWidth: 0.5,
-                      borderRadius: 10,
-                    }}
-                    onChangeText={(text) => setDescription(text)}
-                    placeholder={
-                      '간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'
-                    }
-                  />
-                </View>
-                <View style={styles.buttonContainer}>
+      <Modal
+        animationIn="pulse"
+        animationInTiming={500}
+        animationOut="bounceOutDown"
+        animationOutTiming={500}
+        transparent={true}
+        isVisible={modalVisible}
+        backdropColor="none"
+        onBackButtonPress={() => {
+          setModalVisible(!modalVisible);
+          initStates();
+        }}
+        onBackdropPress={() => {
+          setModalVisible(!modalVisible);
+          initStates();
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>
+              현재 위치에 쓰레기통을 추가합니다.
+            </Text>
+            <View style={styles.itemsContainer}>
+              <View style={{...styles.itemContainer, flexDirection: 'row'}}>
+                <Text style={styles.itemText}>이미지</Text>
+                <TouchableHighlight
+                  style={styles.cameraButton}
+                  onPress={() => {
+                    addNewTrashcan();
+                  }}>
+                  <Text style={styles.textStyle}> 촬영 </Text>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.itemContainer}>
+                <Text style={styles.itemText}>설명</Text>
+                <TextInput
+                  style={{
+                    height: 80,
+                    borderColor: '#aaaaaa',
+                    borderWidth: 0.5,
+                    borderRadius: 10,
+                  }}
+                  onChangeText={(text) => setDescription(text)}
+                  placeholder={
+                    '간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'
+                  }
+                />
+              </View>
+              <View style={styles.buttonContainer}>
+                <TouchableHighlight
+                  style={{...styles.openButton, backgroundColor: '#2196F3'}}
+                  onPress={() => {
+                    setModalVisible(!modalVisible);
+                    initStates();
+                  }}>
+                  <Text style={styles.textStyle}> 취소 </Text>
+                </TouchableHighlight>
+                {image ? (
                   <TouchableHighlight
                     style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                    onPress={() => {
-                      setModalVisible(!modalVisible);
-                    }}>
-                    <Text style={styles.textStyle}> 취소 </Text>
-                  </TouchableHighlight>
-                  {image ? (
-                    <TouchableHighlight
-                      style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                      onPress={async () => {
-                        setLoadingVisible(true);
-                        console.log('pressed');
-                        if (data) {
-                          console.log('here');
+                    onPress={async () => {
+                      setLoadingVisible(true);
+                      console.log('pressed');
+                      if (data) {
+                        console.log('here');
 
-                          await postData();
-                          await fetchData();
-                          //setTimeout(()=>{ fetchData() }, 1000)
-                          setData(0);
-                          setModalVisible(!modalVisible);
-                        } else {
-                          console.log('data is null');
-                        }
-                      }}>
-                      <Text style={styles.textStyle}> 확인 </Text>
-                    </TouchableHighlight>
-                  ) : (
-                    <TouchableHighlight
-                      style={{
-                        ...styles.openButton,
-                        backgroundColor: '#808080',
-                      }}>
-                      <Text style={styles.textStyle}> 확인 </Text>
-                    </TouchableHighlight>
-                  )}
-                </View>
+                        await postData();
+                        await fetchData();
+                        //setTimeout(()=>{ fetchData() }, 1000)
+                        setData(0);
+                        setModalVisible(!modalVisible);
+                        initStates();
+                      } else {
+                        console.log('data is null');
+                      }
+                    }}>
+                    <Text style={styles.textStyle}> 확인 </Text>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    style={{
+                      ...styles.openButton,
+                      backgroundColor: '#808080',
+                    }}>
+                    <Text style={styles.textStyle}> 확인 </Text>
+                  </TouchableHighlight>
+                )}
               </View>
             </View>
           </View>
-        </Modal>
-      </View>
+        </View>
+      </Modal>
 
       <View>
         <Loading
