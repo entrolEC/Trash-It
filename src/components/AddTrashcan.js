@@ -35,6 +35,7 @@ export const AddTrashcan = ({
   setModalVisible,
   loadingVisible,
   setLoadingVisible,
+  addBottomSheetModalRef,
 }) => {
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
@@ -142,6 +143,8 @@ export const AddTrashcan = ({
               setData(0);
               setModalVisible(false);
               initStates();
+
+              addBottomSheetModalRef.current.close();
             } else {
               console.log('data is null');
             }
