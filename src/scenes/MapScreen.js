@@ -79,9 +79,12 @@ export const MapScreen = ({latitude, longitude}) => {
   const bottomSheetModalRef = useRef<Modalize>(null);
   const authBottomSheetModalRef = useRef<Modalize>(null);
   const addBottomSheetModalRef = useRef<Modalize>(null);
+  const leaderBoardBottomSheetModalRef = useRef<Modalize>(null);
+
   const trashcanSnapPoints = useMemo(() => ['40%', '70%'], []);
   const authSnapPoints = useMemo(() => ['30%', '70%'], []);
   const addSnapPoints = useMemo(() => ['100%'], []);
+  const leaderBoardSnapPoints = useMemo(() => ['100%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -123,6 +126,7 @@ export const MapScreen = ({latitude, longitude}) => {
       }
     } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
+      leaderBoardBottomSheetModalRef.current?.present();
     }
   };
 
@@ -256,6 +260,21 @@ export const MapScreen = ({latitude, longitude}) => {
               setModalVisible={setModalVisible}
               loadingVisible={loadingVisible}
               setLoadingVisible={setLoadingVisible}
+              addBottomSheetModalRef={addBottomSheetModalRef}
+            />
+          </BottomSheetModal>
+        ) : leaderBoardVisible ? (
+          <BottomSheetModal
+            ref={leaderBoardBottomSheetModalRef}
+            snapPoints={leaderBoardSnapPoints}
+            onDismiss={() => {
+              setLeaderBoardVisible(false);
+            }}>
+            <LeaderBoard
+              leaderBoardVisible={leaderBoardVisible}
+              setLeaderBoardVisible={setLeaderBoardVisible}
+              loadingVisible={loadingVisible}
+              setLoadingVisible={setLoadingVisible}
             />
           </BottomSheetModal>
         ) : (
@@ -270,12 +289,6 @@ export const MapScreen = ({latitude, longitude}) => {
           setAlertVisible={setAlertVisible}
           message={'로그인을 먼저 해주세요!'}
           confirmText={'확인'}
-        />
-        <LeaderBoard
-          leaderBoardVisible={leaderBoardVisible}
-          setLeaderBoardVisible={setLeaderBoardVisible}
-          loadingVisible={loadingVisible}
-          setLoadingVisible={setLoadingVisible}
         />
       </BottomSheetModalProvider>
     </>
