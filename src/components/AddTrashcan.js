@@ -52,37 +52,29 @@ export const AddTrashcan = ({
     getPin(pinDispatch);
   };
 
-  const addNewTrashcan = () => {
-    ImagePicker.openCamera({
+  const addNewTrashcan = async () => {
+    const image = await ImagePicker.openCamera({
       width: 900,
       height: 900,
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
-    }).then((image) => {
-      console.log(image);
-      setImage(image);
-      getGeolocation(setIsGeolocationLoaded);
-      //getPosition(positionDispatch);
-      setIsImageLoading(false);
-    });
+    })
+
+    console.log(image);
+    setImage(image);
+    await getGeolocation(setIsGeolocationLoaded);
+    let temp = {
+      address: '인천 송도과학로27번길 15',
+      image: {uri: image.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
+    };
+    setData(temp);
   };
 
   const initStates = () => {
     setImage(null);
     setIsImageLoading(false);
   };
-
-  useEffect(() => {
-    if (image !== null && !isImageLoading) initStates();
-    if (image) {
-      let temp = {
-        address: '인천 송도과학로27번길 15',
-        image: {uri: image.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
-      };
-      setData(temp);
-    }
-  }, [image]);
 
   const postData = async () => {
     var formdata = new FormData();
@@ -113,13 +105,6 @@ export const AddTrashcan = ({
       .catch((error) => console.log('error', error));
   };
 
-  useEffect(() => {
-    getUser().then((_user) => {
-      console.log('user trashcaninfo', _user);
-      setUser(_user.user);
-    });
-  }, []);
-
   if (user === null) {
     return (
       <View>
@@ -128,10 +113,18 @@ export const AddTrashcan = ({
     );
   }
 
-  if (modalVisible && image === null && !isImageLoading) {
-    setIsImageLoading(true);
-    addNewTrashcan();
-  }
+  useEffect(() => {
+    if (modalVisible && image === null && !isImageLoading) {
+      console.log("addNewTrashcan Start!!");
+      setIsImageLoading(true);
+      addNewTrashcan();
+      getUser().then((_user) => {
+        console.log('user trashcaninfo', _user);
+        setUser(_user.user);
+      });
+    }
+  },[modalVisible])
+  
 
   return (
     <View>
@@ -152,7 +145,9 @@ export const AddTrashcan = ({
             } else {
               console.log('data is null');
             }
-          }}>
+            
+          }}
+          >
           <Icon name={'cloud-upload-outline'} size={30} color={'#05BCDF'} style={{marginBottom: 5, paddingLeft: Dimensions.get('window').width - 120}} />
         </TouchableWithoutFeedback>
         </View>
