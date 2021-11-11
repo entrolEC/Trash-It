@@ -71,7 +71,6 @@ export const LeaderBoard = ({
           }
         });
       });
-      
 
       setLoadingVisible(true);
     }
@@ -118,9 +117,17 @@ export const LeaderBoard = ({
                   source={{uri: user.photo}}
                   style={{width: 75, height: 75, borderRadius: 50}}
                 />
+                <View style={{marginLeft: '15%', paddingTop: 10}}>
+                  <View style={{alignItems: 'center'}}>
+                    <Text style={{color: 'white'}}>COUNT</Text>
+                    <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userScore}</Text>
+                  </View>
+                </View>
                 <View style={{marginLeft: '20%', paddingTop: 10}}>
-                  <Text style={{color: 'white'}}>COUNT</Text>
-                  <Text style={{color: 'white'}}>{userScore}</Text>
+                  <View style={{alignItems: 'center'}}>
+                    <Text style={{color: 'white'}}>RANK</Text>
+                    <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userRank}</Text>
+                  </View>
                 </View>
               </View>
             ) : null
@@ -147,22 +154,23 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   itemlist: {
+    borderColor: '#aaaaaa',
     marginVertical: 5,
-    borderRadius: 15,
     backgroundColor: '#ffffff',
     paddingVertical: 25,
     flexDirection: 'row',
     justifyContent: 'center',
     width: '100%',
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 1,
     },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.18,
+    shadowRadius: 1.00,
     
-    elevation: 3,
+    elevation: 1,
   },
   text: {
     fontSize: 15,
