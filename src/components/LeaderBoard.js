@@ -16,6 +16,8 @@ import Modal from 'react-native-modal';
 import {getNewToken, getUser} from '../service/UserManager';
 import {URL} from '../../env.json';
 
+import Icon from 'react-native-vector-icons/FontAwesome5';
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -26,6 +28,10 @@ export const LeaderBoard = ({
   setLoadingVisible,
 }) => {
   const [users, setUsers] = useState([]);
+  const [user, setUser] = useState();
+  const [userScore, setUserScore] = useState();
+  const [userRank, setUserRank] = useState();
+  const crwonColor = ['#DAA520', '#C0C0C0', '#A0522D'];
 
   const fetchData = async () => {
     var requestOptions = {
@@ -43,6 +49,7 @@ export const LeaderBoard = ({
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
         setLoadingVisible(false);
+
         console.log('result : ', result);
       })
       .catch((error) => console.log('error', error));
@@ -50,33 +57,44 @@ export const LeaderBoard = ({
 
   useEffect(() => {
     if (leaderBoardVisible) {
+      fetchData().then(() => {
+        getUser().then((_user) => {
+          console.log('user trashcaninfo', _user);
+          setUser(_user.user);
+  
+          for (var i = 0; i < users.length; i++) {
+            if (users[i]._id === _user.user._id) {
+              setUserRank(i + 1);
+              setUserScore(users[i].author.length);
+              break;
+            }
+          }
+        });
+      });
+      
+
       setLoadingVisible(true);
-      fetchData();
     }
   }, [leaderBoardVisible]);
-
-  const renderSeparator = () => (
-    <View
-      style={{
-        height: 1,
-        width: '100%',
-        backgroundColor: '#CED0CE',
-      }}
-    />
-  );
 
   const Item = ({username, count, idx}) => (
     <View
       style={
-        idx % 2 == 0
-          ? {...styles.item, backgroundColor: '#f5f5f5'}
-          : styles.item
+        idx === 0 ? (
+          {...styles.itemlist, paddingVertical: 35}
+        ) : styles.itemlist
       }>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{...styles.username, fontWeight: 'bold'}}>{idx + 1}</Text>
-        <Text style={styles.username}>{username}</Text>
+        <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>{idx + 1}</Text>
+        
+        <Text style={styles.text}>{username}</Text>
+        {
+          idx < 3 ? (
+            <Icon name="crown" size={20} style={{marginLeft: 10}} color={crwonColor[idx]} />
+          ) : null
+        }
       </View>
-      <Text style={styles.username}>{count}</Text>
+      <Text style={{...styles.text, fontWeight: 'bold', color: '#3817aa', marginLeft: '40%'}}>{count}</Text>
     </View>
   );
 
@@ -85,49 +103,39 @@ export const LeaderBoard = ({
   );
 
   return (
-    <View style={styles.centeredView}>
-      <Modal
-        animationIn="pulse"
-        animationInTiming={500}
-        animationOut="bounceOutDown"
-        animationOutTiming={500}
-        transparent={true}
-        isVisible={leaderBoardVisible}
-        backdropColor="none"
-        onBackButtonPress={() => {
-          setLeaderBoardVisible(!leaderBoardVisible);
-        }}
-        onBackdropPress={() => {
-          setLeaderBoardVisible(!leaderBoardVisible);
-          setLoadingVisible(false);
-        }}>
-        <View style={styles.centeredView}>
-          <View
-            style={{
-              ...styles.modalView,
-              width: windowWidth * 0.85,
-              height: windowHeight * 0.6,
-            }}>
-            <FlatList
-              data={loadingVisible ? null : users}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              ItemSeparatorComponent={renderSeparator}
-            />
-
-            <TouchableHighlight
-              style={{...styles.openButton, backgroundColor: '#2196F3'}}
-              onPress={() => {
-                setLoadingVisible(false);
-                console.log('touched!');
-                setLeaderBoardVisible(!leaderBoardVisible);
-              }}>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-          </View>
+    <>
+      <View style={styles.circle} />
+      <View style={styles.centeredView}>
+        <View>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white', marginTop: '25%' }}>LeaderBoard</Text>
         </View>
-      </Modal>
-    </View>
+
+        <View style={{alignSelf: 'flex-start', paddingLeft: '5%', marginTop: '3%'}}>
+          {
+            user ? (
+              <View style={{flexDirection: 'row'}}>
+                <Image 
+                  source={{uri: user.photo}}
+                  style={{width: 75, height: 75, borderRadius: 50}}
+                />
+                <View style={{marginLeft: '20%', paddingTop: 10}}>
+                  <Text style={{color: 'white'}}>COUNT</Text>
+                  <Text style={{color: 'white'}}>{userScore}</Text>
+                </View>
+              </View>
+            ) : null
+          }
+        </View>
+
+        <View style={{ marginTop: '3%' }}>
+          <FlatList
+            data={loadingVisible ? null : users}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id} />
+        </View>
+      </View>
+      <View />
+    </>
   );
 };
 
@@ -138,53 +146,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
-    paddingHorizontal: 40,
-    shadowColor: '#000',
+  itemlist: {
+    marginVertical: 5,
+    borderRadius: 15,
+    backgroundColor: '#ffffff',
+    paddingVertical: 25,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 15,
-    elevation: 2,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 30,
-    textAlign: 'center',
-  },
-  image: {
-    width: 300,
-    height: 300,
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    
+    elevation: 3,
   },
   text: {
-    marginVertical: 20,
-  },
-  item: {
-    backgroundColor: '#ffffff',
-    padding: 10,
-    paddingVertical: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  username: {
     fontSize: 15,
     marginHorizontal: 5,
   },
+  circle: {
+    width: windowWidth * 2,
+    height: windowWidth * 2,
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: '70%',
+    borderRadius: windowWidth * 2,
+    backgroundColor: '#3817AA',
+  }
 });
