@@ -263,8 +263,9 @@ export const TrashcanInfo = ({
         <View style={{flexDirection: 'row', paddingRight: 50}}>
           <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
             <TouchableWithoutFeedback
-              onPress={() => {
-                postActions('like');
+              onPress={async () => {
+                await postActions('like');
+                refreshData();
               }}>
               <LottieView
                 ref={likeAnimation}
@@ -280,8 +281,9 @@ export const TrashcanInfo = ({
             </Text>
 
             <TouchableWithoutFeedback
-              onPress={() => {
-                postActions('dislike');
+              onPress={async () => {
+                await postActions('dislike');
+                refreshData();
               }}>
               <LottieView
                 ref={disLikeAnimation}
