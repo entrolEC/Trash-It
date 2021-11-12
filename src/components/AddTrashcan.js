@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
@@ -29,6 +28,7 @@ import {getData} from '../service/AsyncStorage';
 
 import {URL} from '../../env.json';
 import {Loading} from './Loading.js';
+import {Alert} from './Alert.js';
 
 export const AddTrashcan = ({
   modalVisible,
@@ -42,6 +42,7 @@ export const AddTrashcan = ({
   const [image, setImage] = useState(null);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -53,7 +54,7 @@ export const AddTrashcan = ({
     getPin(pinDispatch);
   };
 
-  const addNewTrashcan = async () => {
+        const addNewTrashcan = async () => {
     const image = await ImagePicker.openCamera({
       width: 900,
       height: 900,
@@ -77,34 +78,40 @@ export const AddTrashcan = ({
     setIsImageLoading(false);
   };
 
-  const postData = async () => {
-    var formdata = new FormData();
-    console.log('here1');
-    const accessToken = await getNewToken();
-    console.log('addtrashcan postdata', accessToken);
-    formdata.append('latitude', isGeolocationLoaded.latitude);
-    formdata.append('longitude', isGeolocationLoaded.longitude);
-    formdata.append('address', data.address);
-    formdata.append('image', data.image);
-    formdata.append('description', description);
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow',
-    };
+  // const postData = async () => {
+  //   var formdata = new FormData();
+  //   console.log('here1');
+  //   const accessToken = await getNewToken();
+  //   console.log('addtrashcan postdata', accessToken);
+  //   formdata.append('latitude', isGeolocationLoaded.latitude);
+  //   formdata.append('longitude', isGeolocationLoaded.longitude);
+  //   formdata.append('address', data.address);
+  //   formdata.append('image', data.image);
+  //   formdata.append('description', description);
+  //   var requestOptions = {
+  //     headers: {
+  //       'Content-Type': 'multipart/form-data',
+  //       Authorization: 'Bearer ' + accessToken,
+  //     },
+  //     method: 'POST',
+  //     body: formdata,
+  //     redirect: 'follow',
+  //   };
 
-    await fetch(`http://${URL}/locations/`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log(result);
-        setLoadingVisible(false);
-      })
-      .catch((error) => console.log('error', error));
-  };
+  //   await fetch(`http://${URL}/locations/`, requestOptions)
+  //     .then((response) => response.text())
+  //     .then((result) => {
+  //       console.log(result);
+  //       setLoadingVisible(false);
+  //     })
+  //     .catch((error) => console.log('error', error));
+  // };
+
+  const postData = () => {
+    setTimeout(() => {
+      setAlertVisible(true);
+    }, 2000);
+  }
 
   if (user === null) {
     return (
@@ -244,6 +251,14 @@ export const AddTrashcan = ({
           loadingVisible={loadingVisible}
           setLoadingVisible={setLoadingVisible} />
       </View>
+      <Alert
+        alertVisible={alertVisible}
+        setAlertVisible={setAlertVisible}
+        title={'쓰레기통 인식 불가!'}
+        message={'사진에 쓰레기통이 포함되어있는지 다시 확인해주세요!'}
+        confirmText={'알겠어요!'}
+        callback={() => setLoadingVisible(false)}
+      />
     </View>
   );
 };
