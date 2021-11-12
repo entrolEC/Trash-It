@@ -27,8 +27,8 @@ export const LeaderBoard = ({
   loadingVisible,
   setLoadingVisible,
 }) => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState();
+  const [users, setUsers] = useState(null);
+  const [user, setUser] = useState(null);
   const [userScore, setUserScore] = useState();
   const [userRank, setUserRank] = useState();
   const crwonColor = ['#DAA520', '#C0C0C0', '#A0522D'];
@@ -48,7 +48,7 @@ export const LeaderBoard = ({
         console.log('leaderBoard!!', result);
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
-        setLoadingVisible(false);
+
 
         console.log('result : ', result);
       })
@@ -57,24 +57,31 @@ export const LeaderBoard = ({
 
   useEffect(() => {
     if (leaderBoardVisible) {
-      fetchData().then(() => {
-        getUser().then((_user) => {
-          console.log('user trashcaninfo', _user);
-          setUser(_user.user);
-  
-          for (var i = 0; i < users.length; i++) {
-            if (users[i]._id === _user.user._id) {
-              setUserRank(i + 1);
-              setUserScore(users[i].author.length);
-              break;
-            }
-          }
-        });
-      });
-
       setLoadingVisible(true);
+      fetchData();
+      getUser().then((_user) => {
+        console.log('user trashcaninfo', _user);
+        if(_user!==null)
+          setUser(_user.user);
+      });
     }
   }, [leaderBoardVisible]);
+  
+  useEffect(() => {
+    if(user!==null && users!==null) {
+      console.log("user: ",user);
+      console.log("users: ",users);
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].id === user.id) {
+          console.log("found!!!!!!!!!!!!!!!!");
+          setUserRank(i + 1);
+          setUserScore(users[i].author.length);
+          setLoadingVisible(false);
+          break;
+        }
+      }
+    }
+  },[user, users])
 
   const Item = ({username, count, idx}) => (
     <View
@@ -111,7 +118,7 @@ export const LeaderBoard = ({
 
         <View style={{alignSelf: 'flex-start', paddingLeft: '5%', marginTop: '3%'}}>
           {
-            user ? (
+            user!==null ? (
               <View style={{flexDirection: 'row'}}>
                 <Image 
                   source={{uri: user.photo}}
