@@ -123,6 +123,7 @@ export const MapScreen = ({latitude, longitude}) => {
       } else {
         setModalVisible(true);
         addBottomSheetModalRef.current?.present();
+        console.log("addBottomSheetModalRef",addBottomSheetModalRef)
       }
     } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
