@@ -1,32 +1,6 @@
 import {PermissionsAndroid, Platform} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 
-export const getLocationPermission = async () => {
-  try {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'TrashIt 위치 권한 요청',
-        message: '사용자의 위치 권한이 필요합니다.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the location');
-      return true;
-      //setHasLocationPermission(true);
-    } else {
-      console.log('location permission denied');
-      return false;
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-  return false;
-};
-
 const hasPermissionIOS = async () => {
   const openSetting = () => {
     Linking.openSettings().catch(() => {

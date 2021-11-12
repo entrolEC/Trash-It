@@ -27,8 +27,8 @@ export const LeaderBoard = ({
   loadingVisible,
   setLoadingVisible,
 }) => {
-  const [users, setUsers] = useState([]);
-  const [user, setUser] = useState();
+  const [users, setUsers] = useState(null);
+  const [user, setUser] = useState(null);
   const [userScore, setUserScore] = useState();
   const [userRank, setUserRank] = useState();
   const crwonColor = ['#DAA520', '#C0C0C0', '#A0522D'];
@@ -48,7 +48,6 @@ export const LeaderBoard = ({
         console.log('leaderBoard!!', result);
         await result.sort((a, b) => a.author.length < b.author.length);
         setUsers(result);
-        setLoadingVisible(false);
 
         console.log('result : ', result);
       })
@@ -57,24 +56,30 @@ export const LeaderBoard = ({
 
   useEffect(() => {
     if (leaderBoardVisible) {
-      fetchData().then(() => {
-        getUser().then((_user) => {
-          console.log('user trashcaninfo', _user);
-          setUser(_user.user);
-
-          for (var i = 0; i < users.length; i++) {
-            if (users[i]._id === _user.user._id) {
-              setUserRank(i + 1);
-              setUserScore(users[i].author.length);
-              break;
-            }
-          }
-        });
-      });
-
       setLoadingVisible(true);
+      fetchData();
+      getUser().then((_user) => {
+        console.log('user trashcaninfo', _user);
+        if (_user !== null) setUser(_user.user);
+      });
     }
   }, [leaderBoardVisible]);
+
+  useEffect(() => {
+    if (user !== null && users !== null) {
+      console.log('user: ', user);
+      console.log('users: ', users);
+      for (var i = 0; i < users.length; i++) {
+        if (users[i].id === user.id) {
+          console.log('found!!!!!!!!!!!!!!!!');
+          setUserRank(i + 1);
+          setUserScore(users[i].author.length);
+          setLoadingVisible(false);
+          break;
+        }
+      }
+    }
+  }, [user, users]);
 
   const Item = ({username, count, idx}) => (
     <View
@@ -82,19 +87,21 @@ export const LeaderBoard = ({
         idx === 0 ? {...styles.itemlist, paddingVertical: 35} : styles.itemlist
       }>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>
-          {idx + 1}
-        </Text>
-
-        <Text style={styles.text}>{username}</Text>
         {idx < 3 ? (
           <Icon
             name="crown"
             size={20}
-            style={{marginLeft: 10}}
+            style={{...styles.text, marginRight: '20%', fontSize: 20}}
             color={crwonColor[idx]}
           />
-        ) : null}
+        ) : (
+          <Text
+            style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>
+            {idx + 1}
+          </Text>
+        )}
+
+        <Text style={styles.text}>{username}</Text>
       </View>
       <Text
         style={{
@@ -130,7 +137,7 @@ export const LeaderBoard = ({
 
         <View
           style={{alignSelf: 'flex-start', paddingLeft: '5%', marginTop: '3%'}}>
-          {user ? (
+          {user !== null ? (
             <View style={{flexDirection: 'row'}}>
               <Image
                 source={{uri: user.photo}}
@@ -138,7 +145,7 @@ export const LeaderBoard = ({
               />
               <View style={{marginLeft: '15%', paddingTop: 10}}>
                 <View style={{alignItems: 'center'}}>
-                  <Text style={{color: 'white'}}>COUNT</Text>
+                  <Text style={{color: 'white'}}>업로드 횟수</Text>
                   <Text
                     style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>
                     {userScore}
@@ -147,7 +154,7 @@ export const LeaderBoard = ({
               </View>
               <View style={{marginLeft: '20%', paddingTop: 10}}>
                 <View style={{alignItems: 'center'}}>
-                  <Text style={{color: 'white'}}>RANK</Text>
+                  <Text style={{color: 'white'}}>순위</Text>
                   <Text
                     style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>
                     {userRank}
@@ -166,7 +173,6 @@ export const LeaderBoard = ({
           />
         </View>
       </View>
-      <View />
     </>
   );
 };
@@ -208,6 +214,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: '70%',
     borderRadius: windowWidth * 2,
-    backgroundColor: '#3817AA',
+    backgroundColor: '#8CBA80',
   },
 });

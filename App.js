@@ -3,7 +3,7 @@ import { BackHandler } from 'react-native';
 import { SplashScreen } from './src/scenes/SplashScreen';
 import { UserProvider } from './src/context/UserContext';
 import { PinProvider } from './src/context/PinContext';
-import {getLocationPermission, hasLocationPermission} from './src/service/Permission';
+import {hasLocationPermission} from './src/service/Permission';
 import {Alert} from './src/components/Alert';
 
 export default App = () => { 
@@ -11,19 +11,12 @@ export default App = () => {
   const [backAlertVisible, setBackAlertVisible] = useState(false);
   // get location permission
   useEffect(() => {
-    if(!hasLocationPermission()) {
-      console.log('permission 1');
-      getLocationPermission()
-      .then((permission) => {
-        console.log('permission 2');
-        permission && setPermissionLoaded(1);
-      })
-        
-    } else {
-      setPermissionLoaded(1);
-      console.log('permission 3');
-    }
 
+    const getLocationPermission = async () => {
+      const hasPermission =await hasLocationPermission();
+      setPermissionLoaded(hasPermission);
+    }
+    
     const backAction = () => {
       setBackAlertVisible(true)
       return true;
@@ -33,6 +26,8 @@ export default App = () => {
       "hardwareBackPress",
       backAction
     );
+
+    getLocationPermission();
 
     return () => backHandler.remove();
   },[]);
