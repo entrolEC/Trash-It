@@ -31,7 +31,7 @@ export const LeaderBoard = ({
   const [user, setUser] = useState(null);
   const [userScore, setUserScore] = useState();
   const [userRank, setUserRank] = useState();
-  const crwonColor = ['#DAA520', '#C0C0C0', '#A0522D'];
+  const crownColor = ['#DAA520', '#C0C0C0', '#A0522D'];
 
   const fetchData = async () => {
     var requestOptions = {
@@ -84,31 +84,31 @@ export const LeaderBoard = ({
   const Item = ({username, count, idx}) => (
     <View
       style={
-        idx === 0 ? {...styles.itemlist, paddingVertical: 35} : styles.itemlist
+        styles.itemlist
       }>
-      <View style={{flexDirection: 'row'}}>
-        {idx < 3 ? (
-          <Icon
-            name="crown"
-            size={20}
-            style={{...styles.text, marginRight: '20%', fontSize: 20}}
-            color={crwonColor[idx]}
-          />
-        ) : (
-          <Text
-            style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>
-            {idx + 1}
-          </Text>
-        )}
 
-        <Text style={styles.text}>{username}</Text>
-      </View>
+      {idx < 3 ? (
+        <Icon
+          name="crown"
+          size={20}
+          style={{position:'absolute', left:'5%', top:'100%'}}
+          color={crownColor[idx]}
+        />
+      ) : (
+        <Text
+          style={{...styles.text, position:'absolute', left:'5%', top:'100%', fontWeight: 'bold'}}>
+          {idx + 1}
+        </Text>
+      )}
+
+      <Text style={{...styles.text, position:'absolute', left:'20%', top:'100%'}}>{username}</Text>
+
       <Text
         style={{
           ...styles.text,
           fontWeight: 'bold',
           color: '#3817aa',
-          marginLeft: '40%',
+          position:'absolute', right:'10%', top:'100%'
         }}>
         {count}
       </Text>
@@ -131,7 +131,7 @@ export const LeaderBoard = ({
               color: 'white',
               marginTop: '25%',
             }}>
-            LeaderBoard
+            리더보드
           </Text>
         </View>
 
@@ -191,7 +191,8 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     flexDirection: 'row',
     justifyContent: 'center',
-    width: '100%',
+    width: windowWidth*0.9,
+    height: windowHeight*0.1,
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {
@@ -200,7 +201,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.18,
     shadowRadius: 1.0,
-
     elevation: 1,
   },
   text: {
