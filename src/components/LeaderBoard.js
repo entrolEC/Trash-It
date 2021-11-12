@@ -91,14 +91,16 @@ export const LeaderBoard = ({
         ) : styles.itemlist
       }>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>{idx + 1}</Text>
-        
-        <Text style={styles.text}>{username}</Text>
         {
           idx < 3 ? (
-            <Icon name="crown" size={20} style={{marginLeft: 10}} color={crwonColor[idx]} />
-          ) : null
+            <Icon name="crown" size={20} style={{...styles.text, marginRight: '20%', fontSize: 20}} color={crwonColor[idx]} />
+          ) : (
+            <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>{idx + 1}</Text>
+          )
         }
+        
+        <Text style={styles.text}>{username}</Text>
+       
       </View>
       <Text style={{...styles.text, fontWeight: 'bold', color: '#3817aa', marginLeft: '40%'}}>{count}</Text>
     </View>
@@ -126,13 +128,13 @@ export const LeaderBoard = ({
                 />
                 <View style={{marginLeft: '15%', paddingTop: 10}}>
                   <View style={{alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>COUNT</Text>
+                    <Text style={{color: 'white'}}>업로드 횟수</Text>
                     <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userScore}</Text>
                   </View>
                 </View>
                 <View style={{marginLeft: '20%', paddingTop: 10}}>
                   <View style={{alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>RANK</Text>
+                    <Text style={{color: 'white'}}>순위</Text>
                     <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userRank}</Text>
                   </View>
                 </View>
@@ -190,6 +192,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     bottom: '70%',
     borderRadius: windowWidth * 2,
-    backgroundColor: '#3817AA',
+    backgroundColor: '#8CBA80',
   }
 });
