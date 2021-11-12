@@ -61,7 +61,7 @@ export const LeaderBoard = ({
         getUser().then((_user) => {
           console.log('user trashcaninfo', _user);
           setUser(_user.user);
-  
+
           for (var i = 0; i < users.length; i++) {
             if (users[i]._id === _user.user._id) {
               setUserRank(i + 1);
@@ -79,21 +79,32 @@ export const LeaderBoard = ({
   const Item = ({username, count, idx}) => (
     <View
       style={
-        idx === 0 ? (
-          {...styles.itemlist, paddingVertical: 35}
-        ) : styles.itemlist
+        idx === 0 ? {...styles.itemlist, paddingVertical: 35} : styles.itemlist
       }>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>{idx + 1}</Text>
-        
+        <Text style={{...styles.text, marginRight: '20%', fontWeight: 'bold'}}>
+          {idx + 1}
+        </Text>
+
         <Text style={styles.text}>{username}</Text>
-        {
-          idx < 3 ? (
-            <Icon name="crown" size={20} style={{marginLeft: 10}} color={crwonColor[idx]} />
-          ) : null
-        }
+        {idx < 3 ? (
+          <Icon
+            name="crown"
+            size={20}
+            style={{marginLeft: 10}}
+            color={crwonColor[idx]}
+          />
+        ) : null}
       </View>
-      <Text style={{...styles.text, fontWeight: 'bold', color: '#3817aa', marginLeft: '40%'}}>{count}</Text>
+      <Text
+        style={{
+          ...styles.text,
+          fontWeight: 'bold',
+          color: '#3817aa',
+          marginLeft: '40%',
+        }}>
+        {count}
+      </Text>
     </View>
   );
 
@@ -106,39 +117,53 @@ export const LeaderBoard = ({
       <View style={styles.circle} />
       <View style={styles.centeredView}>
         <View>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white', marginTop: '25%' }}>LeaderBoard</Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: 'white',
+              marginTop: '25%',
+            }}>
+            LeaderBoard
+          </Text>
         </View>
 
-        <View style={{alignSelf: 'flex-start', paddingLeft: '5%', marginTop: '3%'}}>
-          {
-            user ? (
-              <View style={{flexDirection: 'row'}}>
-                <Image 
-                  source={{uri: user.photo}}
-                  style={{width: 75, height: 75, borderRadius: 50}}
-                />
-                <View style={{marginLeft: '15%', paddingTop: 10}}>
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>COUNT</Text>
-                    <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userScore}</Text>
-                  </View>
-                </View>
-                <View style={{marginLeft: '20%', paddingTop: 10}}>
-                  <View style={{alignItems: 'center'}}>
-                    <Text style={{color: 'white'}}>RANK</Text>
-                    <Text style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>{userRank}</Text>
-                  </View>
+        <View
+          style={{alignSelf: 'flex-start', paddingLeft: '5%', marginTop: '3%'}}>
+          {user ? (
+            <View style={{flexDirection: 'row'}}>
+              <Image
+                source={{uri: user.photo}}
+                style={{width: 75, height: 75, borderRadius: 50}}
+              />
+              <View style={{marginLeft: '15%', paddingTop: 10}}>
+                <View style={{alignItems: 'center'}}>
+                  <Text style={{color: 'white'}}>COUNT</Text>
+                  <Text
+                    style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>
+                    {userScore}
+                  </Text>
                 </View>
               </View>
-            ) : null
-          }
+              <View style={{marginLeft: '20%', paddingTop: 10}}>
+                <View style={{alignItems: 'center'}}>
+                  <Text style={{color: 'white'}}>RANK</Text>
+                  <Text
+                    style={{color: 'white', fontSize: 30, fontWeight: 'bold'}}>
+                    {userRank}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          ) : null}
         </View>
 
-        <View style={{ marginTop: '3%' }}>
+        <View style={{marginTop: '3%'}}>
           <FlatList
             data={loadingVisible ? null : users}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id} />
+            keyExtractor={(item) => item.id}
+          />
         </View>
       </View>
       <View />
@@ -151,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: '10%',
   },
   itemlist: {
     borderColor: '#aaaaaa',
@@ -162,14 +187,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: '100%',
     borderRadius: 15,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.18,
-    shadowRadius: 1.00,
-    
+    shadowRadius: 1.0,
+
     elevation: 1,
   },
   text: {
@@ -184,5 +209,5 @@ const styles = StyleSheet.create({
     bottom: '70%',
     borderRadius: windowWidth * 2,
     backgroundColor: '#3817AA',
-  }
+  },
 });
