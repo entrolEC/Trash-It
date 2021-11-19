@@ -208,6 +208,7 @@ export const MapScreen = ({latitude, longitude}) => {
             ref={bottomSheetModalRef}
             snapPoints={trashcanSnapPoints}
             onDismiss={() => {
+              if (authModalVisible) setAuthModalVisible(false);
               setInfoModalVisible(false);
               setSelectedIndex(null);
               setSelectedId(null);
