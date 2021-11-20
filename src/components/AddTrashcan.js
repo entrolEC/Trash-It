@@ -72,6 +72,31 @@ export const AddTrashcan = ({
     setData(temp);
   };
 
+  const isTrashCan = async () => {
+    var formdata = new FormData();
+    const accessToken = await getNewToken();
+    formdata.append('image', data.image);
+
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + accessToken,
+      },
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    await fetch(`http://${URL}/check`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log(result)
+      })
+      .catch((error) => {
+        console.log('isTrashCanError', error);
+      })
+  }
+
   const initStates = () => {
     setImage(null);
     setIsImageLoading(false);
@@ -197,47 +222,6 @@ export const AddTrashcan = ({
           }
           
         </View>
-
-        {/* <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-            onPress={() => {
-              setModalVisible(!modalVisible);
-              initStates();
-            } }>
-            <Text style={styles.textStyle}> 취소 </Text>
-          </TouchableHighlight>
-          {image ? (
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-              onPress={async () => {
-                setLoadingVisible(true);
-                console.log('pressed');
-                if (data) {
-                  console.log('here');
-
-                  await postData();
-                  await fetchData();
-                  //setTimeout(()=>{ fetchData() }, 1000)
-                  setData(0);
-                  setModalVisible(!modalVisible);
-                  initStates();
-                } else {
-                  console.log('data is null');
-                }
-              } }>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-          ) : (
-            <TouchableHighlight
-              style={{
-                ...styles.openButton,
-                backgroundColor: '#808080',
-              }}>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-          )}
-        </View> */}
       </View>
       <View>
         <Loading
