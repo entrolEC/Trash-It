@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import ImageModal from 'react-native-image-modal';
+import {Alert} from '../components/Alert';
 
 import {
   usePinState,
@@ -45,6 +45,7 @@ export const AddTrashcan = ({
   const [image, setImage] = useState(null);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -95,11 +96,7 @@ export const AddTrashcan = ({
       .then((result) => {
         console.log('isTrashCanResult', result);
         if (result === 'false') {
-          return (
-            <View>
-              <Text>This is Not a TrashCan</Text>
-            </View>
-          );
+          setAlertVisible(true);
         }
       })
       .catch((error) => {
@@ -255,6 +252,16 @@ export const AddTrashcan = ({
           setLoadingVisible={setLoadingVisible}
         />
       </View>
+
+      <Alert
+        alertVisible={alertVisible}
+        setAlertVisible={setAlertVisible}
+        message={'사진에 쓰레기통이 없습니다.'}
+        confirmText={'확인'}
+        callback={() => {
+          addBottomSheetModalRef.current.close();
+        }}
+      />
     </View>
   );
 };

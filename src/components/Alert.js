@@ -26,7 +26,7 @@ export const Alert = ({
       showCancelButton={showCancel}
       showConfirmButton={true}
       cancelText="취소"
-      confirmText="알겠어요!"
+      confirmText={confirmText}
       confirmButtonColor="#DD6B55"
       onCancelPressed={() => {
         setAlertVisible(false);
