@@ -23,7 +23,10 @@ import {getGeolocation} from '../service/Geolocation';
 
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {TouchableHighlight, TouchableWithoutFeedback} from '@gorhom/bottom-sheet'
+import {
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet';
 
 import {getData} from '../service/AsyncStorage';
 
@@ -54,22 +57,54 @@ export const AddTrashcan = ({
   };
 
   const addNewTrashcan = async () => {
-    const image = await ImagePicker.openCamera({
+    const imageVal = await ImagePicker.openCamera({
       width: 900,
       height: 900,
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
-    })
+    });
 
-    console.log(image);
-    setImage(image);
+    console.log(imageVal);
+    setImage(imageVal);
     await getGeolocation(setIsGeolocationLoaded);
     let temp = {
       address: '인천 송도과학로27번길 15',
-      image: {uri: image.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
+      image: {uri: imageVal.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
     };
     setData(temp);
+  };
+
+  const isTrashCan = async () => {
+    var formdata = new FormData();
+    const accessToken = await getNewToken();
+    formdata.append('image', data.image);
+
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + accessToken,
+      },
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    await fetch(`http://${URL}/check/`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log('isTrashCanResult', result);
+        if (result === 'false') {
+          return (
+            <View>
+              <Text>This is Not a TrashCan</Text>
+            </View>
+          );
+        }
+      })
+      .catch((error) => {
+        console.log('isTrashCanError', error);
+      });
   };
 
   const initStates = () => {
@@ -116,7 +151,7 @@ export const AddTrashcan = ({
 
   useEffect(() => {
     if (modalVisible && image === null && !isImageLoading) {
-      console.log("addNewTrashcan Start!!");
+      console.log('addNewTrashcan Start!!');
       setIsImageLoading(true);
       addNewTrashcan();
       getUser().then((_user) => {
@@ -124,13 +159,23 @@ export const AddTrashcan = ({
         setUser(_user.user);
       });
     }
-  },[modalVisible])
-  
+
+    if (data) isTrashCan();
+  }, [modalVisible, data]);
 
   return (
     <View>
-      <View style={{borderBottomWidth: 0.5, borderBottomColor: '#aaaaaa', alignItems: 'center', marginBottom: 10, flexDirection: 'row'}}>
-        <Text style={{fontSize: 20, marginBottom: 10, marginLeft: 10}}>핀 추가</Text>
+      <View
+        style={{
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#aaaaaa',
+          alignItems: 'center',
+          marginBottom: 10,
+          flexDirection: 'row',
+        }}>
+        <Text style={{fontSize: 20, marginBottom: 10, marginLeft: 10}}>
+          핀 추가
+        </Text>
         <TouchableWithoutFeedback
           onPress={async () => {
             setLoadingVisible(true);
@@ -148,17 +193,22 @@ export const AddTrashcan = ({
             } else {
               console.log('data is null');
             }
-            
-          }}
-          >
-          <Icon name={'cloud-upload-outline'} size={30} color={'#05BCDF'} style={{marginBottom: 5, paddingLeft: Dimensions.get('window').width - 120}} />
+          }}>
+          <Icon
+            name={'cloud-upload-outline'}
+            size={30}
+            color={'#05BCDF'}
+            style={{
+              marginBottom: 5,
+              paddingLeft: Dimensions.get('window').width - 120,
+            }}
+          />
         </TouchableWithoutFeedback>
-        </View>
+      </View>
       <View>
         <View style={styles.user}>
-          {
-            user ? (
-              <>
+          {user ? (
+            <>
               <Image
                 source={{
                   uri: user.photo,
@@ -166,12 +216,13 @@ export const AddTrashcan = ({
                 style={styles.profileimage}
               />
               <View style={{marginLeft: 13, flexDirection: 'column'}}>
-                <Text style={{fontSize: 17, fontWeight: 'bold'}}>{user.name}</Text>
+                <Text style={{fontSize: 17, fontWeight: 'bold'}}>
+                  {user.name}
+                </Text>
                 <Text>{user.email}</Text>
               </View>
-              </>
-            ) : null
-          }
+            </>
+          ) : null}
         </View>
 
         <View style={styles.itemContainer}>
@@ -180,69 +231,29 @@ export const AddTrashcan = ({
               height: 80,
             }}
             onChangeText={(text) => setDescription(text)}
-            placeholder={'간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'} />
+            placeholder={
+              '간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'
+            }
+          />
         </View>
 
         <View style={{alignItems: 'center'}}>
-          {
-            image ? (
-              <ImageModal
-                style={styles.image}
-                resizeMode="contain"
-                source={{
-                  uri: image.path,
-                }}
-              />
-            ) : null
-          }
-          
-        </View>
-
-        {/* <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-            onPress={() => {
-              setModalVisible(!modalVisible);
-              initStates();
-            } }>
-            <Text style={styles.textStyle}> 취소 </Text>
-          </TouchableHighlight>
           {image ? (
-            <TouchableHighlight
-              style={{ ...styles.openButton, backgroundColor: '#2196F3' }}
-              onPress={async () => {
-                setLoadingVisible(true);
-                console.log('pressed');
-                if (data) {
-                  console.log('here');
-
-                  await postData();
-                  await fetchData();
-                  //setTimeout(()=>{ fetchData() }, 1000)
-                  setData(0);
-                  setModalVisible(!modalVisible);
-                  initStates();
-                } else {
-                  console.log('data is null');
-                }
-              } }>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-          ) : (
-            <TouchableHighlight
-              style={{
-                ...styles.openButton,
-                backgroundColor: '#808080',
-              }}>
-              <Text style={styles.textStyle}> 확인 </Text>
-            </TouchableHighlight>
-          )}
-        </View> */}
+            <ImageModal
+              style={styles.image}
+              resizeMode="contain"
+              source={{
+                uri: image.path,
+              }}
+            />
+          ) : null}
+        </View>
       </View>
       <View>
         <Loading
           loadingVisible={loadingVisible}
-          setLoadingVisible={setLoadingVisible} />
+          setLoadingVisible={setLoadingVisible}
+        />
       </View>
     </View>
   );
@@ -272,5 +283,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center',
     flexDirection: 'row',
-  }
+  },
 });
