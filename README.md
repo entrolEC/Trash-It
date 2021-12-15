@@ -1,5 +1,4 @@
 # trashcanMap
-# trashcanMap
 ```
 npm install
 or
