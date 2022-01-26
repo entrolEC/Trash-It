@@ -153,6 +153,7 @@ export const TrashcanInfo = ({
             else disLikeAnimation.current.play(0, 0);
 
             setIsFirstRun(false);
+            refreshData();
           }
         })
         .catch((error) => console.log('error', error));
@@ -262,8 +263,9 @@ export const TrashcanInfo = ({
         <View style={{flexDirection: 'row', paddingRight: 50}}>
           <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
             <TouchableWithoutFeedback
-              onPress={() => {
-                postActions('like');
+              onPress={async () => {
+                await postActions('like');
+                refreshData();
               }}>
               <LottieView
                 ref={likeAnimation}
@@ -279,8 +281,9 @@ export const TrashcanInfo = ({
             </Text>
 
             <TouchableWithoutFeedback
-              onPress={() => {
-                postActions('dislike');
+              onPress={async () => {
+                await postActions('dislike');
+                refreshData();
               }}>
               <LottieView
                 ref={disLikeAnimation}
@@ -306,7 +309,7 @@ export const TrashcanInfo = ({
           <View>
             <Text style={{marginTop: '40%'}}>{selectedTrashcan.description}</Text>
           </View>
-          <Text style={{marginTop: '25%'}}>게시자 : {selectedTrashcan.author.email}</Text>
+          <Text style={{marginTop: 40}}>게시자 : {selectedTrashcan.author.username}</Text>
         </View>
 
         <View style={{flex: 1, justifyContent: 'flex-end'}}>

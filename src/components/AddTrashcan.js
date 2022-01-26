@@ -1,15 +1,16 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View,
   Image,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
+import ImageModal from 'react-native-image-modal';
+import {Alert} from '../components/Alert';
 
 import {
   usePinState,
@@ -21,6 +22,11 @@ import {getNewToken, getUser} from '../service/UserManager';
 import {getGeolocation} from '../service/Geolocation';
 
 import Modal from 'react-native-modal';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  TouchableHighlight,
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet';
 
 import {getData} from '../service/AsyncStorage';
 
@@ -32,11 +38,14 @@ export const AddTrashcan = ({
   setModalVisible,
   loadingVisible,
   setLoadingVisible,
+  addBottomSheetModalRef,
 }) => {
   const [description, setDescription] = useState('설명 없음');
   const [data, setData] = useState(0);
-  const [image, setImage] = useState();
+  const [image, setImage] = useState(null);
   const [isGeolocationLoaded, setIsGeolocationLoaded] = useState(0);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
 
   const pinState = usePinState();
   const pinDispatch = usePinDispatch();
@@ -48,30 +57,57 @@ export const AddTrashcan = ({
     getPin(pinDispatch);
   };
 
-  const addNewTrashcan = () => {
-    ImagePicker.openCamera({
+  const addNewTrashcan = async () => {
+    const imageVal = await ImagePicker.openCamera({
       width: 900,
       height: 900,
       includeExif: true,
       cropping: true,
       mediaType: 'photo',
-    }).then((image) => {
-      console.log(image);
-      setImage(image);
-      getGeolocation(setIsGeolocationLoaded);
-      //getPosition(positionDispatch);
     });
+
+    console.log(imageVal);
+    setImage(imageVal);
+    await getGeolocation(setIsGeolocationLoaded);
+    let temp = {
+      address: '인천 송도과학로27번길 15',
+      image: {uri: imageVal.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
+    };
+    setData(temp);
   };
 
-  useEffect(() => {
-    if (image) {
-      let temp = {
-        address: '인천 송도과학로27번길 15',
-        image: {uri: image.path, type: 'image/jpeg', name: ';alkfsdj;ljkasdf'},
-      };
-      setData(temp);
-    }
-  }, [image]);
+  const isTrashCan = async () => {
+    var formdata = new FormData();
+    const accessToken = await getNewToken();
+    formdata.append('image', data.image);
+
+    var requestOptions = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: 'Bearer ' + accessToken,
+      },
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+    };
+
+    await fetch(`http://${URL}/check/`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => {
+        console.log('isTrashCanResult', result);
+        if (result === 'false') {
+          setAlertVisible(true);
+        }
+      })
+      .catch((error) => {
+        console.log('isTrashCanError', error);
+      });
+  };
+
+  const initStates = () => {
+    setImage(null);
+    setIsImageLoading(false);
+  };
 
   const postData = async () => {
     var formdata = new FormData();
@@ -102,110 +138,130 @@ export const AddTrashcan = ({
       .catch((error) => console.log('error', error));
   };
 
-  useEffect(() => {
-    getUser().then((_user) => {
-      console.log('user trashcaninfo', _user);
-      setUser(_user.user);
-    });
-  }, []);
-
   if (user === null) {
     return (
       <View>
-        <Text>
-          로그인을 먼저 해주세요.
-        </Text>
+        <Text>로그인을 먼저 해주세요.</Text>
       </View>
-    )
+    );
   }
+
+  useEffect(() => {
+    if (modalVisible && image === null && !isImageLoading) {
+      console.log('addNewTrashcan Start!!');
+      setIsImageLoading(true);
+      addNewTrashcan();
+      getUser().then((_user) => {
+        console.log('user trashcaninfo', _user);
+        setUser(_user.user);
+      });
+    }
+
+    if (data) isTrashCan();
+  }, [modalVisible, data]);
+
   return (
     <View>
-      <View style={styles.centeredView}>
-        <Modal
-          animationIn="pulse"
-          animationInTiming={500}
-          animationOut="bounceOutDown"
-          animationOutTiming={500}
-          transparent={true}
-          isVisible={modalVisible}
-          backdropColor="none"
-          onBackButtonPress={() => {
-            setModalVisible(!modalVisible);
-          }}
-          onBackdropPress={() => {
-            setModalVisible(!modalVisible);
+      <View
+        style={{
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#aaaaaa',
+          alignItems: 'center',
+          marginBottom: 10,
+          flexDirection: 'row',
+        }}>
+        <Text style={{fontSize: 20, marginBottom: 10, marginLeft: 10}}>
+          핀 추가
+        </Text>
+        <TouchableWithoutFeedback
+          onPress={async () => {
+            setLoadingVisible(true);
+            console.log('pressed');
+            if (data) {
+              console.log('here');
+              await postData();
+              await fetchData();
+              //setTimeout(()=>{ fetchData() }, 1000)
+              setData(0);
+              setModalVisible(false);
+              initStates();
+
+              addBottomSheetModalRef.current.close();
+            } else {
+              console.log('data is null');
+            }
           }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>
-                현재 위치에 쓰레기통을 추가합니다.
-              </Text>
-              <View style={styles.itemsContainer}>
-                <View style={{...styles.itemContainer, flexDirection: 'row'}}>
-                  <Text style={styles.itemText}>이미지</Text>
-                  <TouchableHighlight
-                    style={styles.cameraButton}
-                    onPress={() => {
-                      addNewTrashcan();
-                    }}>
-                    <Text style={styles.textStyle}> 촬영 </Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={styles.itemContainer}>
-                  <Text style={styles.itemText}>설명</Text>
-                  <TextInput
-                    style={{
-                      height: 80,
-                      borderColor: '#aaaaaa',
-                      borderWidth: 0.5,
-                      borderRadius: 10,
-                    }}
-                    onChangeText={(text) => setDescription(text)}
-                    placeholder={
-                      '간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'
-                    }
-                  />
-                </View>
-                <View style={styles.buttonContainer}>
-                  <TouchableHighlight
-                    style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                    onPress={() => {
-                      setModalVisible(!modalVisible);
-                    }}>
-                    <Text style={styles.textStyle}> 취소 </Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    style={{...styles.openButton, backgroundColor: '#2196F3'}}
-                    onPress={async () => {
-                      setLoadingVisible(true);
-                      console.log('pressed');
-                      if (data) {
-                        console.log('here');
-
-                        await postData();
-                        await fetchData();
-                        //setTimeout(()=>{ fetchData() }, 1000)
-                        setData(0);
-                        setModalVisible(!modalVisible);
-                      } else {
-                        console.log('data is null');
-                      }
-                    }}>
-                    <Text style={styles.textStyle}> 확인 </Text>
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-          </View>
-        </Modal>
+          <Icon
+            name={'cloud-upload-outline'}
+            size={30}
+            color={'#05BCDF'}
+            style={{
+              marginBottom: 5,
+              paddingLeft: Dimensions.get('window').width - 120,
+            }}
+          />
+        </TouchableWithoutFeedback>
       </View>
+      <View>
+        <View style={styles.user}>
+          {user ? (
+            <>
+              <Image
+                source={{
+                  uri: user.photo,
+                }}
+                style={styles.profileimage}
+              />
+              <View style={{marginLeft: 13, flexDirection: 'column'}}>
+                <Text style={{fontSize: 17, fontWeight: 'bold'}}>
+                  {user.name}
+                </Text>
+                <Text>{user.email}</Text>
+              </View>
+            </>
+          ) : null}
+        </View>
 
+        <View style={styles.itemContainer}>
+          <TextInput
+            style={{
+              height: 80,
+            }}
+            onChangeText={(text) => setDescription(text)}
+            placeholder={
+              '간단한 설명을 부탁드립니다! \n ex) 버스정류장 옆 or ~ 가게 앞'
+            }
+          />
+        </View>
+
+        <View style={{alignItems: 'center'}}>
+          {image ? (
+            <ImageModal
+              style={styles.image}
+              resizeMode="contain"
+              source={{
+                uri: image.path,
+              }}
+            />
+          ) : null}
+        </View>
+      </View>
       <View>
         <Loading
           loadingVisible={loadingVisible}
           setLoadingVisible={setLoadingVisible}
         />
       </View>
+
+      <Alert
+        alertVisible={alertVisible}
+        setAlertVisible={setAlertVisible}
+        message={'사진에 쓰레기통이 없습니다.'}
+        confirmText={'확인'}
+        callback={() => {
+          addBottomSheetModalRef.current.close();
+        }}
+      />
     </View>
   );
 };
@@ -217,61 +273,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 22,
   },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 25,
-    paddingHorizontal: 40,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 15,
-    elevation: 2,
-    marginHorizontal: 13,
-    width: 100,
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 30,
-    textAlign: 'center',
-    fontSize: 18,
-  },
-  itemText: {
-    marginBottom: 10,
-    textAlign: 'left',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    //alignContent: "space-around"
-    justifyContent: 'space-around',
-  },
   itemContainer: {
     marginVertical: 20,
   },
-  itemsContainer: {
-    padding: 10,
+  image: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').width,
   },
-  cameraButton: {
-    backgroundColor: '#41B6FF',
-    borderRadius: 10,
-    padding: 10,
-    elevation: 5,
-    width: 100,
-    marginLeft: 130,
+  profileimage: {
+    width: 50,
+    height: 50,
+    borderRadius: 50 / 2,
+  },
+  user: {
+    marginLeft: 10,
+    marginTop: 10,
+    alignItems: 'center',
+    flexDirection: 'row',
   },
 });

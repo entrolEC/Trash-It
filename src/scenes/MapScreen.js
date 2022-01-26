@@ -77,7 +77,14 @@ export const MapScreen = ({latitude, longitude}) => {
   const {pin} = pinState; // included : data, loading, error, success
 
   const bottomSheetModalRef = useRef<Modalize>(null);
-  const snapPoints = useMemo(() => ['40%', '70%'], []);
+  const authBottomSheetModalRef = useRef<Modalize>(null);
+  const addBottomSheetModalRef = useRef<Modalize>(null);
+  const leaderBoardBottomSheetModalRef = useRef<Modalize>(null);
+
+  const trashcanSnapPoints = useMemo(() => ['40%', '70%'], []);
+  const authSnapPoints = useMemo(() => ['30%', '70%'], []);
+  const addSnapPoints = useMemo(() => ['100%'], []);
+  const leaderBoardSnapPoints = useMemo(() => ['100%'], []);
 
   const onClicked = (point, idx) => {
     console.log('clicked', point, idx);
@@ -109,14 +116,18 @@ export const MapScreen = ({latitude, longitude}) => {
     const userData = await getData('user');
     if (name === 'login') {
       setAuthModalVisible(true);
+      authBottomSheetModalRef.current?.present();
     } else if (name === 'addTrashcan') {
       if (userData === null) {
         setAlertVisible(true);
       } else {
         setModalVisible(true);
+        addBottomSheetModalRef.current?.present();
+        console.log("addBottomSheetModalRef",addBottomSheetModalRef)
       }
     } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
+      leaderBoardBottomSheetModalRef.current?.present();
     }
   };
 
@@ -195,8 +206,9 @@ export const MapScreen = ({latitude, longitude}) => {
         {selectedIndex !== null ? (
           <BottomSheetModal
             ref={bottomSheetModalRef}
-            snapPoints={snapPoints}
+            snapPoints={trashcanSnapPoints}
             onDismiss={() => {
+              if (authModalVisible) setAuthModalVisible(false);
               setInfoModalVisible(false);
               setSelectedIndex(null);
               setSelectedId(null);
@@ -219,6 +231,54 @@ export const MapScreen = ({latitude, longitude}) => {
               setLoadingVisible={setLoadingVisible}
             />
           </BottomSheetModal>
+        ) : authModalVisible ? (
+          <BottomSheetModal
+            ref={authBottomSheetModalRef}
+            snapPoints={authSnapPoints}
+            onDismiss={() => {
+              setAuthModalVisible(false);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}
+            backgroundComponent={(props) => (
+              <BottomSheetBackground {...props} />
+            )}>
+            <Auth
+              authModalVisible={authModalVisible}
+              setAuthModalVisible={setAuthModalVisible}
+            />
+          </BottomSheetModal>
+        ) : modalVisible ? (
+            <BottomSheetModal
+            ref={addBottomSheetModalRef}
+            snapPoints={addSnapPoints}
+            onDismiss={() => {
+              setModalVisible(false);
+              // console.log(`this is trashcanLocation`, selectedTrashcan);
+              //addNewTrashcan()
+            }}>
+            <AddTrashcan
+              modalVisible={modalVisible}
+              setModalVisible={setModalVisible}
+              loadingVisible={loadingVisible}
+              setLoadingVisible={setLoadingVisible}
+              addBottomSheetModalRef={addBottomSheetModalRef}
+            />
+          </BottomSheetModal>
+        ) : leaderBoardVisible ? (
+          <BottomSheetModal
+            ref={leaderBoardBottomSheetModalRef}
+            snapPoints={leaderBoardSnapPoints}
+            onDismiss={() => {
+              setLeaderBoardVisible(false);
+            }}>
+            <LeaderBoard
+              leaderBoardVisible={leaderBoardVisible}
+              setLeaderBoardVisible={setLeaderBoardVisible}
+              loadingVisible={loadingVisible}
+              setLoadingVisible={setLoadingVisible}
+            />
+          </BottomSheetModal>
         ) : (
           <FloatingButton
             onPressItem={(name) => {
@@ -226,24 +286,11 @@ export const MapScreen = ({latitude, longitude}) => {
             }}
           />
         )}
-        <AddTrashcan
-          modalVisible={modalVisible}
-          setModalVisible={setModalVisible}
-          loadingVisible={loadingVisible}
-          setLoadingVisible={setLoadingVisible}
-        />
-        <Auth
-          authModalVisible={authModalVisible}
-          setAuthModalVisible={setAuthModalVisible}
-        />
         <Alert
           alertVisible={alertVisible}
           setAlertVisible={setAlertVisible}
           message={'로그인을 먼저 해주세요!'}
-        />
-        <LeaderBoard
-          leaderBoardVisible={leaderBoardVisible}
-          setLeaderBoardVisible={setLeaderBoardVisible}
+          confirmText={'확인'}
         />
       </BottomSheetModalProvider>
     </>
