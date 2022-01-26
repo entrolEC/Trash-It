@@ -246,9 +246,9 @@ export const TrashcanInfo = ({
     }
 
     return (
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: '20%'}}>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <LottieView
-          style={{width: 150, height: 150}}
+          style={{alignItems: 'center', width: '70%', height: '70%'}}
           source={require('../assets/lottie/loading.json')}
           autoPlay
           loop
@@ -259,77 +259,75 @@ export const TrashcanInfo = ({
 
   return (
     <View style={styles.centeredView}>
-      <View style={styles.centeredView}>
-        <View style={{flexDirection: 'row', paddingRight: 50}}>
-          <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
-            <TouchableWithoutFeedback
-              onPress={async () => {
-                await postActions('like');
-                refreshData();
-              }}>
-              <LottieView
-                ref={likeAnimation}
-                style={{width: 80, height: 80}}
-                source={require('../assets/lottie/like.json')}
-                autoPlay={false}
-                loop={false}
-              />
-            </TouchableWithoutFeedback>
+      <View style={{flexDirection: 'row', paddingRight: '13%'}}>
+        <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
+          <TouchableWithoutFeedback
+            onPress={async () => {
+              await postActions('like');
+              refreshData();
+            }}>
+            <LottieView
+              ref={likeAnimation}
+              style={{width: 80, height: 80}}
+              source={require('../assets/lottie/like.json')}
+              autoPlay={false}
+              loop={false}
+            />
+          </TouchableWithoutFeedback>
 
-            <Text style={{color: likeTextColor}}>
-                  {likes - dislikes}
-            </Text>
+          <Text style={{color: likeTextColor}}>
+                {likes - dislikes}
+          </Text>
 
-            <TouchableWithoutFeedback
-              onPress={async () => {
-                await postActions('dislike');
-                refreshData();
-              }}>
-              <LottieView
-                ref={disLikeAnimation}
-                style={{width: 80, height: 80}}
-                source={require('../assets/lottie/dislike.json')}
-                autoPlay={false}
-                loop={false}
-              />
-            </TouchableWithoutFeedback>
-          </View>
-
-          <ImageModal
-            style={styles.image}
-            resizeMode="contain"
-            source={{
-              // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
-              uri: `http://${URL}${selectedTrashcan.image}`,
-            }}
-          />
+          <TouchableWithoutFeedback
+            onPress={async () => {
+              await postActions('dislike');
+              refreshData();
+            }}>
+            <LottieView
+              ref={disLikeAnimation}
+              style={{width: 80, height: 80}}
+              source={require('../assets/lottie/dislike.json')}
+              autoPlay={false}
+              loop={false}
+            />
+          </TouchableWithoutFeedback>
         </View>
 
-        <View style={{position: 'absolute', justifyContent: 'center', alignItems: 'center'}}>
-          <View>
-            <Text style={{marginTop: '40%'}}>{selectedTrashcan.description}</Text>
-          </View>
-          <Text style={{marginTop: 40}}>게시자 : {selectedTrashcan.author.username}</Text>
-        </View>
+        <ImageModal
+          style={styles.image}
+          resizeMode="contain"
+          source={{
+            // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
+            uri: `http://${URL}${selectedTrashcan.image}`,
+          }}
+        />
+      </View>
 
-        <View style={{flex: 1, justifyContent: 'flex-end'}}>
-          {user != null &&
-            user.email == selectedTrashcan.author.email ? (
-            <TouchableHighlight
-              style={{...styles.deleteButton}}
-              onPress={async () => {
-                setLoadingVisible(true);
-                await deleteData();
-                setSelectedIndex(null);
-                setSelectedId(null);
-                setLoading(true);
-                setModalVisible(!modalVisible);
-                refreshData();
-              }}>
-              <Text style={styles.textStyle}> 삭제 </Text>
-            </TouchableHighlight>
-          ) : null}
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View>
+          <Text>{selectedTrashcan.description}</Text>
         </View>
+        <Text style={{marginTop: '10%'}}>게시자 : {selectedTrashcan.author.username}</Text>
+      </View>
+
+      <View style={{flex: 1, justifyContent: 'flex-end'}}>
+        {user != null &&
+          user.email == selectedTrashcan.author.email ? (
+          <TouchableHighlight
+            style={{...styles.deleteButton}}
+            onPress={async () => {
+              setLoadingVisible(true);
+              await deleteData();
+              setSelectedIndex(null);
+              setSelectedId(null);
+              setLoading(true);
+              setModalVisible(!modalVisible);
+              refreshData();
+            }}>
+            <Text style={styles.textStyle}> 삭제 </Text>
+          </TouchableHighlight>
+        ) : null}
       </View>
     </View>
   );
@@ -352,7 +350,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    paddingRight: 3
+    paddingRight: 3,
   },
   image: {
     width: 225,
