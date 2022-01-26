@@ -7,6 +7,7 @@ import {
   Text,
   View,
   Image,
+  SafeAreaView,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
@@ -258,9 +259,9 @@ export const TrashcanInfo = ({
   }
 
   return (
-    <View style={styles.centeredView}>
-      <View style={{flexDirection: 'row', paddingRight: '13%'}}>
-        <View style={{flexDirection: 'column', alignItems: 'center', marginTop: '13%'}}>
+    <SafeAreaView style={styles.centeredView}>
+      <View style={{flex: 2, flexDirection: 'row', paddingRight: '17%'}}>
+        <View style={{alignItems: 'center', paddingTop: '5%'}}>
           <TouchableWithoutFeedback
             onPress={async () => {
               await postActions('like');
@@ -268,14 +269,14 @@ export const TrashcanInfo = ({
             }}>
             <LottieView
               ref={likeAnimation}
-              style={{width: 80, height: 80}}
+              style={{height: Dimensions.get('window').width * 0.2}}
               source={require('../assets/lottie/like.json')}
               autoPlay={false}
               loop={false}
             />
           </TouchableWithoutFeedback>
 
-          <Text style={{color: likeTextColor}}>
+          <Text style={{color: likeTextColor, fontSize: Dimensions.get('screen').height * 0.02}}>
                 {likes - dislikes}
           </Text>
 
@@ -286,7 +287,7 @@ export const TrashcanInfo = ({
             }}>
             <LottieView
               ref={disLikeAnimation}
-              style={{width: 80, height: 80}}
+              style={{height: Dimensions.get('screen').width * 0.2}}
               source={require('../assets/lottie/dislike.json')}
               autoPlay={false}
               loop={false}
@@ -295,7 +296,7 @@ export const TrashcanInfo = ({
         </View>
 
         <ImageModal
-          style={styles.image}
+          style={{width: Dimensions.get('screen').width * 0.5, height: Dimensions.get('screen').height * 0.25}}
           resizeMode="contain"
           source={{
             // ${selectedTrashcan.image}가 /media/경로/.jpeg형태이기 때문에 http://${URL}${selectedTrashcan.image}로 수정
@@ -304,11 +305,9 @@ export const TrashcanInfo = ({
         />
       </View>
 
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <View>
-          <Text>{selectedTrashcan.description}</Text>
-        </View>
-        <Text style={{marginTop: '10%'}}>게시자 : {selectedTrashcan.author.username}</Text>
+      <View style={{flex: 2, alignItems: 'center', justifyContent: 'flex-start', marginTop: Dimensions.get('screen').height * 0.02}}>
+        <Text style={{fontSize: Dimensions.get('screen').height * 0.02}}>{selectedTrashcan.description}</Text>
+        <Text style={{fontSize: Dimensions.get('screen').height * 0.02, marginTop: 10}}>게시자 : {selectedTrashcan.author.username}</Text>
       </View>
 
       <View style={{flex: 1, justifyContent: 'flex-end'}}>
@@ -329,7 +328,7 @@ export const TrashcanInfo = ({
           </TouchableHighlight>
         ) : null}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -339,26 +338,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  openButton: {
-    backgroundColor: '#F194FF',
-    borderRadius: 20,
-    padding: 10,
-    marginTop: 15,
-    elevation: 2,
-  },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
-    textAlign: 'center',
-    paddingRight: 3,
-  },
-  image: {
-    width: 225,
-    height: 225,
-    marginTop: 10,
-  },
-  text: {
-    marginTop: 0,
   },
   deleteButton: {
     justifyContent: "center",
