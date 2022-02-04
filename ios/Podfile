@@ -27,11 +27,11 @@ target 'trashcanMap' do
   end
 end
 
-target 'trashcanMap-tvOS' do
-  # Pods for trashcanMap-tvOS
+# target 'trashcanMap-tvOS' do
+#   # Pods for trashcanMap-tvOS
 
-  target 'trashcanMap-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
+#   target 'trashcanMap-tvOSTests' do
+#     inherit! :search_paths
+#     # Pods for testing
+#   end
+# end
