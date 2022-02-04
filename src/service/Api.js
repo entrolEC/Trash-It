@@ -83,3 +83,67 @@ export const getUserDetail = (params) => {
 
   return result;
 }
+
+export const getUsers = () => {
+  var requestOptions = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'GET',
+    redirect: 'follow',
+  };
+
+  const result = fetch(`http://${URL}/users/`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => console.log('error', error));
+
+    return result;
+}
+
+export const checkTrashcan = (formdata, accessToken) => {
+  var requestOptions = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: 'Bearer ' + accessToken,
+    },
+    method: 'POST',
+    body: formdata,
+    redirect: 'follow',
+  };
+
+  const result =  fetch(`http://${URL}/check/`, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      console.log('isTrashCanResult', result);
+      return result;
+    })
+    .catch((error) => {
+      console.log('isTrashCanError', error);
+    });
+  
+  return result;
+}
+
+export const addTrashcan = (formdata, accessToken) => {
+  var requestOptions = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      Authorization: 'Bearer ' + accessToken,
+    },
+    method: 'POST',
+    body: formdata,
+    redirect: 'follow',
+  };
+
+  const result = fetch(`http://${URL}/locations/`, requestOptions)
+    .then((response) => response.text())
+    .then((result) => {
+      return true;
+    })
+    .catch((error) => console.log('error', error));
+
+  return result;
+}

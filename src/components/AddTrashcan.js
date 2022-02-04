@@ -32,6 +32,7 @@ import {getData} from '../service/AsyncStorage';
 
 import {URL} from '../../env.json';
 import {Loading} from './Loading.js';
+import {checkTrashcan, addTrashcan} from '../service/Api'
 
 export const AddTrashcan = ({
   modalVisible,
@@ -81,27 +82,10 @@ export const AddTrashcan = ({
     const accessToken = await getNewToken();
     formdata.append('image', data.image);
 
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/check/`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log('isTrashCanResult', result);
-        if (result === 'false') {
-          setAlertVisible(true);
-        }
-      })
-      .catch((error) => {
-        console.log('isTrashCanError', error);
-      });
+    const result = await checkTrashcan(formdata, accessToken);
+    if (result === 'false') {
+      setAlertVisible(true);
+    }
   };
 
   const initStates = () => {
@@ -119,23 +103,12 @@ export const AddTrashcan = ({
     formdata.append('address', data.address);
     formdata.append('image', data.image);
     formdata.append('description', description);
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: 'Bearer ' + accessToken,
-      },
-      method: 'POST',
-      body: formdata,
-      redirect: 'follow',
-    };
 
-    await fetch(`http://${URL}/locations/`, requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log(result);
-        setLoadingVisible(false);
-      })
-      .catch((error) => console.log('error', error));
+    const result = await addTrashcan(formdata, accessToken);
+    if(result) { // 등록 성공
+      setLoadingVisible(false);
+    }
+      
   };
 
   if (user === null) {

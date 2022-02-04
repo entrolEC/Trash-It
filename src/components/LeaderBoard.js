@@ -18,6 +18,8 @@ import {URL} from '../../env.json';
 
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
+import {getUsers} from '../service/Api'
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -34,24 +36,9 @@ export const LeaderBoard = ({
   const crownColor = ['#DAA520', '#C0C0C0', '#A0522D'];
 
   const fetchData = async () => {
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'GET',
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/users/`, requestOptions)
-      .then((response) => response.json())
-      .then(async (result) => {
-        console.log('leaderBoard!!', result);
-        await result.sort((a, b) => a.author.length < b.author.length);
-        setUsers(result);
-
-        console.log('result : ', result);
-      })
-      .catch((error) => console.log('error', error));
+    const result = await getUsers();
+    result.sort((a, b) => a.author.length < b.author.length);
+    setUsers(result);
   };
 
   useEffect(() => {

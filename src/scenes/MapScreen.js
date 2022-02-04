@@ -93,25 +93,6 @@ export const MapScreen = ({latitude, longitude}) => {
     setInfoModalVisible(true);
   };
 
-  const fetchData = async (point) => {
-    // console.log('fetchData', point);
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'GET',
-      redirect: 'follow',
-    };
-
-    await fetch(`http://${URL}/locations/${point.id}/`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('clicked result', result);
-        setSelectedtrashcan(result);
-      })
-      .catch((error) => console.log('error', error));
-  };
-
   const menuPressed = async (name) => {
     const userData = await getData('user');
     if (name === 'login') {
@@ -173,7 +154,6 @@ export const MapScreen = ({latitude, longitude}) => {
                   width={60}
                   height={60}
                   onClick={async () => {
-                    // await fetchData(point);
                     await onClicked(point, idx);
                     bottomSheetModalRef.current?.present();
                   }}>
