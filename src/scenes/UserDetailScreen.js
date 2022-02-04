@@ -21,6 +21,7 @@ import {
 import {URL} from '../../env.json';
 import {LineChart} from 'react-native-chart-kit';
 import dateFormat, {masks} from 'dateformat';
+import {getUserDetail} from '../service/Api';
 
 export const UserDetailScreen = ({user}) => {
   const [errMessage, setErrMessage] = useState();
@@ -54,31 +55,24 @@ export const UserDetailScreen = ({user}) => {
   }, [user]);
 
   const getUserData = async () => {
-    var requestOptions = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      method: 'GET',
-      redirect: 'follow',
-    };
+
 
     const params = user.user.id;
-    await fetch(`http://${URL}/users/${params}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log('getUserData', result.log);
-        let tmpUserData = [];
-        for (let i = 0; i < 7; i++) {
-          tmpUserData.push(
-            result.log[chartLabels[i]] == null
-              ? 0
-              : result.log[chartLabels[i]].length,
-          );
-        }
-        setUserData(tmpUserData);
-        setTrashcanNum(result.total);
-      })
-      .catch((error) => console.log('error on userdetail ', error, params));
+
+    const userDetail = await getUserDetail(params);
+
+    let tmpUserData = [];
+    for (let i = 0; i < 7; i++) {
+      tmpUserData.push(
+        userDetail.log[chartLabels[i]] == null
+          ? 0
+          : userDetail.log[chartLabels[i]].length,
+      );
+    }
+    setUserData(tmpUserData);
+    setTrashcanNum(userDetail.total);
+
+    
   };
 
   return (

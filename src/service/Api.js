@@ -65,3 +65,21 @@ export const getPin = async () => {
     console.log("getPin api method", result);
   return result;
 }
+
+export const getUserDetail = (params) => {
+  const requestOptions = {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'GET',
+    redirect: 'follow',
+  };
+  const result =  fetch(`http://${URL}/users/${params}`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        return result;
+      })
+      .catch((error) => console.log('error on userdetail ', error, params));
+
+  return result;
+}
