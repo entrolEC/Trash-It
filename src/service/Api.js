@@ -1,5 +1,5 @@
-import { URL } from '../../env.json';
-import { setData, getData } from './AsyncStorage';
+import {URL} from '../../env.json';
+import {setData, getData} from './AsyncStorage';
 
 export const getNewAccessToken = async (refreshToken) => {
   let formdata = new FormData();
@@ -14,13 +14,13 @@ export const getNewAccessToken = async (refreshToken) => {
     redirect: 'follow',
   };
   const result = fetch(`http://${URL}/accounts/token/refresh/`, requestOptions)
-  .then((response) => response.json())
-  .then((result) => {
-    return result.access;
-  })
+    .then((response) => response.json())
+    .then((result) => {
+      return result.access;
+    });
   console.log('getNewAccessToken', result);
   return result;
-}
+};
 
 export const googleLoginFinish = async (token) => {
   let formdata = new FormData();
@@ -35,21 +35,24 @@ export const googleLoginFinish = async (token) => {
     body: formdata,
     redirect: 'follow',
   };
-  
-  const result = fetch(`http://${URL}/accounts/google/login/finish/`, requestOptions)
-  .then((response) => response.json())
-  .then(async (result) => { 
+
+  const result = fetch(
+    `http://${URL}/accounts/google/login/finish/`,
+    requestOptions,
+  )
+    .then((response) => response.json())
+    .then(async (result) => {
       const data = {
-        accessToken: result.access_token, 
-        refreshToken: result.refresh_token, 
-        user: result.user
-      } 
+        accessToken: result.access_token,
+        refreshToken: result.refresh_token,
+        user: result.user,
+      };
       console.log('getUser', data);
       return data;
-  })
-  console.log("getUser api method", result);
+    });
+  console.log('getUser api method', result);
   return result;
-}
+};
 
 export const getPin = async () => {
   var requestOptions = {
@@ -57,14 +60,14 @@ export const getPin = async () => {
     redirect: 'follow',
   };
 
-  const result =  fetch(`http://${URL}/pin/`, requestOptions)
+  const result = fetch(`http://${URL}/pin/`, requestOptions)
     .then((response) => response.json())
     .then((result) => {
       return result;
-    })
-    console.log("getPin api method", result);
+    });
+  console.log('getPin api method', result);
   return result;
-}
+};
 
 export const getUserDetail = (params) => {
   const requestOptions = {
@@ -74,15 +77,15 @@ export const getUserDetail = (params) => {
     method: 'GET',
     redirect: 'follow',
   };
-  const result =  fetch(`http://${URL}/users/${params}`, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => console.log('error on userdetail ', error, params));
+  const result = fetch(`http://${URL}/users/${params}`, requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => console.log('error on userdetail ', error, params));
 
   return result;
-}
+};
 
 export const getUsers = () => {
   var requestOptions = {
@@ -100,8 +103,8 @@ export const getUsers = () => {
     })
     .catch((error) => console.log('error', error));
 
-    return result;
-}
+  return result;
+};
 
 export const checkTrashcan = (formdata, accessToken) => {
   var requestOptions = {
@@ -114,7 +117,7 @@ export const checkTrashcan = (formdata, accessToken) => {
     redirect: 'follow',
   };
 
-  const result =  fetch(`http://${URL}/check/`, requestOptions)
+  const result = fetch(`http://${URL}/check/`, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       console.log('isTrashCanResult', result);
@@ -123,9 +126,9 @@ export const checkTrashcan = (formdata, accessToken) => {
     .catch((error) => {
       console.log('isTrashCanError', error);
     });
-  
+
   return result;
-}
+};
 
 export const addTrashcan = (formdata, accessToken) => {
   var requestOptions = {
@@ -146,4 +149,4 @@ export const addTrashcan = (formdata, accessToken) => {
     .catch((error) => console.log('error', error));
 
   return result;
-}
+};

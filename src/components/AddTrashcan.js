@@ -159,7 +159,7 @@ export const AddTrashcan = ({
               setModalVisible(false);
               initStates();
 
-              addBottomSheetModalRef.current.close();
+              addBottomSheetModalRef.dismiss();
             } else {
               console.log('data is null');
             }

@@ -104,7 +104,7 @@ export const MapScreen = ({latitude, longitude}) => {
       } else {
         setModalVisible(true);
         addBottomSheetModalRef.current?.present();
-        console.log("addBottomSheetModalRef",addBottomSheetModalRef)
+        console.log('addBottomSheetModalRef', addBottomSheetModalRef);
       }
     } else if (name === 'leaderBoard') {
       setLeaderBoardVisible(true);
@@ -183,12 +183,14 @@ export const MapScreen = ({latitude, longitude}) => {
             )}
         </NaverMapView>
 
-        {selectedIndex !== null ? (
+        {infoModalVisible && selectedIndex !== null ? (
           <BottomSheetModal
             ref={bottomSheetModalRef}
             snapPoints={trashcanSnapPoints}
             onDismiss={() => {
-              if (authModalVisible) setAuthModalVisible(false);
+              if (authModalVisible) {
+                setAuthModalVisible(false);
+              }
               setInfoModalVisible(false);
               setSelectedIndex(null);
               setSelectedId(null);
@@ -209,6 +211,7 @@ export const MapScreen = ({latitude, longitude}) => {
               setAlertVisible={setAlertVisible}
               loadingVisible={loadingVisible}
               setLoadingVisible={setLoadingVisible}
+              bottomSheetModalRef={bottomSheetModalRef}
             />
           </BottomSheetModal>
         ) : authModalVisible ? (
@@ -229,7 +232,7 @@ export const MapScreen = ({latitude, longitude}) => {
             />
           </BottomSheetModal>
         ) : modalVisible ? (
-            <BottomSheetModal
+          <BottomSheetModal
             ref={addBottomSheetModalRef}
             snapPoints={addSnapPoints}
             onDismiss={() => {
