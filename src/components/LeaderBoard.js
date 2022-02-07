@@ -30,9 +30,7 @@ export const LeaderBoard = ({
 
   const fetchData = async () => {
     const result = await getUsers();
-    console.log(result);
-    await result.sort((a, b) => a.author.length < b.author.length);
-    console.log(result);
+    result.sort((a, b) => b.author.length - a.author.length);
     setUsers(result);
   };
 
@@ -60,6 +58,8 @@ export const LeaderBoard = ({
           break;
         }
       }
+    } else {
+      setLoadingVisible(false);
     }
   }, [user, users]);
 
