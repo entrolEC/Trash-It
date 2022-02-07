@@ -105,9 +105,9 @@ export const TrashcanInfo = ({
         console.log('user trashcaninfo',_user);
         setUser(_user.user);
         console.log('setUser fin');
-        if (modalVisible === true) {getSelectedTrashcan();}
       }
     });
+    if (modalVisible === true) {getSelectedTrashcan();}
   },[modalVisible, userLikes, userDisLikes]);
 
   const refreshData = async () => {
