@@ -12,27 +12,14 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImageModal from 'react-native-image-modal';
 import {Alert} from '../components/Alert';
 
-import {
-  usePinState,
-  usePinDispatch,
-  getPin,
-  PinContext,
-} from '../context/PinContext';
+import {usePinDispatch, getPin} from '../context/PinContext';
 import {getNewToken, getUser} from '../service/UserManager';
 import {getGeolocation} from '../service/Geolocation';
 
-import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-} from '@gorhom/bottom-sheet';
-
-import {getData} from '../service/AsyncStorage';
-
-import {URL} from '../../env.json';
+import {TouchableWithoutFeedback} from '@gorhom/bottom-sheet';
 import {Loading} from './Loading.js';
-import {checkTrashcan, addTrashcan} from '../service/Api'
+import {checkTrashcan, addTrashcan} from '../service/Api';
 
 export const AddTrashcan = ({
   modalVisible,
@@ -48,9 +35,7 @@ export const AddTrashcan = ({
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [alertVisible, setAlertVisible] = useState(false);
 
-  const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const {pin} = pinState; // included : data, loading, error, success
 
   const [user, setUser] = useState();
 
@@ -105,10 +90,10 @@ export const AddTrashcan = ({
     formdata.append('description', description);
 
     const result = await addTrashcan(formdata, accessToken);
-    if(result) { // 등록 성공
+    if (result) {
+      // 등록 성공
       setLoadingVisible(false);
     }
-      
   };
 
   if (user === null) {
@@ -130,7 +115,9 @@ export const AddTrashcan = ({
       });
     }
 
-    if (data) isTrashCan();
+    if (data) {
+      isTrashCan();
+    }
   }, [modalVisible, data]);
 
   return (

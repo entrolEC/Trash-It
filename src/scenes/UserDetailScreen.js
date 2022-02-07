@@ -2,32 +2,19 @@ import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
   Image,
   Text,
   Dimensions,
-  ActivityIndicator,
-  Button,
-  TextInput,
-  TouchableHighlight,
 } from 'react-native';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCode,
-} from '@react-native-community/google-signin';
 
-import {URL} from '../../env.json';
 import {LineChart} from 'react-native-chart-kit';
-import dateFormat, {masks} from 'dateformat';
+import dateFormat from 'dateformat';
 import {getUserDetail} from '../service/Api';
 
 export const UserDetailScreen = ({user}) => {
-  const [errMessage, setErrMessage] = useState();
   const [trashcanNum, setTrashcanNum] = useState();
   const [userData, setUserData] = useState([0, 0, 0, 0, 0, 0, 0]);
-  const [chartData, setChartData] = useState({});
   const chartLabels = [];
   for (let i = 0; i < 7; i++) {
     chartLabels.push(
@@ -47,16 +34,12 @@ export const UserDetailScreen = ({user}) => {
     useShadowColorFromDataset: false, // optional
   };
 
-  const windowHeight = Dimensions.get('window').height;
-
   useEffect(() => {
     getUserData();
     console.log(user);
   }, [user]);
 
   const getUserData = async () => {
-
-
     const params = user.user.id;
 
     const userDetail = await getUserDetail(params);
@@ -71,8 +54,6 @@ export const UserDetailScreen = ({user}) => {
     }
     setUserData(tmpUserData);
     setTrashcanNum(userDetail.total);
-
-    
   };
 
   return (

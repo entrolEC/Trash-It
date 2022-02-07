@@ -1,17 +1,15 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, TouchableHighlight, View, Image} from 'react-native';
+import React from 'react';
+import {StyleSheet} from 'react-native';
 import AwesomeAlert from 'react-native-awesome-alerts';
-
-import Modal from 'react-native-modal';
 
 export const Alert = ({
   alertVisible,
   setAlertVisible,
   title,
   message,
-  showCancel=false,
+  showCancel = false,
   confirmText,
-  cancelText="",
+  cancelText = '',
   callback = null,
 }) => {
   return (
@@ -33,7 +31,9 @@ export const Alert = ({
       }}
       onConfirmPressed={() => {
         setAlertVisible(false);
-        if (callback !== null) callback();
+        if (callback !== null) {
+          callback();
+        }
       }}
       setAlertVisible
       contentContainerStyle={styles.contentContainer}

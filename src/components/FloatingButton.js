@@ -1,6 +1,5 @@
-import React, {Component, useRef, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
-  Text,
   View,
   StyleSheet,
   Animated,
@@ -8,19 +7,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import {
-  usePinState,
-  usePinDispatch,
-  getPin,
-  PinContext,
-} from '../context/PinContext';
-
-import {getData} from '../service/AsyncStorage';
+import {usePinDispatch, getPin} from '../context/PinContext';
 
 export const FloatingButton = (props) => {
-  const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const {pin} = pinState; // included : data, loading, error, success
 
   const [animation, setAnimation] = useState(new Animated.Value(0));
   const [open, setOpen] = useState(0);

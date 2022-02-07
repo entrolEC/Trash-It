@@ -1,24 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View,
   Image,
   FlatList,
   Dimensions,
 } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
 
-import Modal from 'react-native-modal';
-import {getNewToken, getUser} from '../service/UserManager';
-import {URL} from '../../env.json';
-
+import {getUser} from '../service/UserManager';
+import {getUsers} from '../service/Api';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-
-import {getUsers} from '../service/Api'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -37,7 +30,9 @@ export const LeaderBoard = ({
 
   const fetchData = async () => {
     const result = await getUsers();
-    result.sort((a, b) => a.author.length < b.author.length);
+    console.log(result);
+    await result.sort((a, b) => a.author.length < b.author.length);
+    console.log(result);
     setUsers(result);
   };
 
@@ -69,33 +64,45 @@ export const LeaderBoard = ({
   }, [user, users]);
 
   const Item = ({username, count, idx}) => (
-    <View
-      style={
-        styles.itemlist
-      }>
-
+    <View style={styles.itemlist}>
       {idx < 3 ? (
         <Icon
           name="crown"
           size={20}
-          style={{position:'absolute', left:'5%', top:'100%'}}
+          style={{position: 'absolute', left: '5%', top: '100%'}}
           color={crownColor[idx]}
         />
       ) : (
         <Text
-          style={{...styles.text, position:'absolute', left:'5%', top:'100%', fontWeight: 'bold'}}>
+          style={{
+            ...styles.text,
+            position: 'absolute',
+            left: '5%',
+            top: '100%',
+            fontWeight: 'bold',
+          }}>
           {idx + 1}
         </Text>
       )}
 
-      <Text style={{...styles.text, position:'absolute', left:'20%', top:'100%'}}>{username}</Text>
+      <Text
+        style={{
+          ...styles.text,
+          position: 'absolute',
+          left: '20%',
+          top: '100%',
+        }}>
+        {username}
+      </Text>
 
       <Text
         style={{
           ...styles.text,
           fontWeight: 'bold',
           color: '#3817aa',
-          position:'absolute', right:'10%', top:'100%'
+          position: 'absolute',
+          right: '10%',
+          top: '100%',
         }}>
         {count}
       </Text>
@@ -178,8 +185,8 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     flexDirection: 'row',
     justifyContent: 'center',
-    width: windowWidth*0.9,
-    height: windowHeight*0.1,
+    width: windowWidth * 0.9,
+    height: windowHeight * 0.1,
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: {

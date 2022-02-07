@@ -98,6 +98,7 @@ export const getUsers = () => {
   const result = fetch(`http://${URL}/users/`, requestOptions)
     .then((response) => response.json())
     .then((result) => {
+      result.sort((a, b) => a.author.length < b.author.length);
       return result;
     })
     .catch((error) => console.log('error', error));

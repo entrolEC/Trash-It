@@ -1,27 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {BackHandler, SafeAreaView, LogBox} from 'react-native';
-import AnimatedSplash from 'react-native-animated-splash-screen';
+import {BackHandler, LogBox} from 'react-native';
 import {MapScreen} from './MapScreen';
-import Geolocation from 'react-native-geolocation-service';
-import {
-  usePinState,
-  usePinDispatch,
-  getPin,
-  PinContext,
-} from '../context/PinContext';
-import {UsersProvider} from '../context/UserContext';
-import {set} from 'react-native-reanimated';
+import {usePinState, usePinDispatch, getPin} from '../context/PinContext';
 import {Alert} from '../components/Alert';
 import {getGeolocation} from '../service/Geolocation';
 
 import LottieView from 'lottie-react-native';
-
-import {URL} from '../../env.json';
-
-const initialState = {
-  latitude: 37.3677,
-  longitude: 126.6603,
-};
 
 LogBox.ignoreAllLogs();
 
@@ -48,14 +32,19 @@ export const SplashScreen = () => {
 
   useEffect(() => {
     console.log('pinerror:', pin.error);
-    if (isLoaded)
+    if (isLoaded) {
       setTimeout(() => {
-        if (!pin.success) setShowConnectionAlert(true);
+        if (!pin.success) {
+          setShowConnectionAlert(true);
+        }
       }, 5000);
+    }
   }, [isLoaded]);
 
   useEffect(() => {
-    if (pin.success) setIsPinLoaded(true);
+    if (pin.success) {
+      setIsPinLoaded(true);
+    }
   }, [pin.success]);
 
   return (

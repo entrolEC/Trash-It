@@ -1,15 +1,12 @@
 /* eslint-disable prettier/prettier */
 import React, {useState, useEffect, useRef} from 'react';
-import {Dimensions, Modal} from 'react-native';
+import {Dimensions} from 'react-native';
 import {
-  Alert,
   StyleSheet,
   Text,
   View,
-  Image,
   SafeAreaView,
 } from 'react-native';
-import ImagePicker from 'react-native-image-crop-picker';
 
 import {URL} from '../../env.json';
 
@@ -17,19 +14,15 @@ import {
   usePinState,
   usePinDispatch,
   getPin,
-  PinContext,
 } from '../context/PinContext';
 
 import ImageModal from 'react-native-image-modal';
 import {
-  TouchableOpacity,
   TouchableHighlight,
   TouchableWithoutFeedback,
 } from '@gorhom/bottom-sheet';
 
 import LottieView from 'lottie-react-native';
-
-import { getData } from '../service/AsyncStorage';
 import { getNewToken, getUser } from '../service/UserManager';
 
 export const TrashcanInfo = ({
@@ -49,9 +42,7 @@ export const TrashcanInfo = ({
   const [selectedTrashcan, setSelectedTrashcan] = useState();
   const [user, setUser] = useState(null);
 
-  const pinState = usePinState();
   const pinDispatch = usePinDispatch();
-  const {pin} = pinState; // included : data, loading, error, success
 
   const [likes, setLikes] = useState(0);
   const [dislikes, setDisLikes] = useState(0);
@@ -119,11 +110,6 @@ export const TrashcanInfo = ({
     });
   },[modalVisible, userLikes, userDisLikes]);
 
-  const reloadPinData = async () => {
-    console.log('reloadPinData');
-    if (modalVisible === true) {getSelectedTrashcan();}
-  };
-
   const refreshData = async () => {
     getPin(pinDispatch);
   };
@@ -190,16 +176,16 @@ export const TrashcanInfo = ({
         })
         .catch((error) => console.log('error', error));
 
-        if (action == 'like' && !userLikes) {
+        if (action === 'like' && !userLikes) {
           if (prevDisLikeState) {disLikeAnimation.current.play(40, 10);}
           likeAnimation.current.play(10, 40);
         }
-        else if (action == 'like' && userLikes) {likeAnimation.current.play(40, 10);}
-        else if (action == 'dislike' && !userDisLikes) {
+        else if (action === 'like' && userLikes) {likeAnimation.current.play(40, 10);}
+        else if (action === 'dislike' && !userDisLikes) {
           if (prevLikeState) {likeAnimation.current.play(40, 10);}
           disLikeAnimation.current.play(10, 40);
         }
-        else if (action == 'dislike' && userDisLikes) {disLikeAnimation.current.play(40, 10);}
+        else if (action === 'dislike' && userDisLikes) {disLikeAnimation.current.play(40, 10);}
 
         console.log('likeanimation', likeAnimation);
         console.log('dislikeanimation', disLikeAnimation);
