@@ -1,5 +1,4 @@
 import {URL} from '../../env.json';
-import {setData, getData} from './AsyncStorage';
 
 export const getNewAccessToken = async (refreshToken) => {
   let formdata = new FormData();
