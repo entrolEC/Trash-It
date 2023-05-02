@@ -1,5 +1,7 @@
 # TrashIt
+<p align="center">
 <img src="https://user-images.githubusercontent.com/50871137/235619035-05194752-1e6f-42a8-ab49-a41bd1477cfc.png" width="20%" height="10%" title="앱 이미지" alt="앱 이미지"></img>
+</p>
 
 ## 서비스 소개
 ### 서비스 목적
