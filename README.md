@@ -19,6 +19,10 @@
 - **리더보드 기능**
   - 등록한 쓰레기통 개수에 따라 리더보드에 랭킹됩니다.
   - 추후 리워드에 활용할 예정입니다.
+ 
+![trashit-model drawio (2)](https://github.com/entrolEC/Trash-It/assets/47941102/657fd796-9795-4e2c-8c56-8b13c2605436)
+
+
 
 ## 사용 기술
 ### Frontend
