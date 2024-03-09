@@ -21,6 +21,8 @@ export const getNewAccessToken = async (refreshToken) => {
   return result;
 };
 
+;;;;;;;;
+
 export const googleLoginFinish = async (token) => {
   let formdata = new FormData();
 
